@@ -1,0 +1,137 @@
+
+
+.containerAdicionarProduto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  gap: 5%;
+  flex-wrap: wrap;
+}
+
+.FormAdicionarProduto {
+  background-color: rgb(255, 255, 255);
+  margin-top: 3rem;
+  height: 26rem;
+  width: 30rem;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-auto-rows: 3.5rem;
+  border-radius: 12px;
+  padding-top: 2rem;
+  
+
+  & input[type="text"],
+  input[type="number"] {
+    padding-left: 10px;
+    height: 2rem;
+    width: 20rem;
+    border-radius: 7px;
+    border: 1px solid black;
+    font-size: 1rem;
+  }
+  & input[type="number"] {
+    width: 6rem;
+  }
+  & input:focus {
+    outline: none;
+    border: 1px solid blue;
+    box-shadow: 2px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  }
+  & button {
+    padding: 15px 25px;
+    border: unset;
+    border-radius: 15px;
+    color: #212121;
+    z-index: 1;
+    background: #e8e8e8;
+    position: relative;
+    font-weight: 1000;
+    font-size: 17px;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+    transition: all 250ms;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 15px;
+    background-color: #212121;
+    z-index: -1;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+    transition: all 250ms;
+  }
+
+  button:hover {
+    color: #e8e8e8;
+  }
+
+  button:hover::before {
+    width: 100%;
+  }
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.TabelaProdutosContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 1rem;
+
+}
+.TabelaProdutos{
+  margin-bottom: 20rem;
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+    & tr:nth-child(even){
+      background-color: rgb(182, 182, 182);
+    }
+    & th{
+      background-color: seagreen;
+      color: aliceblue;
+    }
+  
+}
+.upload-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.botao-upload {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+.botao-upload:hover {
+  background-color: #0056b3;
+}
+
+.nome-arquivo {
+  font-size: 14px;
+  color: #333;
+}
+

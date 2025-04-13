@@ -1,0 +1,24 @@
+.BarraDePesquisa{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    & input{
+        width: 30rem;
+        height: 2rem;
+        border-radius: 7px;
+        border: 1px solid black;
+        padding-left: 10px;
+    }
+    & button{
+        background-color:transparent;
+        position: relative;
+        left: -1.8rem;
+        border: none;
+        cursor: pointer;
+    }
+    & button:hover{
+        color: blue;
+        transform: scale(1.1);
+    }
+}

@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using StoreSystemFabianaPerfumaria.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+
+namespace StoreSystemFabianaPerfumaria.Controllers
+
+{
+    [Route("api/[Controller]")]
+    [ApiController]
+    public class AdicionarProduto : Controller
+    {
+        private readonly IConfiguration _config;
+        public AdicionarProduto(IConfiguration config)
+        {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+        }
+
+        [HttpPost("CadastroDeProdutos")]
+        public async Task<ActionResult> Produtos([FromBody] Produtos AdicionarProdutos)
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    
+
+                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem)";
+                    var command = new SqlCommand(query, connection);
+
+                    command.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
+                    command.Parameters.Add(new SqlParameter("@Marca", AdicionarProdutos.Marca));
+                    command.Parameters.Add(new SqlParameter("@Preco", AdicionarProdutos.Preco));
+                    command.Parameters.Add(new SqlParameter("@Quantidade", AdicionarProdutos.Quantidade));
+                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", AdicionarProdutos.CodigoDeBarra));
+                    command.Parameters.Add(new SqlParameter("@UrlImagem", AdicionarProdutos.UrlImagem));
+
+                    await connection.OpenAsync();
+                    var result = await command.ExecuteNonQueryAsync();
+
+                    if (result > 0)
+                    {
+                        return Ok("Produto Adicionado com sucesso");
+                    }
+                    else
+                    {
+                        return BadRequest("Erro ao adicionar produto");
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao adicionar produto: {ex.Message}");
+
+            }
+        }
+
+
+
+    }
+
+}

@@ -1,0 +1,29 @@
+.navBar {
+  display: flex;
+  background: rgb(159, 71, 4);
+  background: linear-gradient(
+    90deg,
+    rgba(159, 71, 4, 1) 7%,
+    rgba(219, 95, 0, 1) 48%,
+    rgba(251, 149, 14, 1) 61%
+  );
+  height: 5rem;
+  padding: 1rem;
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 5rem;
+  padding-right: 5rem;
+    & .logo{
+        position: relative;
+        left: 45%;
+    }
+
+  
+}
+@media screen and (max-width: 600px) {
+    .logo{
+      left: 0rem !important;
+    }
+
+}

@@ -1,0 +1,84 @@
+.Container {
+  background-image: url("../../img/digital-art-beautiful-mountains.jpg");
+  height: 100vh;
+  background-size: cover;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: aliceblue;
+  & .Login {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.603);
+    height: 30rem;
+    width: 25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 23px;
+    border: solid 1px rgb(198, 204, 211);
+
+    & .iconUser {
+      position: absolute;
+      top: 6rem;
+    }
+
+    & form {
+      position: relative;
+      top: 1rem;
+      & input {
+        min-width: 300px;
+        max-width: 200px;
+        height: 15px;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+      }
+      & input:focus {
+        outline: none;
+        border: 1.5px solid rgb(0, 119, 255);
+        -webkit-box-shadow: 7px 3px 10px -4px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 7px 3px 10px -4px rgba(0, 0, 0, 0.75);
+        box-shadow: 7px 3px 10px -4px rgba(0, 0, 0, 0.75);
+        background-color: black;
+        color: aliceblue;
+      }
+      & input[type="email"] {
+        position: relative;
+        top: -1.4rem;
+      }
+    }
+    & h1 {
+      position: relative;
+      top: -8rem;
+    }
+    & button {
+      position: relative;
+      top: 6rem;
+      width: 10rem;
+      height: 2.6rem;
+      border-radius: 15px;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all .3s ease-in;
+      background-color: orangered;
+    }
+    & button:hover{
+      background-color:black;
+      border: 1px solid blue;
+      color: white;
+    }
+    & .iconsOlhos{
+      position:absolute;
+      left: 18rem;
+      top: 2.5rem;
+      color: black;
+      cursor: pointer;
+    }
+
+  }
+}
