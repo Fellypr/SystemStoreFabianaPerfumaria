@@ -26,7 +26,11 @@ function RealizarUmaVenda() {
   const [quantidade, setQuantidade] = useState(1);
   const [desconto, setDesconto] = useState("R$ 0,00");
   const [produtosVendidos, setProdutosVendidos] = useState([]);
-   
+
+  const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
+  const [quantiaRecebida, setquantiaRecebida] = useState("R$ 0,00");
+  const [troco, setTroco] = useState("R$ 0,00");
+  const [formaDePagamento, setformaDePagamento] = useState("");
 
   // Buscar produto no backend
   const buscarProduto = async () => {
@@ -51,10 +55,11 @@ function RealizarUmaVenda() {
     }
   };
 
-  // Dispara busca do produto sempre que o código de barras muda
   useEffect(() => {
     if (codigoDeBarra.trim().length > 7) {
       buscarProduto();
+    }else{
+      setProduto(null);
     }
   }, [codigoDeBarra]);
 
@@ -79,14 +84,31 @@ function RealizarUmaVenda() {
       const Valor = parseFloat(item.preco);
       const qtd = parseInt(item.quantidade);
       const descontoNum = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
+
       return acc + (Valor * qtd - descontoNum);
     }, 0);
-
-    return total.toLocaleString("pt-BR", {
+    const totalFormatado = total.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
+
+    setPrecoTotal(totalFormatado);
   };
+  useEffect(() => {calcularTotalGeral();}, [produtosVendidos]);
+  // eslint-disable-next-line no-unused-vars
+  useEffect(() => {
+    const calcularTroco = () => {
+      const valorGeral = precoTotal.toString().replace(/\D/g, "") / 100;
+      const valorRecebido = quantiaRecebida.toString().replace(/\D/g, "") / 100;
+      const trocoNumerico = Number(valorGeral) - Number(valorRecebido);
+      const valorFormatado = Number(trocoNumerico).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      setTroco(valorFormatado);
+    };
+    calcularTroco();
+  }, [precoTotal, quantiaRecebida]);
 
   const removerProduto = (index) => {
     const novaLista = produtosVendidos.filter((_, i) => i !== index);
@@ -112,9 +134,13 @@ function RealizarUmaVenda() {
         {/* FORMULÁRIO DE PRODUTO */}
         <form className="CadastraProduto" onSubmit={(e) => e.preventDefault()}>
           <div className="imagemDoProduto">
-            <img src={produto?.urlImagem ||" "} alt="" width={100} height={100} style={{ borderRadius: "50%" , position: "relative",
-              left: "40%"
-            }} />
+            <img
+              src={produto?.urlImagem || " "}
+              alt=""
+              width={100}
+              height={100}
+              style={{ borderRadius: "50%", position: "relative", left: "40%" }}
+            />
           </div>
           <div className="input-group">
             <label>Código:</label>
@@ -271,7 +297,17 @@ function RealizarUmaVenda() {
                 <tr>
                   <th colSpan={6}>
                     <div className="FormaDePagamento">
-                      <select required>
+                      <select
+                        required
+                        onChange={(e) => {
+                          setformaDePagamento(e.target.value);
+                          if (e.target.value === "Dinheiro") {
+                            setquantiaRecebida("");
+                            setTroco("R$ 0,00");
+                          }
+                        }}
+                      >
+                        <option value=" ">Selecione</option>
                         <option value="Dinheiro">Dinheiro</option>
                         <option value="CartãoDeCredito">
                           Cartão de Crédito
@@ -282,6 +318,28 @@ function RealizarUmaVenda() {
                       </select>
                     </div>
                   </th>
+                </tr>
+                <tr>
+                  {formaDePagamento === "Dinheiro" && (
+                    <>
+                      <td colSpan={3} style={{ border: "none" , textAlign: "center", fontSize: "1.5rem" ,backgroundColor: "rgb(0, 255, 149)"}}>
+                        <label>Quantia Recebida:</label>
+                      </td>
+                      <td  >
+                        <input
+                          type="text"
+                          value={quantiaRecebida || "R$ 0,00"}
+                          onChange={(e) => {
+                            formatarMoeda((e), setquantiaRecebida);
+                          }}
+                          style={{ border: "none" ,textAlign: "center", fontSize: "1rem",width: "100%" , backgroundColor: "rgb(160, 102, 102)", color: "white" , fontWeight: "bold"}}
+                        />
+                      </td>
+                      <td colSpan={2} style={{ border: "none", textAlign: "center", fontSize: "1.5rem", backgroundColor: "rgb(0, 0, 0)",color: "white", fontWeight: "bold",textWrap: "nowrap" }}>
+                        <label>Troco:{troco}</label>
+                      </td>
+                    </>
+                  )}
                 </tr>
 
                 <tr>
@@ -312,7 +370,7 @@ function RealizarUmaVenda() {
                     }}
                     height={50}
                   >
-                    {calcularTotalGeral()}
+                    {precoTotal}
                   </td>
                 </tr>
 
