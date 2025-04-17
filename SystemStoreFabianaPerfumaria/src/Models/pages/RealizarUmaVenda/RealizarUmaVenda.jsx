@@ -8,7 +8,7 @@ import { MdCancel } from "react-icons/md";
 import "./RealizarUmaVenda.css";
 import "./RealizarVendaMobile.css";
 //router
-import { Link } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 
 // Função para formatar valores monetários
 function formatarMoeda(e, setValor) {
@@ -24,7 +24,9 @@ function RealizarUmaVenda() {
   const [codigoDeBarra, setCodigoDeBarras] = useState("");
   const [produto, setProduto] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
+  const [quantidadeTotal, setQuantidadeTotal] = useState(0);
   const [desconto, setDesconto] = useState("R$ 0,00");
+
   const [produtosVendidos, setProdutosVendidos] = useState([]);
 
   const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
@@ -32,7 +34,6 @@ function RealizarUmaVenda() {
   const [troco, setTroco] = useState("R$ 0,00");
   const [formaDePagamento, setformaDePagamento] = useState("");
 
-  // Buscar produto no backend
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
@@ -46,11 +47,9 @@ function RealizarUmaVenda() {
           },
         }
       );
-      console.log("Resposta completa:", response);
-      console.log("Resposta completa com data:", response.data);
       setProduto(response.data);
     } catch (error) {
-      console.log("Produto não encontrado", error);
+      console.error(error);
       setProduto(null);
     }
   };
@@ -58,7 +57,7 @@ function RealizarUmaVenda() {
   useEffect(() => {
     if (codigoDeBarra.trim().length > 7) {
       buscarProduto();
-    }else{
+    } else {
       setProduto(null);
     }
   }, [codigoDeBarra]);
@@ -71,13 +70,13 @@ function RealizarUmaVenda() {
       quantidade,
       desconto,
     };
-
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
 
     setProduto(null);
     setCodigoDeBarras("");
     setQuantidade(1);
     setDesconto("R$ 0,00");
+    setQuantidadeTotal((prevTotal) => prevTotal + Number(quantidade));
   };
   const calcularTotalGeral = () => {
     const total = produtosVendidos.reduce((acc, item) => {
@@ -94,7 +93,9 @@ function RealizarUmaVenda() {
 
     setPrecoTotal(totalFormatado);
   };
-  useEffect(() => {calcularTotalGeral();}, [produtosVendidos]);
+  useEffect(() => {
+    calcularTotalGeral();
+  }, [produtosVendidos]);
   // eslint-disable-next-line no-unused-vars
   useEffect(() => {
     const calcularTroco = () => {
@@ -113,6 +114,58 @@ function RealizarUmaVenda() {
   const removerProduto = (index) => {
     const novaLista = produtosVendidos.filter((_, i) => i !== index);
     setProdutosVendidos(novaLista);
+    setQuantidadeTotal(
+      (prevTotal) => prevTotal - Number(produtosVendidos[index].quantidade)
+    );
+  };
+
+  const FinalizarVenda = async () => {
+    try {
+      const precoLimpo = precoTotal.replace(/\D/g, "");
+
+      const dadosParaEnvio = [
+        {
+          nomeDoProduto: produtosVendidos
+            .map((produto) => produto.nomeDoProduto)
+            .join(" - "),
+          precoTotal: Number(precoLimpo / 100), // já como número
+          quantidade: quantidadeTotal,
+          dataDaVenda: new Date().toISOString(),
+          formaDePagamento: formaDePagamento,
+        },
+      ];
+
+      console.log(
+        "Enviando para API:",
+        JSON.stringify(dadosParaEnvio, null, 2)
+      );
+
+      const response = await axios.post(
+        "http://localhost:5080/api/RealizarVenda/RealizarVenda",
+        dadosParaEnvio,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Venda realizada com sucesso:", response.data);
+
+      // Limpar os dados
+      setProdutosVendidos([]);
+      setQuantidadeTotal(0);
+      setPrecoTotal("R$ 0,00");
+      setquantiaRecebida("R$ 0,00");
+      setTroco("R$ 0,00");
+      setformaDePagamento("");
+    } catch (error) {
+      if (error.response) {
+        console.error("Erro ao realizar venda:", error.response.data);
+      } else {
+        console.error("Erro inesperado ao realizar venda:", error.message);
+      }
+    }
   };
 
   return (
@@ -322,20 +375,47 @@ function RealizarUmaVenda() {
                 <tr>
                   {formaDePagamento === "Dinheiro" && (
                     <>
-                      <td colSpan={3} style={{ border: "none" , textAlign: "center", fontSize: "1.5rem" ,backgroundColor: "rgb(0, 255, 149)"}}>
+                      <td
+                        colSpan={3}
+                        style={{
+                          border: "none",
+                          textAlign: "center",
+                          fontSize: "1.5rem",
+                          backgroundColor: "rgb(0, 255, 149)",
+                        }}
+                      >
                         <label>Quantia Recebida:</label>
                       </td>
-                      <td  >
+                      <td>
                         <input
                           type="text"
                           value={quantiaRecebida || "R$ 0,00"}
                           onChange={(e) => {
-                            formatarMoeda((e), setquantiaRecebida);
+                            formatarMoeda(e, setquantiaRecebida);
                           }}
-                          style={{ border: "none" ,textAlign: "center", fontSize: "1rem",width: "100%" , backgroundColor: "rgb(160, 102, 102)", color: "white" , fontWeight: "bold"}}
+                          style={{
+                            border: "none",
+                            textAlign: "center",
+                            fontSize: "1rem",
+                            width: "100%",
+                            backgroundColor: "rgb(160, 102, 102)",
+                            color: "white",
+                            fontWeight: "bold",
+                          }}
                         />
                       </td>
-                      <td colSpan={2} style={{ border: "none", textAlign: "center", fontSize: "1.5rem", backgroundColor: "rgb(0, 0, 0)",color: "white", fontWeight: "bold",textWrap: "nowrap" }}>
+                      <td
+                        colSpan={2}
+                        style={{
+                          border: "none",
+                          textAlign: "center",
+                          fontSize: "1.5rem",
+                          backgroundColor: "rgb(0, 0, 0)",
+                          color: "white",
+                          fontWeight: "bold",
+                          textWrap: "nowrap",
+                        }}
+                      >
                         <label>Troco:{troco}</label>
                       </td>
                     </>
@@ -393,6 +473,7 @@ function RealizarUmaVenda() {
                         color: "white",
                       }}
                       id="btn"
+                      onClick={() => FinalizarVenda()}
                     >
                       Realizar venda
                     </button>
@@ -404,7 +485,10 @@ function RealizarUmaVenda() {
                         color: "white",
                       }}
                       id="btn"
-                      onClick={() => setProdutosVendidos([])}
+                      onClick={() => {
+                        setProdutosVendidos([]);
+                        setQuantidadeTotal(0);
+                      }}
                     >
                       Cancelar venda
                     </button>
@@ -413,8 +497,6 @@ function RealizarUmaVenda() {
               </tfoot>
             </table>
           </div>
-
-          {/* FORMA DE PAGAMENTO */}
         </section>
       </main>
     </>

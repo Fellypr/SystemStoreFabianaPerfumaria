@@ -46,7 +46,7 @@
         background-color: black;
         color: aliceblue;
       }
-      & input[type="email"] {
+      & .email {
         position: relative;
         top: -1.4rem;
       }
