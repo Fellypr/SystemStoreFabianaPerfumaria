@@ -180,7 +180,7 @@ function RealizarUmaVenda() {
           />
         </Link>
 
-        <h1>Tela De Venda</h1>
+        <h1>Tela De Vendas</h1>
       </header>
 
       <main className="ContainerTelaDeVenda">

@@ -12,6 +12,7 @@ import ExcluirProdutos from './Models/pages/ExcluirProdutos/ExcluirProdutos.jsx'
 import HistoricoEEstatistica from './Models/pages/HistoricoEEstatistica/HistoricoEEstatistica.jsx'
 import EditarProduto from './Models/pages/EditarProduto/EditarProduto.jsx'
 import RealizarUmaVenda from './Models/pages/RealizarUmaVenda/RealizarUmaVenda.jsx'
+import CadastroDeClientes from './Models/pages/CadastroDeCliente/CadastroDeClientes.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/HistoricoEEstatistica' element={<HistoricoEEstatistica/>}/>
                   <Route path='/EditarProduto' element={<EditarProduto/>}/>
                   <Route path='/RealizarUmaVenda' element={<RealizarUmaVenda/>}/>
+                  <Route path='/CadastroDeClientes' element={<CadastroDeClientes/>}/>
 
               </Route>
           </Routes> 

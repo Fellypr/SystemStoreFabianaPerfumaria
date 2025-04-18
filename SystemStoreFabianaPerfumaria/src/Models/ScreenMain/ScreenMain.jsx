@@ -100,8 +100,8 @@ const ScreenMain = () => {
             </Link>
           </div>
           <div className="Item" style={{ backgroundColor: "rgb(255, 102, 0)" }}>
-            <Link className="Link">
-              <IoPersonAdd size={50} />
+            <Link className="Link" to={"/CadastroDeClientes"}>
+              <IoPersonAdd size={50}  />
               Cadastro de Clientes
             </Link>
           </div>
