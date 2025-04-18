@@ -86,23 +86,66 @@ namespace Backend.Controllers
 
                 foreach (var venda in vendas)
                 {
-                    var query = "INSERT INTO RealizarVendas (NomeDoProduto,PrecoTotal,Quantidade,DataDaVenda,FormaDePagamento) VALUES (@NomeDoProduto,@Preco,@Quantidade,@DataDaVenda,@FormaDePagamento)";
+                    var query = "INSERT INTO RealizarVendas (NomeDoProduto,PrecoTotal,QuantidadeTotal,DataDaVenda,FormaDePagamento) VALUES (@NomeDoProduto,@Preco,@Quantidade,@DataDaVenda,@FormaDePagamento)";
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@NomeDoProduto", venda.NomeDoProduto);
                     command.Parameters.AddWithValue("@Preco", venda.PrecoTotal);
-                    command.Parameters.AddWithValue("@Quantidade", venda.Quantidade);
+                    command.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
                     command.Parameters.AddWithValue("@DataDaVenda", venda.DataDaVenda);
                     command.Parameters.AddWithValue("@FormaDePagamento", venda.FormaDePagamento);
 
                     await command.ExecuteNonQueryAsync();
+
+                    var queryUpdate = "UPDATE AdicionarProduto SET Quantidade = Quantidade - @Quantidade WHERE NomeDoProduto = @nomeDoProduto";
+                    var command2 = new SqlCommand(queryUpdate, connection);
+                    command2.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
+                    command2.Parameters.AddWithValue("@nomeDoProduto", venda.NomeDoProduto);
+
+                    await command2.ExecuteNonQueryAsync();
                 }
 
                 return Ok("Todas as vendas foram realizadas com sucesso");
             }
         }
 
+        [HttpGet("VendasRealizadas")]
+        public async Task<ActionResult> HistoricoDeVendasRealizadas()
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    var query = "SELECT * FROM RealizarVendas";
+                    var command = new SqlCommand(query, connection);
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var vendas = new List<VendaRealizadaProp>();
+                        while (await reader.ReadAsync())
+                        {
+                            var venda = new VendaRealizadaProp
+                            {  
+                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
+                                QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
+                                DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                            };
+                            vendas.Add(venda);
+                        }
+                        return Ok(vendas);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
 
     }
-
 
 }

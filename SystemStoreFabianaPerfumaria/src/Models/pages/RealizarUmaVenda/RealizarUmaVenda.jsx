@@ -8,7 +8,7 @@ import { MdCancel } from "react-icons/md";
 import "./RealizarUmaVenda.css";
 import "./RealizarVendaMobile.css";
 //router
-import { Form, Link } from "react-router-dom";
+import {Link } from "react-router-dom";
 
 // Função para formatar valores monetários
 function formatarMoeda(e, setValor) {
@@ -122,15 +122,15 @@ function RealizarUmaVenda() {
   const FinalizarVenda = async () => {
     try {
       const precoLimpo = precoTotal.replace(/\D/g, "");
-
+      const Data = new Date()
       const dadosParaEnvio = [
         {
           nomeDoProduto: produtosVendidos
             .map((produto) => produto.nomeDoProduto)
             .join(" - "),
-          precoTotal: Number(precoLimpo / 100), // já como número
+          precoTotal: Number(precoLimpo / 100),
           quantidade: quantidadeTotal,
-          dataDaVenda: new Date().toISOString(),
+          dataDaVenda: Data.toISOString(),
           formaDePagamento: formaDePagamento,
         },
       ];
@@ -265,8 +265,8 @@ function RealizarUmaVenda() {
               <input type="text" placeholder="Opcional" />
             </div>
             <p>
-              {new Date().toLocaleDateString()} <br />{" "}
-              {new Date().toLocaleTimeString()}
+              {new Date().toLocaleDateString("pt-BR")} <br />{" "}
+              {new Date().toLocaleTimeString("pt-BR")}
             </p>
           </div>
 
@@ -360,7 +360,7 @@ function RealizarUmaVenda() {
                           }
                         }}
                       >
-                        <option value=" ">Selecione</option>
+                        <option value="null">Selecione</option>
                         <option value="Dinheiro">Dinheiro</option>
                         <option value="CartãoDeCredito">
                           Cartão de Crédito

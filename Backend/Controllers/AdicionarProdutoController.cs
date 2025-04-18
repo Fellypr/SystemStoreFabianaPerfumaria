@@ -64,7 +64,43 @@ namespace StoreSystemFabianaPerfumaria.Controllers
             }
         }
 
+        [HttpGet("HistoricoDeProdutos")]
 
+        public async Task<ActionResult> HistoricoDeProdutos()
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT * FROM AdicionarProduto";
+                    var command = new SqlCommand(query, connection);
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var produtos = new List<Produtos>();
+                        while (await reader.ReadAsync())
+                        {
+                            var produto = new Produtos
+                            {
+                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                                Marca = reader["Marca"].ToString(),
+                                Preco = Convert.ToDecimal(reader["Preco"]),
+                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                                CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
+                                UrlImagem = reader["UrlImagem"].ToString(),
+                            };
+                            produtos.Add(produto);
+                        }
+                        return Ok(produtos);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao obter histórico de produtos: {ex.Message}");
+            }
+        }
 
     }
 

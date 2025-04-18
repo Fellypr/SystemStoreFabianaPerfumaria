@@ -44,7 +44,7 @@ function ScreenLogin() {
       <div className="Login">
         <h1>Login</h1>
         <FaCircleUser className="iconUser" size={80} />
-        <form>
+        <form action="submit">
           <input type="text" placeholder="E-mail" required onChange={(e) => setEmail(e.target.value)} className="email" />
           <br />
           <input type={showPassword ? "text" : "password"} placeholder="Senha" required  onChange={(e) => setPassword(e.target.value)}/>
@@ -54,8 +54,9 @@ function ScreenLogin() {
             onClick={ShowPassword}
             
           />
+          <button  onClick={login} >Entrar</button>
         </form>
-        <button type="submit" onClick={login} >Entrar</button>
+        
       </div>
     </div>
   );

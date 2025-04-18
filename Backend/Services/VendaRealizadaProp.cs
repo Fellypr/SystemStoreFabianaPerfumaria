@@ -16,7 +16,7 @@ namespace Backend.Services
         public decimal PrecoTotal { get; set; }
 
         [JsonPropertyName("quantidade")]
-        public int Quantidade { get; set; }
+        public int QuantidadeTotal { get; set; }
 
         [JsonPropertyName("dataDaVenda")]
         public DateTime DataDaVenda { get; set; }
@@ -24,5 +24,6 @@ namespace Backend.Services
         [JsonPropertyName("formaDePagamento")]
         public string FormaDePagamento { get; set; }
     }
+    
 
 }

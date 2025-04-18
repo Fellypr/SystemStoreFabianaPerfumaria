@@ -52,6 +52,7 @@ C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Back
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.csproj.CoreCompileInputs.cache
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.sourcelink.json
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\scopedcss\bundle\Backend.styles.css
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\staticwebassets.development.json
@@ -68,4 +69,3 @@ C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Back
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.pdb
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.genruntimeconfig.cache
 C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\ref\Backend.dll
-C:\Users\Fellype\Documents\Programação\React\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.sourcelink.json

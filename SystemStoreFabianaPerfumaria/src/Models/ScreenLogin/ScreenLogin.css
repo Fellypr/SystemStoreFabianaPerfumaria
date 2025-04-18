@@ -28,6 +28,10 @@
     & form {
       position: relative;
       top: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       & input {
         min-width: 300px;
         max-width: 200px;
@@ -48,7 +52,7 @@
       }
       & .email {
         position: relative;
-        top: -1.4rem;
+        
       }
     }
     & h1 {
@@ -58,6 +62,7 @@
     & button {
       position: relative;
       top: 6rem;
+
       width: 10rem;
       height: 2.6rem;
       border-radius: 15px;
@@ -75,7 +80,7 @@
     & .iconsOlhos{
       position:absolute;
       left: 18rem;
-      top: 2.5rem;
+      top: 3.6rem;
       color: black;
       cursor: pointer;
     }
