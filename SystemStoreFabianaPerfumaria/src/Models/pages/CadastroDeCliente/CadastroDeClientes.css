@@ -7,19 +7,19 @@
     gap: 2rem;
     padding: 20px;
     margin-top: 3rem;
-
   }
   & form {
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(2, 1fr);
-    padding: 20px;
     background-color: rgb(243, 237, 237);
     width: 40rem;
-    height: 20rem;
+    height: 30rem;
     border-radius: 20px;
-    padding-top: 5rem;
+    padding: 10px;
     box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+    position: relative;
+    top: -2rem;
     & .NomeCliente {
       grid-column: 1 / span 2;
     }
@@ -31,23 +31,24 @@
       font-size: 1rem;
       border: 1px solid #000000;
       transition: all 0.5s ease-in;
+      margin-top: 2rem;
     }
     & input:focus {
       background-color: rgb(219, 218, 218);
       color: rgb(0, 0, 0);
       border-radius: 5px;
       outline: none;
-      box-shadow: 8px 6px 10px -5px rgba(0,0,0,1);
+      box-shadow: 8px 6px 10px -5px rgba(0, 0, 0, 1);
     }
     & .button {
       height: 50px;
       width: 150px;
-      
+
       border-radius: 10px;
       cursor: pointer;
       position: relative;
       top: -0.2rem;
-      left: 5rem;
+      left: 15rem;
       overflow: hidden;
       transition: all 0.5s ease-in-out;
       font-size: 1.2rem;
@@ -100,23 +101,61 @@
     & .type1:hover::before {
       transform: translateY(-50px) scale(0) rotate(120deg);
     }
-
-    
-    
   }
   & table {
     border-collapse: collapse;
     text-align: center;
     width: 600px;
     height: 70px;
-    margin-bottom: 22rem;
-        & th{
-            border: 1px solid black;
-            background-color: rgb(57, 201, 29);
-        }
-        & td :nth-child(even){
-            background-color: #252525;
-            color: #fff;
-        }
+    margin-bottom: 28rem;
+    & th {
+      border: 1px solid black;
+      background-color: rgb(57, 201, 29);
+    }
+    & td :nth-child(even) {
+      background-color: #252525;
+      color: #fff;
+    }
+  }
+}
+.TelaDeSucesso {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #b1d411;
+  background: #020024;
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(9, 9, 121, 1) 35%,
+    rgba(0, 212, 255, 1) 100%
+  );
+  width: 30rem;
+  height: 30rem;
+  border-radius: 23px;
+  border: 2px solid #000000;
+  & .TelaDeSucessoContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 3rem;
+  }
+  & h2 {
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+  & p {
+    position: relative;
+    top: 3rem;
+    padding-left: 12px;
+
+    & span {
+      color: rgb(16, 255, 143);
+      position: relative;
+      left: 0.2rem;
+    }
   }
 }
