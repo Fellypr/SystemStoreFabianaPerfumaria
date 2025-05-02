@@ -45,10 +45,104 @@ namespace Backend.Controllers
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("HistoricoDeClientes")]
+        public async Task<ActionResult> HistoricoDeClientes()
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT * FROM CadastroDeCliente ORDER BY Id_Cliente DESC";
+                    var command = new SqlCommand(query, connection);
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var clientes = new List<CadastroDeClienteProp>();
+                        while (await reader.ReadAsync())
+                        {
+                            var cliente = new CadastroDeClienteProp
+                            {
+                                NomeDoCliente = reader["NomeDoCliente"].ToString(),
+                                Cpf = reader["Cpf"].ToString(),
+                                Telefone = reader["Telefone"].ToString(),
+                                Endereco = reader["Endereco"].ToString(),
+                                Bairro = reader["Bairro"].ToString(),
+                                Numero = Convert.ToInt32(reader["Numero"]),
+                                PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
+                            };
+                            clientes.Add(cliente);
+                        }
+                        return Ok(clientes);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpPost("BuscarCliente")]
+
+        public async Task<ActionResult> BuscarCliente([FromBody] BuscarCliente Buscar)
+        {
+            try
+            {
+                var connectionString= _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT * FROM CadastroDeCliente WHERE NomeDoCliente LIKE @NomeDoCliente OR Cpf LIKE @Cpf;";
+                    var command = new SqlCommand(query, connection);
+
+                    command.Parameters.Add(new SqlParameter("@NomeDoCliente", "%" + Buscar.NomeDoCliente + "%"));
+                    command.Parameters.Add(new SqlParameter("@Cpf", "%" + Buscar.Cpf + "%"));
+
+                    await connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var listaDeClientes = new List<object>();
+
+                        while(await reader.ReadAsync())
+                        {
+                            listaDeClientes.Add(new
+                            {
+                                NomeDoCliente = reader["NomeDoCliente"].ToString(),
+                                Cpf = reader["Cpf"].ToString(),
+                                Telefone = reader["Telefone"].ToString(),
+                                Endereco = reader["Endereco"].ToString(),
+                                Bairro = reader["Bairro"].ToString(),
+                                Numero = Convert.ToInt32(reader["Numero"]),
+                                PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
+                            });
+                        }
+
+                        if(listaDeClientes.Count == 0)
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            return Ok(listaDeClientes);
+                        }
+
+                    }
+
+                }
+
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
         }
     }
 }

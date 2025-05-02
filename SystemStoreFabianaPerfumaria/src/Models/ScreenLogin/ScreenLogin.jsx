@@ -47,7 +47,7 @@ function ScreenLogin() {
         <form action="submit">
           <input type="text" placeholder="E-mail" required onChange={(e) => setEmail(e.target.value)} className="email" />
           <br />
-          <input type={showPassword ? "text" : "password"} placeholder="Senha" required  onChange={(e) => setPassword(e.target.value)}/>
+          <input type={showPassword ? "password" : "text"} placeholder="Senha" required  onChange={(e) => setPassword(e.target.value)}/>
           <IoEyeSharp
             className="iconsOlhos"
             size={25}

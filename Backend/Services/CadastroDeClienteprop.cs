@@ -16,4 +16,9 @@ namespace Backend.Services
         public string? PontoDeReferencia { get; set; }
         
     }
+    public class BuscarCliente
+    {
+        public string? NomeDoCliente { get; set; }
+        public string? Cpf { get; set; }
+    }
 }

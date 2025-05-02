@@ -31,10 +31,11 @@ namespace Backend.Controllers
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra = @CodigoDeBarra";
+                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra LIKE @CodigoDeBarra OR NomeDoProduto LIKE @NomeDoProduto";
                     var command = new SqlCommand(query, connection);
 
-                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", RealizarVenda.CodigoDeBarra));
+                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", "%" + RealizarVenda.CodigoDeBarra + "%"));
+                    command.Parameters.Add(new SqlParameter("@NomeDoProduto", "%" + RealizarVenda.NomeDoProduto + "%"));
 
 
                     await connection.OpenAsync();
@@ -44,8 +45,12 @@ namespace Backend.Controllers
                         {
                             var produtos = new
                             {
+                                Id_Produto = Convert.ToInt32(reader["Id_Produto"]),
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
+                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                                CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
+                                Marca = reader["Marca"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),
                             };
 
@@ -70,13 +75,8 @@ namespace Backend.Controllers
         [HttpPost("RealizarVenda")]
         public async Task<ActionResult> RealizarVenda([FromBody] List<VendaRealizadaProp> vendas)
         {
-            Console.WriteLine("Vendas recebidas: " + JsonSerializer.Serialize(vendas));
-
             if (vendas == null || !vendas.Any())
-            {
                 return BadRequest("Nenhuma venda recebida.");
-            }
-
 
             var connectString = _config.GetConnectionString("DefaultConnection");
 
@@ -84,29 +84,54 @@ namespace Backend.Controllers
             {
                 await connection.OpenAsync();
 
+                // 1. Criar uma nova venda (na tabela Venda)
+                var primeiraVenda = vendas.First();
+                var queryVenda = "INSERT INTO Venda (Produtos_Vendidos,DataDaVenda, FormaDePagamento, PrecoTotal,QuantidadeTotal,ValorNaFicha) OUTPUT INSERTED.IdVenda VALUES (@produtos_vendidos,@Data, @FormaPagamento, @Total, @quantidadetotal,@ValorNaFicha)";
+                var cmdVenda = new SqlCommand(queryVenda, connection);
+                string DataFormatada = primeiraVenda.DataDaVenda.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss");
+                cmdVenda.Parameters.AddWithValue("@Data", DataFormatada);
+                cmdVenda.Parameters.AddWithValue("@FormaPagamento", primeiraVenda.FormaDePagamento);
+                cmdVenda.Parameters.AddWithValue("@Total", primeiraVenda.PrecoTotal);
+                cmdVenda.Parameters.AddWithValue("@produtos_vendidos", string.Join(" - ", vendas.Select(v => v.NomeDoProduto)));
+                cmdVenda.Parameters.AddWithValue("@quantidadetotal", primeiraVenda.quantidadeTotal);
+                // cmdVenda.Parameters.AddWithValue("@NomeDoComprador", primeiraVenda.Comprador);
+                cmdVenda.Parameters.AddWithValue("@ValorNaFicha", primeiraVenda.ValorNaFicha);
+
+                
+
+                var idVendaCriada = (int)await cmdVenda.ExecuteScalarAsync();
+
+                // 2. Inserir os produtos com o ID da venda criada
                 foreach (var venda in vendas)
                 {
-                    var query = "INSERT INTO RealizarVendas (NomeDoProduto,PrecoTotal,QuantidadeTotal,DataDaVenda,FormaDePagamento) VALUES (@NomeDoProduto,@Preco,@Quantidade,@DataDaVenda,@FormaDePagamento)";
-                    var command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@NomeDoProduto", venda.NomeDoProduto);
-                    command.Parameters.AddWithValue("@Preco", venda.PrecoTotal);
-                    command.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
-                    command.Parameters.AddWithValue("@DataDaVenda", venda.DataDaVenda);
-                    command.Parameters.AddWithValue("@FormaDePagamento", venda.FormaDePagamento);
+                    var insertProduto = @"
+                INSERT INTO RealizarVendas 
+                (NomeDoProduto, PrecoTotal, QuantidadeTotal, DataDaVenda, FormaDePagamento, IdVenda)
+                VALUES (@NomeDoProduto, @Preco, @Quantidade, @Data, @FormaPagamento, @IdVenda)";
 
-                    await command.ExecuteNonQueryAsync();
+                    var cmdItem = new SqlCommand(insertProduto, connection);
+                    cmdItem.Parameters.AddWithValue("@NomeDoProduto", venda.NomeDoProduto);
+                    cmdItem.Parameters.AddWithValue("@Preco", venda.PrecoTotal);
+                    cmdItem.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
+                    cmdItem.Parameters.AddWithValue("@Data", venda.DataDaVenda);
+                    cmdItem.Parameters.AddWithValue("@FormaPagamento", venda.FormaDePagamento);
+                    cmdItem.Parameters.AddWithValue("@IdVenda", idVendaCriada);
 
-                    var queryUpdate = "UPDATE AdicionarProduto SET Quantidade = Quantidade - @Quantidade WHERE NomeDoProduto = @nomeDoProduto";
-                    var command2 = new SqlCommand(queryUpdate, connection);
-                    command2.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
-                    command2.Parameters.AddWithValue("@nomeDoProduto", venda.NomeDoProduto);
+                    await cmdItem.ExecuteNonQueryAsync();
 
-                    await command2.ExecuteNonQueryAsync();
+                    // Atualizar o estoque
+                    var updateEstoque = "UPDATE AdicionarProduto SET Quantidade = Quantidade - @Quantidade WHERE NomeDoProduto = @NomeDoProduto";
+                    var cmdEstoque = new SqlCommand(updateEstoque, connection);
+                    cmdEstoque.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
+                    cmdEstoque.Parameters.AddWithValue("@NomeDoProduto", venda.NomeDoProduto);
+
+                    await cmdEstoque.ExecuteNonQueryAsync();
                 }
 
-                return Ok("Todas as vendas foram realizadas com sucesso");
+                return Ok("Venda registrada com sucesso");
             }
         }
+
 
         [HttpGet("VendasRealizadas")]
         public async Task<ActionResult> HistoricoDeVendasRealizadas()
@@ -125,7 +150,7 @@ namespace Backend.Controllers
                         while (await reader.ReadAsync())
                         {
                             var venda = new VendaRealizadaProp
-                            {  
+                            {
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
                                 QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
@@ -138,7 +163,7 @@ namespace Backend.Controllers
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

@@ -1,249 +1,305 @@
-.imgProduto {
-  border-radius: 15px;
-  position: absolute;
-  top: 0.2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  left: 15rem;
-  background-color: transparent;
-  width: 10rem;
-  height: 10rem;
-  z-index: 1;
-}
+.body {
+  background-color: rgb(77, 119, 161);
+  height: 150vh;
+  overflow-x: hidden;
+  animation: blurIn 0.7s ease-in;
 
-.ContainerTelaDeVenda {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-
-  & .PainelDeNotas {
+  & .BuscarProduto {
+    height: 4rem;
     display: flex;
-    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    background-color: rgb(235, 235, 235);
-    width: 35rem;
-    height: 35rem;
-    position: relative;
-    border-radius: 15px;
-    left: -2rem;
-    top: -3.3rem;
-    box-shadow: 2px 1px 2px 0px rgba(0, 0, 0, 0.75);
+    padding-left: 20px;
+    margin-top: 1rem;
+    gap: 2rem;
+    
+    & input {
+      height: 3rem;
+      width: 36rem;
+      border-radius: 12px;
+      padding-left: 23px;
+      font-size: 1.3rem;
+      border: none;
+    }
+    & input:focus {
+      outline: none;
+      border: 1px solid black;
+    }
+  }
+  & .TabelaDeProdutos {
+    display: flex;
 
-    & .PainelDoCliente {
+    height: 20rem;
+    gap: 1rem;
+
+    & .ProdutosEncontrados {
+      width: 35rem;
+      height: 25rem;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      background-color: rgb(0, 128, 248);
-      width: 97%;
+      padding: 20px;
+      background-color: #fff;
       border-radius: 12px;
-      padding: 9px;
-      height: 4rem;
-      gap: 5rem;
-      color: white;
-      & .ClienteInfo {
-        display: flex;
-        gap: 0.4rem;
-        & input {
-          height: 1rem;
-          border: none;
-          background-color: transparent;
-          border-bottom: 2px solid black;
-          color: rgb(250, 250, 250);
-          font-size: 1rem;
-        }
-        & input:focus {
-          outline: none;
-        }
-        & input::placeholder {
-          color: rgb(250, 250, 250);
-        }
-      }
-    }
-    & table {
-      position: relative;
-      top: 2rem;
-      text-align: center;
-      & .BotoesTable {
-        & #btn {
-          width: 100%;
-          height: 2rem;
-          border: none;
-          background-color: transparent;
-          color: black;
-        }
-        & #btn:hover {
-          transform: scale(1.1);
-          cursor: pointer;
-
-          transition: all 0.3s ease-in-out;
-          color: white;
-        }
-      }
-    }
-    & .Total {
-      position: relative;
-      top: 10rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-
-      & p {
-        position: relative;
-        top: 1rem;
-        font-size: 1.5rem;
-        color: rgb(39, 38, 38);
-      }
-    }
-
-    & .PainelDoTotal {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      & .totalProduto {
-        background-color: black;
-        color: white;
-        width: 24rem;
-        height: 3rem;
-        text-align: center;
-        font-size: 2rem;
+      margin-left: 1rem;
+      & .ImageProduct {
+        height: 40%;
+        width: 40%;
+        margin-top: 2rem;
+        margin-left: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 15px;
+        & img {
+          border-radius: 23px;
+          border: 1px solid black;
+        }
+      }
+      & .InformationProtuctAll {
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(77, 119, 161);
+        height: 27.6rem;
+        left: 2.2rem;
         position: relative;
-        top: 2rem;
+        top: -1.3rem;
+        
+
+        & .InformationProtuct {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          height: 5rem;
+          width: 15rem;
+          margin: 10px;
+          border-radius: 6px;
+          align-items: center;
+          & p,
+          input {
+            background-color: white;
+            width: 100%;
+            height: 2.6rem;
+            border-radius: 0px 0px 6px 6px;
+            font-size: 1.3rem;
+            padding: 5px;
+            text-align: center;
+            border: none;
+          }
+          & h3 {
+            background-color: rgb(4, 0, 255);
+            width: 100%;
+            height: 2.6rem;
+            border-radius: 6px 6px 0px 0px;
+            padding: 5px;
+            font-size: 1.3rem;
+            color: white;
+          }
+        }
+      }
+      & .BtnAdicionar {
+        height: 3rem;
+        position: absolute;
+        top: 77%;
+        left: 5%;
+        width: 15rem;
+        border-radius: 12px;
+        border: none;
+        background-color: rgb(252, 126, 9);
+        font-size: 1.5rem;
+      }
+      & .BtnAdicionar:hover{
+        cursor: pointer;
+        background-color: rgb(192, 93, 0);
+        transform: scale(1.1);
+        transition: all 0.3s ease-in;
+      } 
+    }
+    & .TabelaDeProdutosAdicionados {
+      background-color: rgb(255, 255, 255);
+      width: 56%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      border-radius: 10px 10px 0px 0px;
+      
+
+      & table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+        text-align: center;
+        & th {
+          background-color: rgb(66, 73,71);
+          color: white;
+          height: 2rem;
+        }
+        & tr:nth-child(even) {
+          border: 1px solid black;
+          background-color: rgb(204, 204, 204);
+          
+        }
       }
     }
   }
-}
-.CadastraProduto {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  width: 500px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background-color: #f4f4f4;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", sans-serif;
-  position: relative;
-  top: -1rem;
-
-  & .NomeProduto {
-    position: relative;
-    top: 0.5rem;
-    border: none;
-    background-color: white;
-    height: 2.5rem;
-    border-radius: 12px;
+  & .SubTotal {
     display: flex;
-    padding-left: 10px;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-  }
-  color: rgb(39, 38, 38);
-  font-size: 1rem;
-}
-& .BtnAdicionar {
-  padding: 15px 25px;
-  border: unset;
-  border-radius: 15px;
-  color: #212121;
-  z-index: 1;
-  background: #e8e8e8;
-  position: relative;
-  font-weight: 1000;
-  font-size: 17px;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.BtnAdicionar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  border-radius: 15px;
-  background-color: #212121;
-  z-index: -1;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-}
-
-button:hover {
-  color: #e8e8e8;
-}
-
-button:hover::before {
-  width: 100%;
-}
-
-.CadastraProduto h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.input-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.input-group label {
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #444;
-}
-
-.input-group input,
-.input-group select {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s;
-}
-
-.input-group input:focus,
-.input-group select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.FormaDePagamento {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-
-  & select {
-    text-align: center;
-    font-size: 1rem;
-    width: 100%;
-    height: 2rem;
-    border-radius: 7px;
-    border: 1px solid black;
+    background-color: rgb(41, 40, 39);
+    height: 7.5rem;
+    width: 53%;
     padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    left: 38.5rem;
+    color: #fff;
+    font-size: 3rem;
+    border-radius: 0px 0px 10px 10px;
+    animation: moveFromBottom 1s ease-in-out;
+  }
+  & .FinalizandoVenda {
+    height: 12rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 2rem;
+    & .DescontoNaVenda {
+      & input {
+        background-color: white;
+        width: 16.5rem;
+        height: 2.6rem;
+        border-radius: 0px 0px 6px 6px;
+        font-size: 1.3rem;
+        padding: 5px;
+        text-align: center;
+        border: none;
+      }
+      & h3 {
+        background-color: rgb(4, 0, 255);
+        width: 16.5rem;
+        height: 2.6rem;
+        border-radius: 6px 6px 0px 0px;
+        padding: 5px;
+        font-size: 1.3rem;
+        color: white;
+      }
+    }
+
+    & .FormaDePagamento {
+      & h3 {
+        background-color: rgb(4, 0, 255);
+        width: 18rem;
+        height: 2.6rem;
+        border-radius: 6px 6px 0px 0px;
+        padding: 5px;
+        font-size: 1.3rem;
+        color: white;
+      }
+      & select {
+        background-color: white;
+        width: 18.6rem;
+        height: 3rem;
+        border-radius: 0px 0px 6px 6px;
+        font-size: 1.3rem;
+        border: none;
+        position: relative;
+        top: -0.2rem;
+      }
+    }
+    & .IfItIsWithMoneyContainer {
+      display: flex;
+      position:absolute;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      top: 48rem;
+      left: 15rem;
+      & h3 {
+        background-color: rgb(4, 0, 255);
+        width: 12rem;
+        height: 2.6rem;
+        border-radius: 6px 6px 0px 0px;
+        padding: 5px;
+        font-size: 1.3rem;
+        color: white;
+      }
+      & p,input{
+        background-color: white;
+        width: 12rem;
+        height: 2.6rem;
+        border-radius: 0px 0px 6px 6px;
+        font-size: 1.3rem;
+        padding: 5px;
+        text-align: center;
+        border: none;
+      }
+    }
+    & .Botoes{
+      display: flex;
+      width: 100%;
+      height: 4rem;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      
+      
+      
+        & #btn{
+          cursor: pointer;
+          border-radius: 12px;
+          width: 30%;
+          height: 90%;
+          color: white;
+          font-size: 1.2rem;
+          border: none;    
+        }
+        & #btn:hover{
+          transform: scale(1.1);
+          transition: all 0.3s ease-in-out;
+          
+        }
+    }
   }
 }
-.BtnDeletar:hover {
-  cursor: pointer;
-  transform: scale(1.2);
-  background-color: red;
-  color: white;
+.ClientesEncontrados{
+  position:absolute;
+  z-index: 1;
+  left: 40.6rem;
+  width: 38rem;
+  height: 25rem;
+  overflow-y: auto;
+  display: flex;
+  top: 11.7rem;
+  justify-content: center;
+
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: aqua;
+}
+.ContainerButton{
+  width: 37.5rem;
+  height: 4rem;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  align-items: center;
+  padding: 10px;
+  background-color: antiquewhite;
+    & .InformacoesDeClienteFiltrados{
+
+      font-size: 1rem;
+      padding: 10px;
+      margin-right: 4rem;
+    }
+}
+@keyframes blurIn {
+  from {
+      filter: blur(20px);
+      opacity: 0;
+  }
+}
+@keyframes moveFromBottom {
+  from { transform: translateY(800px) }
 }

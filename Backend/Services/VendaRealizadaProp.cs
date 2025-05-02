@@ -9,6 +9,8 @@ namespace Backend.Services
 
     public class VendaRealizadaProp
     {
+        [JsonPropertyName("id_produto")]
+        public int Id_Produto { get; set; }
         [JsonPropertyName("nomeDoProduto")]
         public string NomeDoProduto { get; set; }
 
@@ -23,6 +25,16 @@ namespace Backend.Services
 
         [JsonPropertyName("formaDePagamento")]
         public string FormaDePagamento { get; set; }
+
+        [JsonPropertyName("quantidadeTotal")]
+        public int quantidadeTotal { get; set; }
+
+        [JsonPropertyName("valorNaFicha")]
+        public decimal ValorNaFicha { get; set; }
+
+        // [JsonPropertyName("comprador")]
+        // public string Comprador { get; set; }
+
     }
     
 

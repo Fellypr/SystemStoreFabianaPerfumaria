@@ -8,5 +8,6 @@ namespace Backend.Services
     public class BuscarProduto
     {
         public string CodigoDeBarra { get; set; }
+        public string NomeDoProduto { get; set; }
     }
 }

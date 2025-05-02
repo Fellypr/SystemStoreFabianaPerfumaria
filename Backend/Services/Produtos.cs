@@ -2,7 +2,9 @@
 namespace StoreSystemFabianaPerfumaria.Services;
 
 public class Produtos
-{
+{     
+    [JsonPropertyName("id_Produto")]
+    public int Id_Produto { get; set; }
     [JsonPropertyName("NomeDoProduto")]
     public string NomeDoProduto { get; set; }
 

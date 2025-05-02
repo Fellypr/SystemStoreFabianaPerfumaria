@@ -1,13 +1,5 @@
 @media screen and (max-width: 1160px) {
-    .ContainerTelaDeVenda {
-        & .PainelDeNotas{
-            left: 0rem;
-                & table{
-                    width: 100%;
-                }
-
-        }
-    }
+    
 }
 @media screen and (max-width: 600px) {
     .navBar{

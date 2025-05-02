@@ -1,161 +1,430 @@
-.CadastroDeClientesMain {
-  & section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-    padding: 20px;
-    margin-top: 3rem;
-  }
-  & form {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(2, 1fr);
-    background-color: rgb(243, 237, 237);
-    width: 40rem;
-    height: 30rem;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
-    position: relative;
-    top: -2rem;
-    & .NomeCliente {
-      grid-column: 1 / span 2;
+  .CadastroDeClientesMain {
+    transition: all 0.5s ease-in-out;
+    & section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 20px;
+      margin-top: 3rem;
+      animation: moveFromTop 0.8s ease-in-out;
     }
-    & input {
-      height: 2rem;
-      border-radius: 10px;
-      border: none;
-      padding-left: 10px;
-      font-size: 1rem;
-      border: 1px solid #000000;
-      transition: all 0.5s ease-in;
-      margin-top: 2rem;
-    }
-    & input:focus {
-      background-color: rgb(219, 218, 218);
-      color: rgb(0, 0, 0);
-      border-radius: 5px;
-      outline: none;
-      box-shadow: 8px 6px 10px -5px rgba(0, 0, 0, 1);
-    }
-    & .button {
-      height: 50px;
-      width: 150px;
-
-      border-radius: 10px;
-      cursor: pointer;
+    & form {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+      background-color: rgb(243, 237, 237);
+      width:60%;
+      height: 25rem;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
       position: relative;
-      top: -0.2rem;
-      left: 15rem;
-      overflow: hidden;
-      transition: all 0.5s ease-in-out;
-      font-size: 1.2rem;
-    }
+      top: -2rem;
+      padding-top: 5rem;
+      
+      & .Icon{
+        position: absolute;
+        top: 2rem;
+        left: 47%;
+      }
+      
+      & .NomeCliente {
+        grid-column: 1 / span 2;
+      }
 
-    & .button:hover {
-      box-shadow: 0.5px 0.5px 150px #252525;
-    }
+      & input {
+        height: 2rem;
+        border-radius: 10px;
+        border: none;
+        padding-left: 10px;
+        font-size: 1rem;
+        border: 1px solid #000000;
+        transition: all 0.5s ease-in;
+        margin-top: 2rem;
+        text-align: center;
+      }
+      & input:focus {
+        background-color: rgb(219, 218, 218);
+        color: rgb(0, 0, 0);
+        border-radius: 5px;
+        outline: none;
+        box-shadow: 8px 6px 10px -5px rgba(0, 0, 0, 1);
+      }
+      & .button {
+        height: 50px;
+        width: 150px;
+        border-radius: 10px;
+        cursor: pointer;
+        position: relative;
+        top: -0.2rem;
+        left: 83%;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+        font-size: 1.2rem;
+      }
 
-    & .type1::after {
-      content: "Confirmar";
-      height: 50px;
-      width: 150px;
-      background-color: #008080;
-      color: #000000;
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      transform: translateY(50px);
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.5s ease-in-out;
-    }
+      & .button:hover {
+        box-shadow: 0.5px 0.5px 150px #252525;
+      }
 
-    & .type1::before {
-      content: "Enviar";
-      height: 50px;
-      width: 150px;
-      background-color: #fff;
-      color: #008080;
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      transform: translateY(0px) scale(1.2);
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.5s ease-in-out;
-    }
+      & .type1::after {
+        content: "Confirmar";
+        height: 50px;
+        width: 150px;
+        background-color: #008080;
+        color: #000000;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        transform: translateY(50px);
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease-in-out;
+      }
 
-    & .type1:hover::after {
-      transform: translateY(0) scale(1.2);
-    }
+      & .type1::before {
+        content: "Enviar";
+        height: 50px;
+        width: 150px;
+        background-color: #fff;
+        color: #008080;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        transform: translateY(0px) scale(1.2);
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease-in-out;
+      }
 
-    & .type1:hover::before {
-      transform: translateY(-50px) scale(0) rotate(120deg);
+      & .type1:hover::after {
+        transform: translateY(0) scale(1.2);
+      }
+
+      & .type1:hover::before {
+        transform: translateY(-50px) scale(0) rotate(120deg);
+      }
     }
-  }
-  & table {
-    border-collapse: collapse;
-    text-align: center;
-    width: 600px;
-    height: 70px;
-    margin-bottom: 28rem;
-    & th {
+    & table {
+      border-collapse: collapse;
+      text-align: center;
+      width: 90%;
+      height: 70px;
+      margin-bottom: 28rem;
       border: 1px solid black;
-      background-color: rgb(57, 201, 29);
+      
+      & th {
+        border: 1px solid black;
+        background-color: rgb(57, 201, 29);
+      }
+      & tr:nth-child(even) {
+        background-color: #5c5c5c;
+        color: #fff;
+      }
     }
-    & td :nth-child(even) {
-      background-color: #252525;
-      color: #fff;
+  }
+  .TelaDeSucesso {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #0099ff;
+    background: #020024;
+    background: linear-gradient(
+      90deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(9, 9, 121, 1) 35%,
+      rgba(0, 212, 255, 1) 100%
+    );
+    width: 30rem;
+    height: 30rem;
+    border-radius: 23px;
+    border: 2px solid #000000;
+    & .TelaDeSucessoContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 3rem;
     }
-  }
-}
-.TelaDeSucesso {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #b1d411;
-  background: #020024;
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(9, 9, 121, 1) 35%,
-    rgba(0, 212, 255, 1) 100%
-  );
-  width: 30rem;
-  height: 30rem;
-  border-radius: 23px;
-  border: 2px solid #000000;
-  & .TelaDeSucessoContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 3rem;
-  }
-  & h2 {
-    text-align: center;
-    color: rgb(255, 255, 255);
-  }
-  & p {
-    position: relative;
-    top: 3rem;
-    padding-left: 12px;
-
-    & span {
-      color: rgb(16, 255, 143);
+    & h2 {
+      text-align: center;
+      color: rgb(255, 255, 255);
+    }
+    & p {
       position: relative;
-      left: 0.2rem;
+      top: 3rem;
+      padding-left: 19px;
+
+      & span {
+        color: rgb(36, 253, 8);
+        position: relative;
+        left: 0.2rem;
+      }
+    }
+    & .buttons {
+      display: flex;
+      position: relative;
+      top: 6rem;
+      justify-content: center;
+      gap: 1rem;
+
+      & button {
+        border-radius: 10px;
+        cursor: pointer;
+        width: 10rem;
+        height: 2rem;
+        transition: all 0.5s ease-in-out;
+        font-size: 0.9rem;
+        border: none;
+      }
+      & button:hover {
+        box-shadow: 0.5px 0.5px 150px #252525;
+        color: black;
+        transform: scale(1.2);
+      }
     }
   }
+
+  .blur {
+    transition: all 0.5s ease-in;
+    filter: blur(5px);
+    animation-name: blur;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    & section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 20px;
+      margin-top: 3rem;
+    }
+    & form {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+      background-color: rgb(243, 237, 237);
+      width: 40rem;
+      height: 30rem;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+      position: relative;
+      top: -2rem;
+      & .NomeCliente {
+        grid-column: 1 / span 2;
+      }
+      & input {
+        height: 2rem;
+        border-radius: 10px;
+        border: none;
+        padding-left: 10px;
+        font-size: 1rem;
+        border: 1px solid #000000;
+        transition: all 0.5s ease-in;
+        margin-top: 2rem;
+      }
+      & input:focus {
+        background-color: rgb(219, 218, 218);
+        color: rgb(0, 0, 0);
+        border-radius: 5px;
+        outline: none;
+        box-shadow: 8px 6px 10px -5px rgba(0, 0, 0, 1);
+      }
+      & .button {
+        height: 50px;
+        width: 150px;
+
+        border-radius: 10px;
+        cursor: pointer;
+        position: relative;
+        top: -0.2rem;
+        left: 15rem;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+        font-size: 1.2rem;
+      }
+
+      & .button:hover {
+        box-shadow: 0.5px 0.5px 150px #252525;
+      }
+
+      & .type1::after {
+        content: "Confirmar";
+        height: 50px;
+        width: 150px;
+        background-color: #008080;
+        color: #000000;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        transform: translateY(50px);
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease-in-out;
+      }
+
+      & .type1::before {
+        content: "Enviar";
+        height: 50px;
+        width: 150px;
+        background-color: #fff;
+        color: #008080;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        transform: translateY(0px) scale(1.2);
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease-in-out;
+      }
+
+      & .type1:hover::after {
+        transform: translateY(0) scale(1.2);
+      }
+
+      & .type1:hover::before {
+        transform: translateY(-50px) scale(0) rotate(120deg);
+      }
+    }
+    & table {
+      border-collapse: collapse;
+      text-align: center;
+      width: 600px;
+      height: 70px;
+      margin-bottom: 28rem;
+      & th {
+        border: 1px solid black;
+        background-color: rgb(57, 201, 29);
+      }
+      & td :nth-child(even) {
+        background-color: #252525;
+        color: #fff;
+      }
+    }
+  }
+  .TelaDeSucesso {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #0099ff;
+    background: #020024;
+    background: linear-gradient(
+      90deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(9, 9, 121, 1) 35%,
+      rgba(0, 212, 255, 1) 100%
+    );
+    width: 30rem;
+    height: 30rem;
+    border-radius: 23px;
+    border: 2px solid #000000;
+    animation: blurIn 0.7s ease-in;
+    & .TelaDeSucessoContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 3rem;
+      text-wrap: wrap;
+      padding-top: 5rem;
+      
+    }
+    & h2 {
+      text-align: center;
+      color: rgb(255, 255, 255);
+      width: 410px;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid #7e2ea0;
+      animation: typing 2s steps(12, end), cursor 1s steps(12, end) infinite;
+      font-size: 1.7rem;
+      position: relative;
+      left: 2.3rem;
+      top: -2rem;
+      
+    }
+    & p {
+      position: relative;
+      top: 3rem;
+      padding-left: 19px;
+      animation: pushReleaseFromLeft 1.2s ease-in;
+
+      & span {
+        color: rgb(36, 253, 8);
+        position: relative;
+        left: 0.2rem;
+        animation: pushReleaseFromLeft 1.3s ease-in;
+      }
+    }
+    & .buttons {
+      display: flex;
+      position: relative;
+      top: 6rem;
+      justify-content: center;
+      gap: 1rem;
+
+      & button {
+        border-radius: 10px;
+        cursor: pointer;
+        width: 10rem;
+        height: 2rem;
+        transition: all 0.5s ease-in-out;
+        font-size: 0.9rem;
+        border: none;
+        animation: pushReleaseFromLeft 1.5s ease-in;
+      }
+      & button:hover {
+        box-shadow: 0.5px 0.5px 150px #252525;
+        color: black;
+        transform: scale(1.2);
+        animation: pushReleaseFromLeft 1.7s ease-in-out;
+      }
+    }
+  }
+
+  @keyframes blurIn {
+    from {
+        filter: blur(20px);
+        opacity: 0;
+    }
+  }
+
+  @keyframes typing {
+    from {
+      width: 0;
+    }
+  }
+  @keyframes cursor {
+    50% {
+      border-color: transparent;
+    }
+  }
+
+  @keyframes pushReleaseFromLeft {
+    from { transform: translateX(-100%) }
+    30% { transform: translateX(100px) }
+  }
+
+  @keyframes moveFromTop {
+    from { transform: translateY(-800px) }
 }

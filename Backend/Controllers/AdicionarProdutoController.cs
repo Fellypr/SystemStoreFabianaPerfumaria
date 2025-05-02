@@ -30,7 +30,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 var connectionString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    
+
 
                     var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem)";
                     var command = new SqlCommand(query, connection);
@@ -101,7 +101,68 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return StatusCode(500, $"Erro ao obter histórico de produtos: {ex.Message}");
             }
         }
+        [HttpPut("AtualizarProduto/{id_Produto}")]
+        public async Task<IActionResult> AtualizarProduto(int id, [FromBody] Produtos produtoAtualizado)
+        {
+            var connectionString = _config.GetConnectionString("DefaultConnection");
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                var query = @"
+                UPDATE AdicionarProduto
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco
+                WHERE Id_Produto = @Id";
+
+                var cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.NomeDoProduto);
+                cmd.Parameters.AddWithValue("@Marca", produtoAtualizado.Marca);
+                cmd.Parameters.AddWithValue("@Quantidade", produtoAtualizado.Quantidade);
+                cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
+                cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id_Produto);
+
+                var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
+
+                if (linhasAfetadas == 0)
+                    return NotFound("Produto não encontrado.");
+
+                return Ok("Produto atualizado com sucesso!");
+            }
+        }
+        [HttpDelete("ExcluirProduto/{Id}")]
+        public async Task<IActionResult> ExcluirProduto(int id)
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "DELETE FROM AdicionarProduto WHERE Id_Produto = @Id";
+                    var command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    await connection.OpenAsync();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected > 0)
+                    {
+                        return Ok("Produto excluído com sucesso.");
+                    }
+                    else
+                    {
+                        return NotFound("Produto não encontrado.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao excluir o produto: {ex.Message}");
+            }
+        }
 
     }
+
 
 }

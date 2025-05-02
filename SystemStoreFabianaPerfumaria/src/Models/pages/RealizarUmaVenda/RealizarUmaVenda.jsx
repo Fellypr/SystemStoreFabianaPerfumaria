@@ -1,45 +1,80 @@
-//react
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-//icons
-import { MdCancel } from "react-icons/md";
-
-//css
 import "./RealizarUmaVenda.css";
-import "./RealizarVendaMobile.css";
-//router
-import {Link } from "react-router-dom";
 
-// Função para formatar valores monetários
-function formatarMoeda(e, setValor) {
-  const valorNumerico = e.target.value.replace(/\D/g, "");
-  const valorFormatado = (Number(valorNumerico) / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-  setValor(valorFormatado);
-}
+import { FaEquals } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 
-function RealizarUmaVenda() {
-  const [codigoDeBarra, setCodigoDeBarras] = useState("");
-  const [produto, setProduto] = useState(null);
+function RealizarVendaTest() {
+  const [pesquisaProduto, setPesquisaProduto] = useState("");
+  const [produto, setProduto] = useState([]);
+  const [produtosVendidos, setProdutosVendidos] = useState([]);
   const [quantidade, setQuantidade] = useState(1);
   const [quantidadeTotal, setQuantidadeTotal] = useState(0);
   const [desconto, setDesconto] = useState("R$ 0,00");
-
-  const [produtosVendidos, setProdutosVendidos] = useState([]);
-
   const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
-  const [quantiaRecebida, setquantiaRecebida] = useState("R$ 0,00");
+  const [formaDePagamento, setFormaDePagamento] = useState("");
+  const [dinheiroRecebido, setDinheiroRecebido] = useState("R$ 0,00");
   const [troco, setTroco] = useState("R$ 0,00");
-  const [formaDePagamento, setformaDePagamento] = useState("");
+  const [ficha, setFicha] = useState("R$ 0,00");
+  const [cliente, setcliente] = useState([]);
+  const [pesquisarCliente, setPesquisarCliente] = useState("");
+
+  function formatarMoeda(e, setValor) {
+    const valorNumerico = e.target.value.replace(/\D/g, "");
+    const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
+      }
+    );
+    setValor(valorFormatado);
+  }
+
+  const buscarCliente = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5080/api/CadastroDeCliente/BuscarCliente",
+        {
+          NomeDoCliente: pesquisarCliente,
+          Cpf: pesquisarCliente,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log([response.data]);
+      setcliente(
+        Array.isArray(response.data) ? response.data : [response.data]
+      );
+    } catch (error) {
+      console.error(error);
+      setcliente([]);
+    }
+  };
+  useEffect(() => {
+    if (pesquisarCliente.trim().length > 0) {
+      buscarCliente();
+    } else {
+      setcliente(null);
+    }
+  }, [pesquisarCliente]);
+
+  const clienteFiltrados = (cliente || []).filter((item) =>
+    item.nomeDoCliente.toLowerCase().includes(pesquisarCliente.toLowerCase())
+  );
 
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
         "http://localhost:5080/api/RealizarVenda/BuscarProduto",
         {
-          CodigoDeBarra: codigoDeBarra,
+          CodigoDeBarra: pesquisaProduto,
+          NomeDoProduto: pesquisaProduto,
         },
         {
           headers: {
@@ -55,12 +90,12 @@ function RealizarUmaVenda() {
   };
 
   useEffect(() => {
-    if (codigoDeBarra.trim().length > 7) {
+    if (pesquisaProduto.trim().length > 0) {
       buscarProduto();
     } else {
       setProduto(null);
     }
-  }, [codigoDeBarra]);
+  }, [pesquisaProduto]);
 
   const adicionarProduto = () => {
     if (!produto) return;
@@ -73,17 +108,17 @@ function RealizarUmaVenda() {
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
 
     setProduto(null);
-    setCodigoDeBarras("");
+    setPesquisaProduto("");
     setQuantidade(1);
     setDesconto("R$ 0,00");
     setQuantidadeTotal((prevTotal) => prevTotal + Number(quantidade));
   };
+
   const calcularTotalGeral = () => {
     const total = produtosVendidos.reduce((acc, item) => {
       const Valor = parseFloat(item.preco);
       const qtd = parseInt(item.quantidade);
       const descontoNum = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
-
       return acc + (Valor * qtd - descontoNum);
     }, 0);
     const totalFormatado = total.toLocaleString("pt-BR", {
@@ -92,24 +127,12 @@ function RealizarUmaVenda() {
     });
 
     setPrecoTotal(totalFormatado);
+    setFicha(totalFormatado);
   };
+
   useEffect(() => {
     calcularTotalGeral();
   }, [produtosVendidos]);
-  // eslint-disable-next-line no-unused-vars
-  useEffect(() => {
-    const calcularTroco = () => {
-      const valorGeral = precoTotal.toString().replace(/\D/g, "") / 100;
-      const valorRecebido = quantiaRecebida.toString().replace(/\D/g, "") / 100;
-      const trocoNumerico = Number(valorGeral) - Number(valorRecebido);
-      const valorFormatado = Number(trocoNumerico).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-      setTroco(valorFormatado);
-    };
-    calcularTroco();
-  }, [precoTotal, quantiaRecebida]);
 
   const removerProduto = (index) => {
     const novaLista = produtosVendidos.filter((_, i) => i !== index);
@@ -119,21 +142,42 @@ function RealizarUmaVenda() {
     );
   };
 
+  const calcularTroco = () => {
+    const recebido = parseFloat(dinheiroRecebido.replace(/\D/g, "")) / 100;
+    const total = parseFloat(precoTotal.replace(/\D/g, "")) / 100;
+
+    if (!isNaN(recebido) && recebido >= total) {
+      const trocoCalc = (recebido - total).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      setTroco(trocoCalc);
+    } else {
+      setTroco("R$ 0,00");
+    }
+  };
+
+  useEffect(() => {
+    if (formaDePagamento === "dinheiro") {
+      calcularTroco();
+    }
+  }, [dinheiroRecebido, precoTotal, formaDePagamento]);
+
   const FinalizarVenda = async () => {
     try {
       const precoLimpo = precoTotal.replace(/\D/g, "");
-      const Data = new Date()
-      const dadosParaEnvio = [
-        {
-          nomeDoProduto: produtosVendidos
-            .map((produto) => produto.nomeDoProduto)
-            .join(" - "),
-          precoTotal: Number(precoLimpo / 100),
-          quantidade: quantidadeTotal,
-          dataDaVenda: Data.toISOString(),
-          formaDePagamento: formaDePagamento,
-        },
-      ];
+      const Data = new Date();
+
+      const dadosParaEnvio = produtosVendidos.map((produto) => ({
+        nomeDoProduto: produto.nomeDoProduto,
+        precoTotal: Number(precoLimpo / 100),
+        quantidade: produto.quantidade,
+        dataDaVenda: Data.toISOString(),
+        formaDePagamento: formaDePagamento,
+        id_produto: produto.id_produto,
+        quantidadeTotal: quantidadeTotal,
+        valorNaFicha: Number(precoLimpo / 100),
+      }));
 
       console.log(
         "Enviando para API:",
@@ -152,13 +196,16 @@ function RealizarUmaVenda() {
 
       console.log("Venda realizada com sucesso:", response.data);
 
+      alert("Venda realizada com sucesso!");
+
       // Limpar os dados
       setProdutosVendidos([]);
       setQuantidadeTotal(0);
       setPrecoTotal("R$ 0,00");
-      setquantiaRecebida("R$ 0,00");
+      setDinheiroRecebido("R$ 0,00");
       setTroco("R$ 0,00");
-      setformaDePagamento("");
+      setFormaDePagamento("");
+      setFicha("R$ 0,00");
     } catch (error) {
       if (error.response) {
         console.error("Erro ao realizar venda:", error.response.data);
@@ -168,339 +215,239 @@ function RealizarUmaVenda() {
     }
   };
 
+  const CancelarVenda = () => {
+    if (window.confirm("Tem certeza que deseja cancelar a venda?")) {
+      setProdutosVendidos([]);
+      setQuantidadeTotal(0);
+      setPrecoTotal("R$ 0,00");
+      setDinheiroRecebido("R$ 0,00");
+      setTroco("R$ 0,00");
+      setFormaDePagamento("");
+      setFicha("R$ 0,00");
+    }
+  };
+
   return (
     <>
-      <header className="navBar">
-        <Link to={"/ScreenMain"}>
-          <img
-            src="/src/img/logo-removebg-preview.png"
-            width={100}
-            height={100}
-            alt="Logo"
-          />
-        </Link>
-
-        <h1>Tela De Vendas</h1>
-      </header>
-
-      <main className="ContainerTelaDeVenda">
-        {/* FORMULÁRIO DE PRODUTO */}
-        <form className="CadastraProduto" onSubmit={(e) => e.preventDefault()}>
-          <div className="imagemDoProduto">
+      <div className="body">
+        <nav className="navBar">
+          <Link to="/screenMain">
             <img
-              src={produto?.urlImagem || " "}
-              alt=""
+              src="./src/img/logo-removebg-preview.png"
               width={100}
               height={100}
-              style={{ borderRadius: "50%", position: "relative", left: "40%" }}
+              alt="Logo"
             />
-          </div>
-          <div className="input-group">
-            <label>Código:</label>
-            <input
-              type="text"
-              placeholder="Digite o código de barras"
-              value={codigoDeBarra}
-              onChange={(e) => setCodigoDeBarras(e.target.value)}
-              required
-              minLength={7}
-            />
-          </div>
+          </Link>
+          <h2>Realizar Venda</h2>
+        </nav>
 
-          <div className="input-group">
-            <label>Nome do Produto:</label>
-            <div className="NomeProduto">
-              <p>{produto?.nomeDoProduto || "Produto não encontrado"}</p>
+        <section>
+          <form onSubmit={(e) => e.preventDefault()} key={produto?.id_produto}>
+            <div className="BuscarProduto">
+              <input
+                type="text"
+                placeholder="Digite o Codigo de Barras ou Nome do Produto"
+                value={pesquisaProduto}
+                onChange={(e) => setPesquisaProduto(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Digite o Nome Do Cliente "
+                value={pesquisarCliente}
+                onChange={(e) => setPesquisarCliente(e.target.value)}
+              />
             </div>
-          </div>
-
-          <div className="input-group">
-            <label>Quantidade:</label>
-            <input
-              type="number"
-              min={1}
-              value={quantidade}
-              onChange={(e) => setQuantidade(e.target.value)}
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Preço do Produto:</label>
-            <div className="NomeProduto">
-              {produto?.preco !== undefined
-                ? produto.preco.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })
-                : "R$ 0,00"}
-            </div>
-          </div>
-
-          <div className="input-group">
-            <label>Desconto:</label>
-            <input
-              type="text"
-              value={desconto}
-              onChange={(e) => formatarMoeda(e, setDesconto)}
-            />
-          </div>
-
-          <button
-            className="BtnAdicionar"
-            type="submit"
-            onClick={adicionarProduto}
-            disabled={!produto}
-            title="Adicionar"
-            aria-label="Adicionar"
-          >
-            Adicionar
-          </button>
-        </form>
-
-        {/* NOTA FISCAL / TABELA DE VENDAS */}
-        <section className="PainelDeNotas">
-          <div className="PainelDoCliente">
-            <div className="ClienteInfo">
-              <label>Cliente:</label>
-              <input type="text" placeholder="Opcional" />
-            </div>
-            <p>
-              {new Date().toLocaleDateString("pt-BR")} <br />{" "}
-              {new Date().toLocaleTimeString("pt-BR")}
-            </p>
-          </div>
-
-          <div className="TabelaDeVenda">
-            <table border={1} width={520}>
-              <thead>
-                <tr>
-                  <th
-                    colSpan={6}
-                    style={{
-                      backgroundColor: "rgb(0, 81, 255)",
-                      color: "white",
-                    }}
-                  >
-                    Realizando Venda
-                  </th>
-                </tr>
-                <tr>
-                  <th>Nome do Produto</th>
-                  <th>Quantidade</th>
-                  <th>Preço</th>
-                  <th>Desconto</th>
-                  <th colSpan={2}>Total Produto</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {produtosVendidos.map((produto, index) => {
-                  const valorSomado = parseFloat(produto.preco);
-                  const qtd = parseInt(produto.quantidade);
-                  const descontoNum =
-                    parseFloat(produto.desconto.replace(/\D/g, "")) / 100;
-                  const total = valorSomado * qtd - descontoNum;
-
-                  return (
-                    <tr key={index}>
-                      <td width={200}>{produto?.nomeDoProduto || "---"}</td>
-                      <td width={10}>{produto.quantidade}</td>
-                      <td width={100}>
-                        {produto?.preco ? `R$ ${produto.preco}` : "R$ 0,00"}
-                      </td>
-                      <td width={100}>- {produto.desconto}</td>
-                      <td width={90}>
-                        {total.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                      </td>
-                      <td style={{ border: "none" }}>
-                        <button
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "none",
-                            color: "red",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <MdCancel
-                            size={20}
-                            className="BtnDeletar"
-                            onClick={() => removerProduto(index)}
-                          />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      backgroundColor: "rgb(255, 247, 0)",
-                      color: "black",
-                    }}
-                  >
-                    Forma De Pagamento:
-                  </td>
-                </tr>
-                <tr>
-                  <th colSpan={6}>
-                    <div className="FormaDePagamento">
-                      <select
-                        required
-                        onChange={(e) => {
-                          setformaDePagamento(e.target.value);
-                          if (e.target.value === "Dinheiro") {
-                            setquantiaRecebida("");
-                            setTroco("R$ 0,00");
-                          }
-                        }}
-                      >
-                        <option value="null">Selecione</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="CartãoDeCredito">
-                          Cartão de Crédito
-                        </option>
-                        <option value="CartãoDeDebito">Cartão de Débito</option>
-                        <option value="Pix">Pix</option>
-                        <option value="Ficha">Ficha</option>
-                      </select>
+            <div className="ClientesEncontrados">
+              {clienteFiltrados.length > 0 &&
+                clienteFiltrados.map((clientes) => (
+                  <button className="ContainerButton" key={clientes.Id_Cliente}>
+                    <FaUser fontSize={50} />
+                    <div className="InformacoesDeClienteFiltrados">
+                      <div>
+                        <p>
+                          {clientes.nomeDoCliente} | {clientes.cpf} |
+                          {clientes.telefone}
+                        </p>
+                      </div>
                     </div>
-                  </th>
-                </tr>
-                <tr>
-                  {formaDePagamento === "Dinheiro" && (
-                    <>
-                      <td
-                        colSpan={3}
-                        style={{
-                          border: "none",
-                          textAlign: "center",
-                          fontSize: "1.5rem",
-                          backgroundColor: "rgb(0, 255, 149)",
-                        }}
-                      >
-                        <label>Quantia Recebida:</label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={quantiaRecebida || "R$ 0,00"}
-                          onChange={(e) => {
-                            formatarMoeda(e, setquantiaRecebida);
-                          }}
-                          style={{
-                            border: "none",
-                            textAlign: "center",
-                            fontSize: "1rem",
-                            width: "100%",
-                            backgroundColor: "rgb(160, 102, 102)",
-                            color: "white",
-                            fontWeight: "bold",
-                          }}
-                        />
-                      </td>
-                      <td
-                        colSpan={2}
-                        style={{
-                          border: "none",
-                          textAlign: "center",
-                          fontSize: "1.5rem",
-                          backgroundColor: "rgb(0, 0, 0)",
-                          color: "white",
-                          fontWeight: "bold",
-                          textWrap: "nowrap",
-                        }}
-                      >
-                        <label>Troco:{troco}</label>
-                      </td>
-                    </>
-                  )}
-                </tr>
+                  </button>
+                ))}
+            </div>
 
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      backgroundColor: "rgb(4, 159, 255)",
-                      color: "white",
-                    }}
-                  >
-                    Preço Total:
-                  </td>
-                </tr>
+            <div className="TabelaDeProdutos">
+              <div className="ProdutosEncontrados">
+                <div className="ImageProduct">
+                  <img
+                    src={produto?.urlImagem || " "}
+                    width={200}
+                    height={200}
+                    alt="Produto Nao Encontrado"
+                  />
+                </div>
+                <div className="InformationProtuctAll">
+                  <div className="InformationProtuct">
+                    <h3>Nome do Produto:</h3>
+                    <p>{produto?.nomeDoProduto || "Produto não encontrado"}</p>
+                  </div>
 
-                <tr style={{ border: "none", fontSize: "1.5rem" }}>
-                  <td
-                    colSpan={2}
-                    style={{ backgroundColor: "rgb(0, 255, 149)" }}
-                  >
-                    Total:
-                  </td>
-                  <td
-                    colSpan={4}
-                    style={{
-                      backgroundColor: "rgb(0, 0, 0)",
-                      color: "white",
-                      fontWeight: "bold",
-                    }}
-                    height={50}
-                  >
-                    {precoTotal}
-                  </td>
-                </tr>
+                  <div className="InformationProtuct">
+                    <h3>Preço:</h3>
+                    <p>
+                      {produto?.preco !== undefined
+                        ? parseFloat(produto.preco).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })
+                        : "R$ 0,00"}
+                    </p>
+                  </div>
 
-                <tr className="BotoesTable">
-                  <td colSpan={2}>
-                    <button
-                      style={{
-                        backgroundColor: "rgb(0, 4, 255)",
-                        color: "white",
-                      }}
-                      id="btn"
-                    >
-                      Imprimir nota
-                    </button>
-                  </td>
-                  <td colSpan={2}>
-                    <button
-                      style={{
-                        backgroundColor: "rgb(12, 195, 2)",
-                        color: "white",
-                      }}
-                      id="btn"
-                      onClick={() => FinalizarVenda()}
-                    >
-                      Realizar venda
-                    </button>
-                  </td>
-                  <td colSpan={2}>
-                    <button
-                      style={{
-                        backgroundColor: "rgb(255, 0, 0)",
-                        color: "white",
-                      }}
-                      id="btn"
-                      onClick={() => {
-                        setProdutosVendidos([]);
-                        setQuantidadeTotal(0);
-                      }}
-                    >
-                      Cancelar venda
-                    </button>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+                  <div className="InformationProtuct">
+                    <h3>Quantidade:</h3>
+                    <input
+                      type="number"
+                      min={1}
+                      value={quantidade}
+                      onChange={(e) => setQuantidade(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="InformationProtuct">
+                    <h3>Desconto:</h3>
+                    <input
+                      type="text"
+                      value={desconto}
+                      onChange={(e) => formatarMoeda(e, setDesconto)}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  className="BtnAdicionar"
+                  type="submit"
+                  title="Adicionar"
+                  aria-label="Adicionar"
+                  onClick={adicionarProduto}
+                >
+                  Adicionar
+                </button>
+              </div>
+
+              <div className="TabelaDeProdutosAdicionados">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nome do Produto</th>
+                      <th>Quantidade</th>
+                      <th>Preço</th>
+                      <th>Desconto</th>
+                      <th>Preço Total</th>
+                      <th>Remover</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {produtosVendidos.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.nomeDoProduto}</td>
+                        <td>{item.quantidade}</td>
+                        <td>
+                          {parseFloat(item.preco).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </td>
+                        <td>{item.desconto}</td>
+                        <td>
+                          {(
+                            parseFloat(item.preco) * item.quantidade -
+                            parseFloat(item.desconto.replace(/\D/g, "")) / 100
+                          ).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </td>
+                        <td>
+                          <button onClick={() => removerProduto(index)}>
+                            X
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
+
+          <div className="SubTotal">
+            <p>Total:</p>
+            <p>{precoTotal}</p>
+          </div>
+
+          <div className="FinalizandoVenda">
+            <div className="DescontoNaVenda">
+              <h3>Desconto na Venda:</h3>
+              <input type="text" name="DescontoNaVenda" />
+            </div>
+            <div className="FormaDePagamento">
+              <h3>Forma de Pagamento:</h3>
+              <select
+                required
+                value={formaDePagamento}
+                onChange={(e) => setFormaDePagamento(e.target.value)}
+              >
+                <option value="">Selecione</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="CartaoDeCredito">Cartão de Credito</option>
+                <option value="CartaoDeDebito">Cartão de Debito</option>
+                <option value="Pix">Pix</option>
+                <option value="Ficha">Ficha</option>
+              </select>
+            </div>
+
+            {formaDePagamento === "dinheiro" && (
+              <div className="IfItIsWithMoneyContainer">
+                <div className="IfItIsWithMoney">
+                  <h3>Dinheiro Recebido</h3>
+                  <input
+                    type="text"
+                    value={dinheiroRecebido}
+                    onChange={(e) => formatarMoeda(e, setDinheiroRecebido)}
+                  />
+                </div>
+                <FaEquals fontSize={30} />
+                <div className="IfItIsWithMoney">
+                  <h3>Troco</h3>
+                  <p>{troco}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="Botoes">
+              <button id="btn" style={{ backgroundColor: "rgb(0, 68, 255)" }}>
+                Olhar Nota
+              </button>
+              <button
+                id="btn"
+                style={{ backgroundColor: "rgb(0, 255, 76)" }}
+                onClick={FinalizarVenda}
+              >
+                Finalizar Venda
+              </button>
+              <button
+                id="btn"
+                style={{ backgroundColor: "rgb(255, 0, 0)" }}
+                onClick={CancelarVenda}
+              >
+                Cancelar Venda
+              </button>
+            </div>
           </div>
         </section>
-      </main>
+      </div>
     </>
   );
 }
 
-export default RealizarUmaVenda;
+export default RealizarVendaTest;

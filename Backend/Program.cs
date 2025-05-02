@@ -1,28 +1,24 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Garantindo que o appsettings.json seja carregado
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-// Configuração de CORS
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Services.AddControllers();
-builder.Services.AddAuthorization();
+// Adiciona política de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("PermitirTudo", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy("PermitirFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:5173") // ou .WithOrigins("http://localhost:5173") para restringir
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+    );
 });
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Adicionando o CORS ao pipeline
-app.UseCors("PermitirTudo");
+// Usa a política de CORS
+app.UseCors("PermitirFrontend");
 
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./CadastroDeClientes.css";
 import axios from "axios";
 import { useState } from "react";
+import { IoPersonAdd } from "react-icons/io5";
+
 
 function CadastroDeClientes() {
   const [clientes, setClientes] = useState([]);
+  const [GetClientes, setGetClientes] = useState([]);
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -68,13 +71,34 @@ function CadastroDeClientes() {
       setEndereco("");
       setBairro("");
       setNumero("");
+      setPontoDeReferencia("");
     } catch (error) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    async function ClienteMethodGet() {
+      try {
+        const response = await axios.get(
+          "http://localhost:5080/api/CadastroDeCliente/HistoricoDeClientes"
+        );
+        console.log(response.data);
+        setGetClientes(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+      
+    }
+    ClienteMethodGet();
+  },[]);
+
+  function continuarCadastrando() {
+    window.location.reload();
+  }
   return (
     <>
-      <main className="CadastroDeClientesMain">
+      <main className={clientes.length > 0 ? "blur" : "CadastroDeClientesMain"}>
         <nav>
           <div className="navBar">
             <Link to={"/ScreenMain"}>
@@ -90,6 +114,7 @@ function CadastroDeClientes() {
         </nav>
         <section>
           <form onSubmit={handleFormSubmit}>
+            <IoPersonAdd size={50} className="Icon" />
             <input
               type="text"
               placeholder="Nome Do Cliente"
@@ -111,6 +136,7 @@ function CadastroDeClientes() {
               onChange={handleChangeTelefone}
               maxLength={15}
             />
+
             <input
               type="text"
               placeholder="Endereço"
@@ -134,6 +160,7 @@ function CadastroDeClientes() {
               placeholder="Ponto De Referencia(opicional)"
               value={pontoDeReferencia}
               onChange={(e) => setPontoDeReferencia(e.target.value)}
+              className="PontoDeReferencia"
             />
 
             <button className="button type1"></button>
@@ -152,17 +179,17 @@ function CadastroDeClientes() {
               <tr>
                 <th>Nome Do Cliente</th>
                 <th width={150}>CPF</th>
-                <th>Telefone</th>
+                <th width={150}>Telefone</th>
                 <th>Endereço</th>
               </tr>
             </thead>
             <tbody>
-              {clientes.map((cliente) => (
+              {GetClientes.slice(0, 7).map((cliente) => (
                 <tr key={cliente.Id_Cliente}>
-                  <td>{cliente.NomeDoCliente}</td>
-                  <td>{cliente.Cpf}</td>
-                  <td>{cliente.Telefone}</td>
-                  <td>{cliente.Endereco}</td>
+                  <td>{cliente.nomeDoCliente}</td>
+                  <td>{cliente.cpf}</td>
+                  <td>{cliente.telefone}</td>
+                  <td>{cliente.endereco}, {cliente.numero}</td>
                 </tr>
               ))}
             </tbody>
@@ -170,35 +197,44 @@ function CadastroDeClientes() {
         </section>
       </main>
       <div>
-        <div className={clientes.length == 0 ? "TelaDeSucesso" : "null"}>
+        <div className={clientes.length > 0 ? "TelaDeSucesso" : "null"}>
           {clientes.map((cliente) => (
             <div key={cliente.Id_Cliente} className="TelaDeSucessoContainer">
               <h2>Cliente Cadastrado Com Sucesso</h2>
+
               <p>
-                <strong>Comfirme Seu Cadastro</strong>
+                Nome Do Cliente: <span>{cliente.NomeDoCliente}</span>
               </p>
               <p>
-                Nome Do Cliente: s<span>{cliente.NomeDoCliente}</span>
+                Cpf: <span>{cliente.Cpf}</span>
               </p>
               <p>
-                Cpf:s<span>{cliente.Cpf}</span>
+                Telefone: <span>{cliente.Telefone}</span>
               </p>
               <p>
-                Telefone:ss<span>{cliente.Telefone}</span>
+                Endereço: <span>{cliente.Endereco}</span>
               </p>
               <p>
-                Endereço: s<span>{cliente.Endereco}</span>
+                Bairro: <span>{cliente.Bairro}</span>
               </p>
               <p>
-                Bairro:s<span>{cliente.Bairro}</span>
-              </p>
-              <p>
-                Numero Da Residencia:2<span>{cliente.Numero}</span>
+                Numero Da Residencia: <span>{cliente.Numero}</span>
               </p>
 
-              <div>
-                <button>Ir Para Pagina Principal</button>
-                <button>Continuar Cadastrando</button>
+              <div className="buttons">
+                <Link to={"/ScreenMain"}>
+                  <button style={{ backgroundColor: "rgb(0, 255, 255)" }}>
+                    Ir Para Pagina Principal
+                  </button>
+                </Link>
+                <Link>
+                  <button
+                    style={{ backgroundColor: "rgb(0, 255, 42)" }}
+                    onClick={continuarCadastrando}
+                  >
+                    Continuar Cadastrando
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
