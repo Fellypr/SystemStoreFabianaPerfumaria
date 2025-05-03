@@ -266,17 +266,17 @@
 .ClientesEncontrados{
   position:absolute;
   z-index: 1;
-  left: 40.6rem;
-  width: 38rem;
+  left: 40rem;
+  width: 40rem;
   height: 25rem;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   top: 11.7rem;
-  justify-content: center;
-
+  align-items: center;
   flex-direction: column;
   border-radius: 12px;
-  background-color: aqua;
+  transition: all 0.8s ease-in-out;
 }
 .ContainerButton{
   width: 37.5rem;
@@ -286,12 +286,30 @@
   border-radius: 12px;
   align-items: center;
   padding: 10px;
-  background-color: antiquewhite;
-    & .InformacoesDeClienteFiltrados{
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
 
-      font-size: 1rem;
-      padding: 10px;
-      margin-right: 4rem;
+    & .InformacoesDeClienteFiltrados{
+      width: 100%;
+      height: 100%;
+     
+      display: flex;
+      justify-content: center;
+      align-items: center;
+        & .InformacoesDeCliente{
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+          font-size: 1.1rem;
+            & .NomeDoCliente{
+              font-weight: bold;
+              flex-wrap: wrap;
+              font-size: 0.9rem;
+
+            }
+
+        }
+      
     }
 }
 @keyframes blurIn {

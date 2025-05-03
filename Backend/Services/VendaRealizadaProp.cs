@@ -32,8 +32,8 @@ namespace Backend.Services
         [JsonPropertyName("valorNaFicha")]
         public decimal ValorNaFicha { get; set; }
 
-        // [JsonPropertyName("comprador")]
-        // public string Comprador { get; set; }
+        [JsonPropertyName("comprador")]
+        public string? Comprador { get; set; }
 
     }
     

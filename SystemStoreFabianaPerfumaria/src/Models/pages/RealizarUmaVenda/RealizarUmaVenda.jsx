@@ -57,7 +57,7 @@ function RealizarVendaTest() {
     }
   };
   useEffect(() => {
-    if (pesquisarCliente.trim().length > 0) {
+    if ((pesquisarCliente || "").trim().length > 0) {
       buscarCliente();
     } else {
       setcliente(null);
@@ -68,6 +68,10 @@ function RealizarVendaTest() {
     item.nomeDoCliente.toLowerCase().includes(pesquisarCliente.toLowerCase())
   );
 
+  function AdicionandoCliente(nome) {
+    setPesquisarCliente(nome);
+    setcliente([]);
+  }
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
@@ -177,6 +181,7 @@ function RealizarVendaTest() {
         id_produto: produto.id_produto,
         quantidadeTotal: quantidadeTotal,
         valorNaFicha: Number(precoLimpo / 100),
+        comprador: pesquisarCliente,
       }));
 
       console.log(
@@ -261,14 +266,15 @@ function RealizarVendaTest() {
             <div className="ClientesEncontrados">
               {clienteFiltrados.length > 0 &&
                 clienteFiltrados.map((clientes) => (
-                  <button className="ContainerButton" key={clientes.Id_Cliente}>
+                  <button className="ContainerButton" key={clientes.Id_Cliente} onClick={() => AdicionandoCliente(clientes.nomeDoCliente)}>
                     <FaUser fontSize={50} />
                     <div className="InformacoesDeClienteFiltrados">
                       <div>
-                        <p>
-                          {clientes.nomeDoCliente} | {clientes.cpf} |
-                          {clientes.telefone}
-                        </p>
+                        <div className="InformacoesDeCliente">
+                          <p className="NomeDoCliente">{clientes.nomeDoCliente}</p>
+                           <p>{clientes.cpf}</p>
+                           <p>{clientes.telefone}</p> 
+                        </div>
                       </div>
                     </div>
                   </button>

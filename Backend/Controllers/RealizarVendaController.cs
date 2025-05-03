@@ -86,7 +86,7 @@ namespace Backend.Controllers
 
                 // 1. Criar uma nova venda (na tabela Venda)
                 var primeiraVenda = vendas.First();
-                var queryVenda = "INSERT INTO Venda (Produtos_Vendidos,DataDaVenda, FormaDePagamento, PrecoTotal,QuantidadeTotal,ValorNaFicha) OUTPUT INSERTED.IdVenda VALUES (@produtos_vendidos,@Data, @FormaPagamento, @Total, @quantidadetotal,@ValorNaFicha)";
+                var queryVenda = "INSERT INTO Venda (Produtos_Vendidos,DataDaVenda, FormaDePagamento, PrecoTotal,QuantidadeTotal,ValorNaFicha,NomeDoComprado) OUTPUT INSERTED.IdVenda VALUES (@produtos_vendidos,@Data, @FormaPagamento, @Total, @quantidadetotal,@ValorNaFicha,@nomeDoComprador)";
                 var cmdVenda = new SqlCommand(queryVenda, connection);
                 string DataFormatada = primeiraVenda.DataDaVenda.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss");
                 cmdVenda.Parameters.AddWithValue("@Data", DataFormatada);
@@ -94,7 +94,7 @@ namespace Backend.Controllers
                 cmdVenda.Parameters.AddWithValue("@Total", primeiraVenda.PrecoTotal);
                 cmdVenda.Parameters.AddWithValue("@produtos_vendidos", string.Join(" - ", vendas.Select(v => v.NomeDoProduto)));
                 cmdVenda.Parameters.AddWithValue("@quantidadetotal", primeiraVenda.quantidadeTotal);
-                // cmdVenda.Parameters.AddWithValue("@NomeDoComprador", primeiraVenda.Comprador);
+                cmdVenda.Parameters.AddWithValue("@nomeDoComprador", primeiraVenda.Comprador);
                 cmdVenda.Parameters.AddWithValue("@ValorNaFicha", primeiraVenda.ValorNaFicha);
 
                 
