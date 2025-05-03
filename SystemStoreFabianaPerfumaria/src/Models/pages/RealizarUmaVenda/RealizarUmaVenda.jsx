@@ -172,17 +172,24 @@ function RealizarVendaTest() {
       const precoLimpo = precoTotal.replace(/\D/g, "");
       const Data = new Date();
 
-      const dadosParaEnvio = produtosVendidos.map((produto) => ({
-        nomeDoProduto: produto.nomeDoProduto,
-        precoTotal: Number(precoLimpo / 100),
-        quantidade: produto.quantidade,
-        dataDaVenda: Data.toISOString(),
-        formaDePagamento: formaDePagamento,
-        id_produto: produto.id_produto,
-        quantidadeTotal: quantidadeTotal,
-        valorNaFicha: Number(precoLimpo / 100),
-        comprador: pesquisarCliente,
-      }));
+      const dadosParaEnvio = produtosVendidos.map((produto) => {
+        const dados = {
+          nomeDoProduto: produto.nomeDoProduto,
+          precoTotal: Number(precoLimpo / 100),
+          quantidade: produto.quantidade,
+          dataDaVenda: Data.toISOString(),
+          formaDePagamento: formaDePagamento,
+          id_produto: produto.id_produto,
+          quantidadeTotal: quantidadeTotal,
+          comprador: pesquisarCliente,
+        };
+
+        if (formaDePagamento === "Ficha") {
+          dados.valorNaFicha = Number(precoLimpo / 100);
+        }
+
+        return dados;
+      });
 
       console.log(
         "Enviando para API:",
@@ -211,6 +218,7 @@ function RealizarVendaTest() {
       setTroco("R$ 0,00");
       setFormaDePagamento("");
       setFicha("R$ 0,00");
+      setcliente("");
     } catch (error) {
       if (error.response) {
         console.error("Erro ao realizar venda:", error.response.data);
@@ -266,14 +274,20 @@ function RealizarVendaTest() {
             <div className="ClientesEncontrados">
               {clienteFiltrados.length > 0 &&
                 clienteFiltrados.map((clientes) => (
-                  <button className="ContainerButton" key={clientes.Id_Cliente} onClick={() => AdicionandoCliente(clientes.nomeDoCliente)}>
+                  <button
+                    className="ContainerButton"
+                    key={clientes.Id_Cliente}
+                    onClick={() => AdicionandoCliente(clientes.nomeDoCliente)}
+                  >
                     <FaUser fontSize={50} />
                     <div className="InformacoesDeClienteFiltrados">
                       <div>
                         <div className="InformacoesDeCliente">
-                          <p className="NomeDoCliente">{clientes.nomeDoCliente}</p>
-                           <p>{clientes.cpf}</p>
-                           <p>{clientes.telefone}</p> 
+                          <p className="NomeDoCliente">
+                            {clientes.nomeDoCliente}
+                          </p>
+                          <p>{clientes.cpf}</p>
+                          <p>{clientes.telefone}</p>
                         </div>
                       </div>
                     </div>
