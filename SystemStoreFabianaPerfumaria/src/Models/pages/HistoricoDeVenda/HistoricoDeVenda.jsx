@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import "./HistoricoDeVenda.css";
 import axios from "axios";
 
@@ -37,6 +37,7 @@ function HistoricoDeVenda() {
         "http://localhost:5080/api/RealizarVenda/FiltrarVendas",
         {
           nomeDoComprado: busca,
+          formaDePagamento: busca,
         },
         {
           headers: {
@@ -44,6 +45,7 @@ function HistoricoDeVenda() {
           },
         }
       );
+      
       console.log(response.data);
       setVendas(response.data);
     } catch (error) {
@@ -53,6 +55,7 @@ function HistoricoDeVenda() {
   useEffect(() => {
     if (busca.trim().length > 0) {
       BuscandoVendas();
+      console.log("Forma De pagamento:", busca);
     } else {
       setVendas([]);
     }
@@ -67,6 +70,7 @@ function HistoricoDeVenda() {
         {
           IdVenda: vendaSelecionada.id_venda,
           ValorNaFicha: valorLimpo,
+          
         },
         {
           headers: {
@@ -110,19 +114,19 @@ function HistoricoDeVenda() {
         <div className="BuscarHistorico">
           <div className="InputsPesquisaDeVenda">
             <form>
-              <input type="date" />
+              {/* <input type="date" onChange={(e) => setBusca(e.target.value)}/> */}
               <input
                 type="text"
                 placeholder="Nome do Cliente"
                 onChange={(e) => setBusca(e.target.value)}
               />
-              <select className="select">
+              <select className="select" onChange={(e) => setBusca(e.target.value)}>
                 <option value="">Pesquisar Pela Forma De Pagamento</option>
-                <option value="dinheiro">Dinheiro</option>
+                <option value="Espécie">Dinheiro</option>
                 <option value="CartaoDeCredito">Cartão de Credito</option>
                 <option value="CartaoDeDebito">Cartão de Debito</option>
-                <option value="Pix">Pix</option>
-                <option value="Ficha">Ficha</option>
+                <option value="PagoNoPix">Pix</option>
+                <option value="Crediario">Ficha</option>
               </select>
             </form>
           </div>
@@ -133,6 +137,7 @@ function HistoricoDeVenda() {
                 <th>produtos vendidos</th>
                 <th>Valor Total</th>
                 <th>Forma De Pagamento</th>
+                <th>Ficha</th>
                 <th colSpan={2}>Data Da Venda</th>
               </tr>
             </thead>
@@ -150,6 +155,7 @@ function HistoricoDeVenda() {
                       : "R$ 0,00"}
                   </td>
                   <td>{venda.formaDePagamento}</td>
+                  <td>{venda?.valorDaFicha === 0 ? "Paga" : venda?.valorNaFicha !== undefined ? parseFloat(venda.valorNaFicha).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "R$ 0,00"}</td>
                   <td>{format(new Date(venda.dataDaVenda), "dd/MM/yyyy")}</td>
                   <td width={40}>
                     <button onClick={() => mostrarDetalhes(venda)}>
@@ -202,7 +208,7 @@ function HistoricoDeVenda() {
             <p>
               <strong>Forma De Pagamento:</strong>
               <br />
-              {vendaSelecionada?.formaDePagamento === "Ficha" ? (
+              {vendaSelecionada?.formaDePagamento === "Crediario" ? (
                 <>
                   Ficha <br />
                   Valor a Abater:{" "}
@@ -250,7 +256,7 @@ function HistoricoDeVenda() {
               <MdCancel size={35} />
             </button>
             <h3>
-              valor a abater: R${" "}
+              Valor a Pagar: R${" "}
               {vendaSelecionada?.valorNaFicha !== undefined
                 ? parseFloat(vendaSelecionada.valorNaFicha).toLocaleString(
                     "pt-BR",

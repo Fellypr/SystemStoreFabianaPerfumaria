@@ -21,6 +21,8 @@ function RealizarVendaTest() {
   const [cliente, setcliente] = useState([]);
   const [pesquisarCliente, setPesquisarCliente] = useState("");
 
+  const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
+
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
     const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
@@ -119,13 +121,19 @@ function RealizarVendaTest() {
   };
 
   const calcularTotalGeral = () => {
-    const total = produtosVendidos.reduce((acc, item) => {
-      const Valor = parseFloat(item.preco);
+    const totalSemDescontoGeral = produtosVendidos.reduce((acc, item) => {
+      const valor = parseFloat(item.preco);
       const qtd = parseInt(item.quantidade);
-      const descontoNum = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
-      return acc + (Valor * qtd - descontoNum);
+      const descontoItem = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
+      return acc + (valor * qtd - descontoItem);
     }, 0);
-    const totalFormatado = total.toLocaleString("pt-BR", {
+
+    const descontoVenda =
+      parseFloat(DescontoNaVenda.replace(/\D/g, "")) / 100 || 0;
+
+    const totalComDescontoGeral = totalSemDescontoGeral - descontoVenda;
+
+    const totalFormatado = totalComDescontoGeral.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
@@ -136,7 +144,7 @@ function RealizarVendaTest() {
 
   useEffect(() => {
     calcularTotalGeral();
-  }, [produtosVendidos]);
+  }, [produtosVendidos, DescontoNaVenda]);
 
   const removerProduto = (index) => {
     const novaLista = produtosVendidos.filter((_, i) => i !== index);
@@ -168,6 +176,8 @@ function RealizarVendaTest() {
   }, [dinheiroRecebido, precoTotal, formaDePagamento]);
 
   const FinalizarVenda = async () => {
+    window.scrollTo(0, 0);
+    window.confirm("Deseja finalizar a venda?");
     try {
       const precoLimpo = precoTotal.replace(/\D/g, "");
       const Data = new Date();
@@ -184,7 +194,7 @@ function RealizarVendaTest() {
           comprador: pesquisarCliente,
         };
 
-        if (formaDePagamento === "Ficha") {
+        if (formaDePagamento === "Crediario") {
           dados.valorNaFicha = Number(precoLimpo / 100);
         }
 
@@ -219,6 +229,7 @@ function RealizarVendaTest() {
       setFormaDePagamento("");
       setFicha("R$ 0,00");
       setcliente("");
+      setDescontoNaVenda("R$ 0,00");
     } catch (error) {
       if (error.response) {
         console.error("Erro ao realizar venda:", error.response.data);
@@ -408,8 +419,14 @@ function RealizarVendaTest() {
           <div className="FinalizandoVenda">
             <div className="DescontoNaVenda">
               <h3>Desconto na Venda:</h3>
-              <input type="text" name="DescontoNaVenda" />
+              <input
+                type="text"
+                name="DescontoNaVenda"
+                value={DescontoNaVenda}
+                onChange={(e) => formatarMoeda(e, setDescontoNaVenda)}
+              />
             </div>
+
             <div className="FormaDePagamento">
               <h3>Forma de Pagamento:</h3>
               <select
@@ -418,15 +435,15 @@ function RealizarVendaTest() {
                 onChange={(e) => setFormaDePagamento(e.target.value)}
               >
                 <option value="">Selecione</option>
-                <option value="dinheiro">Dinheiro</option>
+                <option value="Espécie">Dinheiro</option>
                 <option value="CartaoDeCredito">Cartão de Credito</option>
                 <option value="CartaoDeDebito">Cartão de Debito</option>
-                <option value="Pix">Pix</option>
-                <option value="Ficha">Ficha</option>
+                <option value="PagoNoPix">Pix</option>
+                <option value="Crediario">Ficha</option>
               </select>
             </div>
 
-            {formaDePagamento === "dinheiro" && (
+            {formaDePagamento === "Espécie" && (
               <div className="IfItIsWithMoneyContainer">
                 <div className="IfItIsWithMoney">
                   <h3>Dinheiro Recebido</h3>

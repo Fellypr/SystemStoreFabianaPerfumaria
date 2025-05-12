@@ -129,7 +129,6 @@ function AdicionarProduto() {
           <input
             type="text"
             placeholder="Código de Barras"
-            required
             value={codigoDeBarras}
             onChange={(e) => setCodigoDeBarras(e.target.value)}
           />

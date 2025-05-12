@@ -316,22 +316,22 @@ function CadastroDeClientes() {
               <h2>Cliente Cadastrado Com Sucesso</h2>
 
               <p>
-                Nome Do Cliente: <span>{cliente.NomeDoCliente}</span>
+                Nome Do Cliente: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.NomeDoCliente}</span>
               </p>
               <p>
-                Cpf: <span>{cliente.Cpf}</span>
+                Cpf: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.Cpf}</span>
               </p>
               <p>
-                Telefone: <span>{cliente.Telefone}</span>
+                Telefone: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.Telefone}</span>
               </p>
               <p>
-                Endereço: <span>{cliente.Endereco}</span>
+                Endereço: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.Endereco}</span>
               </p>
               <p>
-                Bairro: <span>{cliente.Bairro}</span>
+                Bairro: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.Bairro}</span>
               </p>
               <p>
-                Numero Da Residencia: <span>{cliente.Numero}</span>
+                Numero Da Residencia: <span style={{ fontWeight: "bold" ,color:"white"}}>{cliente.Numero}</span>
               </p>
 
               <div className="buttons">

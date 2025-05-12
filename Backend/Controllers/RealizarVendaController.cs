@@ -177,10 +177,11 @@ namespace Backend.Controllers
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado";
+                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado OR FormaDePagamento = @formaDePagamento ";
 
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@comprado", "%" + Filtrar.NomeDoComprado + "%");
+                    command.Parameters.AddWithValue("@formaDePagamento", Filtrar.FormaDePagamento );
 
 
                     await connection.OpenAsync();

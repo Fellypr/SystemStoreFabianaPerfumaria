@@ -42,6 +42,12 @@ namespace Backend.Services
     {  
         [JsonPropertyName("nomeDoComprado")]
         public string? NomeDoComprado { get; set; }
+
+        [JsonPropertyName("formaDePagamento")]
+        public string? FormaDePagamento { get; set; }
+
+        [JsonPropertyName("data")]
+        public DateTime? Data { get; set; }
     }
     
 
