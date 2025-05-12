@@ -11,7 +11,7 @@ import { ImCancelCircle } from "react-icons/im";
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
-  const [termoBusca, setTermoBusca] = useState(""); // <<< Novo estado para busca
+  const [termoBusca, setTermoBusca] = useState("");
 
   const buscarProdutos = async () => {
     try {
@@ -101,7 +101,7 @@ function EditarProduto() {
             placeholder="Buscar produto pelo nome..."
             value={termoBusca}
             onChange={(e) => setTermoBusca(e.target.value)}
-            style={{ marginBottom: "10px", padding: "5px", width: "300px" }}
+            style={{ marginBottom: "10px", padding: "5px", width: "500px",borderRadius:"10px" ,fontSize:"18px"}}
           />
 
           <table border={1}>
@@ -123,11 +123,11 @@ function EditarProduto() {
             <tbody>
               {produtosFiltrados.map((produto) => (
                 <tr key={produto.id_Produto}>
-                  <td>{produto.id_Produto}</td>
-                  <td>{produto.nomeDoProduto}</td>
-                  <td>{produto.marca}</td>
+                  <td width={50}>{produto.id_Produto}</td>
+                  <td width={200}>{produto.nomeDoProduto}</td>
+                  <td width={100}>{produto.marca}</td>
                   <td width={50}>{produto.quantidade}</td>
-                  <td>
+                  <td width={100}>
                     {produto?.preco !== undefined
                       ? parseFloat(produto.preco).toLocaleString("pt-BR", {
                           style: "currency",
@@ -135,7 +135,7 @@ function EditarProduto() {
                         })
                       : "R$ 0,00"}
                   </td>
-                  <td width={50}>
+                  <td width={20}>
                     <button
                       type="button"
                       className="BotaoEditar"
@@ -235,7 +235,7 @@ function EditarProduto() {
                     const { value } = values;
                     setProdutoSelecionado({
                       ...produtoSelecionado,
-                      preco: value, // valor numérico sem formatação (ex: "1000")
+                      preco: value, 
                     });
                   }}
                   thousandSeparator="."

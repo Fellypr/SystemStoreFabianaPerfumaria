@@ -8,7 +8,9 @@ namespace Backend.Services
     using System.Text.Json.Serialization;
 
     public class VendaRealizadaProp
-    {
+    {   
+        [JsonPropertyName("idVenda")]
+        public int IdVenda { get; set; }
         [JsonPropertyName("id_produto")]
         public int Id_Produto { get; set; }
         [JsonPropertyName("nomeDoProduto")]
@@ -35,6 +37,11 @@ namespace Backend.Services
         [JsonPropertyName("comprador")]
         public string? Comprador { get; set; }
 
+    }
+    public class FiltrarVendas
+    {  
+        [JsonPropertyName("nomeDoComprado")]
+        public string? NomeDoComprado { get; set; }
     }
     
 

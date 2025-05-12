@@ -13,6 +13,8 @@ import HistoricoEEstatistica from './Models/pages/HistoricoEEstatistica/Historic
 import EditarProduto from './Models/pages/EditarProduto/EditarProduto.jsx'
 import RealizarUmaVenda from './Models/pages/RealizarUmaVenda/RealizarUmaVenda.jsx'
 import CadastroDeClientes from './Models/pages/CadastroDeCliente/CadastroDeClientes.jsx'
+import EditarCliente from './Models/pages/EditarClientes/EditarCliente.jsx'
+import HistoricoDeVenda from './Models/pages/HistoricoDeVenda/HistoricoDeVenda.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -28,6 +30,8 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/EditarProduto' element={<EditarProduto/>}/>
                   <Route path='/RealizarUmaVenda' element={<RealizarUmaVenda/>}/>
                   <Route path='/CadastroDeClientes' element={<CadastroDeClientes/>}/>
+                  <Route path='/EditarCliente' element={<EditarCliente/>}/>
+                  <Route path='/HistoricoDeVenda' element={<HistoricoDeVenda/>}/>
 
                   
 

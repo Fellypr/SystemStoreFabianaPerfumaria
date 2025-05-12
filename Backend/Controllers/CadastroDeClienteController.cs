@@ -76,6 +76,7 @@ namespace Backend.Controllers
                                 Bairro = reader["Bairro"].ToString(),
                                 Numero = Convert.ToInt32(reader["Numero"]),
                                 PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
+                                Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
                             };
                             clientes.Add(cliente);
                         }
@@ -113,7 +114,8 @@ namespace Backend.Controllers
                         while(await reader.ReadAsync())
                         {
                             listaDeClientes.Add(new
-                            {
+                            {   
+                                Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
                                 NomeDoCliente = reader["NomeDoCliente"].ToString(),
                                 Cpf = reader["Cpf"].ToString(),
                                 Telefone = reader["Telefone"].ToString(),
@@ -121,6 +123,7 @@ namespace Backend.Controllers
                                 Bairro = reader["Bairro"].ToString(),
                                 Numero = Convert.ToInt32(reader["Numero"]),
                                 PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
+
                             });
                         }
 
@@ -144,5 +147,71 @@ namespace Backend.Controllers
 
 
         }
+        [HttpPut("AtualizarCliente/{id_Cliente}")]
+
+        public async Task <ActionResult> AtualizarCliente( [FromBody] CadastroDeClienteProp ClienteAtualizado)
+        {
+            var connectionString = _config.GetConnectionString("DefaultConnection");
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                var query = @"
+                UPDATE CadastroDeCliente
+                SET NomeDoCliente = @NomeDoCliente, Cpf = @Cpf, Telefone = @Telefone, Endereco = @Endereco, Bairro = @Bairro, Numero = @Numero, PontoDeReferencia = @PontoDeReferencia
+                WHERE Id_Cliente = @Id_Cliente";
+
+                var cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@NomeDoCliente", ClienteAtualizado.NomeDoCliente);
+                cmd.Parameters.AddWithValue("@Cpf", ClienteAtualizado.Cpf);
+                cmd.Parameters.AddWithValue("@Telefone", ClienteAtualizado.Telefone);
+                cmd.Parameters.AddWithValue("@Endereco", ClienteAtualizado.Endereco);
+                cmd.Parameters.AddWithValue("@Bairro", ClienteAtualizado.Bairro);
+                cmd.Parameters.AddWithValue("@Numero", ClienteAtualizado.Numero);
+                cmd.Parameters.AddWithValue("@PontoDeReferencia", ClienteAtualizado.PontoDeReferencia);
+                cmd.Parameters.AddWithValue("@Id_Cliente", ClienteAtualizado.Id_Cliente);
+
+                var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
+
+                if (linhasAfetadas == 0)
+                    return NotFound("Cliente nao encontrado.");
+
+                return Ok("Cliente atualizado com sucesso!");
+            }
+        }
+        [HttpDelete("ExcluirCadastro/{id}")]
+
+        public async Task <ActionResult> ExcluirCliente(int id)
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "DELETE FROM CadastroDeCliente WHERE Id_Cliente = @Id_Cliente";
+                    var command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Id_Cliente", id);
+
+                    await connection.OpenAsync();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected > 0)
+                    {
+                        return Ok("Cliente excluido com sucesso.");
+                    }
+                    else
+                    {
+                        return NotFound("Cliente nao encontrado.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
+            }
+        }
+        
     }
 }

@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Backend.Services
 {
     public class CadastroDeClienteProp
     {   
+        [JsonPropertyName("id_Cliente")]
+        public int Id_Cliente { get; set; }
         public string NomeDoCliente { get; set; }
         public string Cpf { get; set; }
         public string Telefone{ get; set; }

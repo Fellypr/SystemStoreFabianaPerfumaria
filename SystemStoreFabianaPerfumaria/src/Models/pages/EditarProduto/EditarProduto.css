@@ -16,15 +16,17 @@
 
   & table {
     border-collapse: collapse;
-    min-width: 300%;
+    min-width:200%;
+    box-shadow: 10px 6px 20px -3px rgba(0,0,0,0.75);
 
     & th {
       height: 2rem;
+      border: none;
     }
 
     & td {
-      border: 1px solid rgb(0, 4, 255);
-      background-color: rgb(255, 245, 245);
+      border: 2px solid rgb(0, 4, 255);
+      background-color: rgb(236, 236, 236);
     }
   }
   & .TabelaDeProdutos {

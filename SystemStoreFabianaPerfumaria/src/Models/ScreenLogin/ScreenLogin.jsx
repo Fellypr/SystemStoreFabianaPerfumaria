@@ -44,8 +44,8 @@ function ScreenLogin() {
       <div className="Login">
         <h1>Login</h1>
         <FaCircleUser className="iconUser" size={80} />
-        <form action="submit">
-          <input type="text" placeholder="E-mail" required onChange={(e) => setEmail(e.target.value)} className="email" />
+        <form action="submit" className="formLogin">
+          <input type="text" placeholder="E-mail" required onChange={(e) => setEmail(e.target.value)} className="email"  />
           <br />
           <input type={showPassword ? "password" : "text"} placeholder="Senha" required  onChange={(e) => setPassword(e.target.value)}/>
           <IoEyeSharp

@@ -84,7 +84,7 @@ namespace Backend.Controllers
             {
                 await connection.OpenAsync();
 
-                // 1. Criar uma nova venda (na tabela Venda)
+
                 var primeiraVenda = vendas.First();
                 var queryVenda = "INSERT INTO Venda (Produtos_Vendidos,DataDaVenda, FormaDePagamento, PrecoTotal,QuantidadeTotal,ValorNaFicha,NomeDoComprado) OUTPUT INSERTED.IdVenda VALUES (@produtos_vendidos,@Data, @FormaPagamento, @Total, @quantidadetotal,@ValorNaFicha,@nomeDoComprador)";
                 var cmdVenda = new SqlCommand(queryVenda, connection);
@@ -97,11 +97,11 @@ namespace Backend.Controllers
                 cmdVenda.Parameters.AddWithValue("@nomeDoComprador", primeiraVenda.Comprador);
                 cmdVenda.Parameters.AddWithValue("@ValorNaFicha", primeiraVenda.ValorNaFicha);
 
-                
+
 
                 var idVendaCriada = (int)await cmdVenda.ExecuteScalarAsync();
 
-                // 2. Inserir os produtos com o ID da venda criada
+
                 foreach (var venda in vendas)
                 {
                     var insertProduto = @"
@@ -119,7 +119,7 @@ namespace Backend.Controllers
 
                     await cmdItem.ExecuteNonQueryAsync();
 
-                    // Atualizar o estoque
+
                     var updateEstoque = "UPDATE AdicionarProduto SET Quantidade = Quantidade - @Quantidade WHERE NomeDoProduto = @NomeDoProduto";
                     var cmdEstoque = new SqlCommand(updateEstoque, connection);
                     cmdEstoque.Parameters.AddWithValue("@Quantidade", venda.QuantidadeTotal);
@@ -133,7 +133,7 @@ namespace Backend.Controllers
         }
 
 
-        [HttpGet("VendasRealizadas")]
+        [HttpGet("HistoricoDeVendasRealizadas")]
         public async Task<ActionResult> HistoricoDeVendasRealizadas()
         {
             try
@@ -141,7 +141,7 @@ namespace Backend.Controllers
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM RealizarVendas";
+                    var query = "SELECT * FROM Venda ORDER BY DataDaVenda DESC";
                     var command = new SqlCommand(query, connection);
                     await connection.OpenAsync();
                     using (var reader = await command.ExecuteReaderAsync())
@@ -151,7 +151,7 @@ namespace Backend.Controllers
                         {
                             var venda = new VendaRealizadaProp
                             {
-                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                                NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
                                 PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
                                 QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
@@ -168,6 +168,82 @@ namespace Backend.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+        [HttpPost("FiltrarVendas")]
+        public async Task<ActionResult> FiltrarVendas([FromBody] FiltrarVendas Filtrar)
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado";
+
+                    var command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@comprado", "%" + Filtrar.NomeDoComprado + "%");
+
+
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var vendas = new List<object>();
+                        while (await reader.ReadAsync())
+                        {
+                            vendas.Add(new
+                            {
+                                Id_Venda = Convert.ToInt32(reader["IdVenda"]),
+                                Comprador = reader["NomeDoComprado"].ToString(),
+                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
+                                quantidadeTotal = Convert.ToInt32(reader["quantidadeTotal"]),
+                                NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
+                                DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
+                            });
+                        }
+                        return Ok(vendas);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("AbaterValor/{idVenda}")]
+        public async Task<ActionResult> AbaterValorNaFicha(int idVenda , [FromBody] VendaRealizadaProp Atualizar)
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    await connection.OpenAsync();
+
+                    var query = "UPDATE Venda SET ValorNaFicha = ValorNaFicha - @ValorNaFicha WHERE IdVenda = @IdVenda";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@IdVenda", idVenda);
+                        command.Parameters.AddWithValue("@ValorNaFicha", Atualizar.ValorNaFicha);
+
+                        var rowsAffected = await command.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok("Valor abatido com sucesso");
+                        }
+                        else
+                        {
+                            return NotFound("Venda não encontrada");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao abater valor: {ex.Message}");
+            }
         }
 
 

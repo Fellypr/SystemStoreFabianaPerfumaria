@@ -1,0 +1,288 @@
+.HistoricoDeVendaContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  & .BuscarHistorico {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    width: 90%;
+    height: 30rem;
+    background-color: rgb(235, 235, 235);
+    box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    & .InputsPesquisaDeVenda {
+      display: flex;
+      height: 3rem;
+      margin-top: 1rem;
+      align-items: center;
+      justify-content: center;
+      & form {
+        margin-top: 2rem;
+        gap: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        & input {
+          border-radius: 12px;
+          width: 30rem;
+          height: 2rem;
+          border: 1px solid #000000;
+          padding-left: 10px;
+          font-size: 1rem;
+        }
+        & input[type="date"] {
+          text-align: center;
+          font-size: 1.3rem;
+        }
+        & input:focus {
+          outline: none;
+          border: 1px solid black;
+        }
+        & .select {
+          width: 30rem;
+          height: 2rem;
+          border-radius: 12px;
+          border: 1px solid #000000;
+          padding-left: 10px;
+          font-size: 1rem;
+        }
+      }
+    }
+    & .TabelaHistoricoDeVenda {
+      width: 90%;
+      margin: 3rem;
+      border-collapse: collapse;
+      border: 1px solid #000000;
+      text-align: center;
+      & th {
+        border: none;
+        padding: 5px;
+        background-color: rgb(65, 65, 65);
+        color: white;
+      }
+      & td {
+        border: 1px solid #000000;
+        & button {
+          width: 100%;
+          border: none;
+          background-color: rgb(14, 129, 223);
+          color: white;
+        }
+        & button:hover {
+          cursor: pointer;
+          transform: scale(1.1);
+          transition: all 0.3s ease-in;
+          background-color: #000000;
+          color: white;
+        }
+      }
+      & tr:nth-child(even) {
+        background-color: rgb(82, 82, 82);
+        color: white;
+      }
+    }
+  }
+}
+
+.ConteudoDoHistorico {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 80%;
+  background-color: rgb(211, 211, 211);
+  box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+  border-radius: 22px;
+  animation: zoomInRight 0.3s ease-in;
+}
+
+.ConteudoDoHistorico {
+  display: flex;
+  justify-content: space-between;
+  & .InformacoesSobreOCliente {
+    display: flex;
+    margin-left: 1rem;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    padding-top: 3rem;
+    gap: 1rem;
+    font-size: 1.5rem;
+
+    & p {
+      word-break: break-all;
+      width: 100%;
+      height: auto;
+    }
+  }
+  & .HistoricoDaVenda {
+    display: flex;
+    margin-right: 0.5rem;
+    flex-direction: column;
+    justify-content: center;
+    width: 60%;
+    gap: 1.5rem;
+    font-size: 1.3rem;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    & p {
+      word-break: break-all;
+      width: 100%;
+      height: auto;
+    }
+    & .BotaoFechar {
+      width: 6%;
+      color: red;
+      background-color: transparent;
+      border: none;
+      position: absolute;
+      left: 93%;
+      top: 1.5rem;
+    }
+    & .BotaoFechar:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.3s ease-in;
+    }
+    & .VerFicha {
+      width: 20%;
+      color: green;
+      border: none;
+      font-size: 1rem;
+      margin-left: 1rem;
+      height: 2rem;
+      border-radius: 10px;
+    }
+    & .VerFicha:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.2s ease-in;
+    }
+  }
+  & .abaterFicha {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.3rem;
+    transition: all 0.5s ease-in-out;
+    background: #2a7b9b;
+    background: linear-gradient(
+      90deg,
+      rgba(42, 123, 155, 1) 0%,
+      rgba(87, 199, 133, 1) 50%,
+      rgba(237, 221, 83, 1) 100%
+    );
+    box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    height: 11rem;
+    width: 30rem;
+    border-radius: 10px;
+    -webkit-animation: roll-in-blurred-left 0.65s cubic-bezier(0.23, 1, 0.32, 1)
+      both;
+    animation: roll-in-blurred-left 0.65s cubic-bezier(0.23, 1, 0.32, 1) both;
+    & input {
+      width: 60%;
+      height: 2rem;
+      padding-left: 10px;
+      border-radius: 6px;
+      border: 1px solid #000000;
+      text-align: center;
+      font-size: 1rem;
+    }
+    & input:focus {
+      outline: none;
+    }
+    & .abaterButton {
+      width: 30%;
+      height: 2rem;
+      border-radius: 12px;
+      border: none;
+      background-color: rgb(14, 129, 223);
+      color: white;
+    }
+    & .abaterButton:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.3s ease-in;
+      background-color: #000000;
+      color: white;
+    }
+    & .ButtonDisabled{
+      display: none;
+    }
+    & .ButtonClosedFicha {
+      position: absolute;
+      top: 0.2rem;
+      right: 0.3rem;
+      font-size: 1.5rem;
+      border: none;
+      background-color: transparent;
+      color: red;
+    }
+    & .ButtonClosedFicha:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: all 0.3s ease-in;
+    }
+  }
+}
+.HiddenAbater {
+  display: none;
+}
+
+@keyframes zoomInRight {
+  from {
+    transform: scale(5) translateX(20%);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes roll-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) rotate(-720deg);
+    transform: translateX(-1000px) rotate(-720deg);
+    -webkit-filter: blur(50px);
+    filter: blur(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) rotate(0deg);
+    transform: translateX(0) rotate(0deg);
+    -webkit-filter: blur(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+@keyframes roll-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) rotate(-720deg);
+    transform: translateX(-1000px) rotate(-720deg);
+    -webkit-filter: blur(50px);
+    filter: blur(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(-15rem) rotate(0deg);
+    transform: translateX(-15rem) rotate(0deg);
+    -webkit-filter: blur(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}

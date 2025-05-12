@@ -4,10 +4,12 @@ import "./CadastroDeClientes.css";
 import axios from "axios";
 import { useState } from "react";
 import { IoPersonAdd } from "react-icons/io5";
-
+import { MdCancel } from "react-icons/md";
 
 function CadastroDeClientes() {
+  // useState De Cadastro
   const [clientes, setClientes] = useState([]);
+
   const [GetClientes, setGetClientes] = useState([]);
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -16,6 +18,40 @@ function CadastroDeClientes() {
   const [bairro, setBairro] = useState("");
   const [pontoDeReferencia, setPontoDeReferencia] = useState("");
   const [numero, setNumero] = useState("");
+
+  // buscar clientes
+  const [termoBusca, setTermoBusca] = useState("");
+  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+
+  const buscarClientes = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5080/api/CadastroDeCliente/BuscarCliente",
+        {
+          Cpf: termoBusca,
+          NomeDoCliente: termoBusca,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setClientesFiltrados(
+        Array.isArray(response.data) ? response.data : [response.data]
+      );
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (termoBusca.trim() !== "") {
+      buscarClientes();
+    } else {
+      setClientes([]);
+    }
+  }, [termoBusca]);
 
   function formatarCPF(cpf) {
     return cpf
@@ -83,19 +119,40 @@ function CadastroDeClientes() {
         const response = await axios.get(
           "http://localhost:5080/api/CadastroDeCliente/HistoricoDeClientes"
         );
-        console.log(response.data);
         setGetClientes(response.data);
       } catch (error) {
         console.error(error);
       }
-      
     }
     ClienteMethodGet();
-  },[]);
+  }, []);
 
   function continuarCadastrando() {
     window.location.reload();
   }
+  const ExcluirCadastro = async (id) => {
+    const nome = GetClientes.find((item) => item.id_Cliente === id).nomeDoCliente;
+    const confirmar = window.confirm(
+      `Tem certeza que deseja excluir o cadastro de ${nome}?`
+    );
+    if (!confirmar) return;
+    try {
+      await axios.delete(
+        `http://localhost:5080/api/CadastroDeCliente/ExcluirCadastro/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("Cadastro excluído com sucesso!");
+      setClientesFiltrados([]);
+    } catch (error) {
+      alert("Erro ao excluir cadastro.");
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <main className={clientes.length > 0 ? "blur" : "CadastroDeClientesMain"}>
@@ -112,8 +169,8 @@ function CadastroDeClientes() {
             <h1>Cadastro De Clientes</h1>
           </div>
         </nav>
-        <section>
-          <form onSubmit={handleFormSubmit}>
+        <section className="CadastroDeClientesSection">
+          <form onSubmit={handleFormSubmit} className="CadastroDeClientesForm">
             <IoPersonAdd size={50} className="Icon" />
             <input
               type="text"
@@ -166,7 +223,7 @@ function CadastroDeClientes() {
             <button className="button type1"></button>
           </form>
 
-          <table border={1}>
+          <table border={1} className="CadastradoRecente">
             <thead>
               <tr>
                 <th
@@ -185,17 +242,73 @@ function CadastroDeClientes() {
             </thead>
             <tbody>
               {GetClientes.slice(0, 7).map((cliente) => (
-                <tr key={cliente.Id_Cliente}>
+                <tr key={cliente.id_Cliente}> 
                   <td>{cliente.nomeDoCliente}</td>
                   <td>{cliente.cpf}</td>
                   <td>{cliente.telefone}</td>
-                  <td>{cliente.endereco}, {cliente.numero}</td>
+                  <td>
+                    {cliente.endereco}, {cliente.numero}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          <div className="ExcluirContainer">
+            <h1>Excluir Cadastros</h1>
+            <input
+              type="text"
+              placeholder="Coloque o Nome Do Cliente"
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+            />
+            <table className="tableEditar">
+              <thead>
+                <tr>
+                  <th
+                    colSpan={5}
+                    style={{
+                      backgroundColor: "rgb(0, 26, 255)",
+                      color: "white",
+                    }}
+                  >
+                    Cadastros Recentes
+                  </th>
+                </tr>
+                <tr>
+                  <th width={400}>Nome Do Cliente</th>
+                  <th width={150}>CPF</th>
+                  <th width={150}>Telefone</th>
+                  <th colSpan={2}>Endereço</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clientesFiltrados.map((cliente) => (
+                  <tr key={cliente.id_Cliente}>
+                    <td>{cliente.nomeDoCliente}</td>
+                    <td>{cliente.cpf}</td>
+                    <td>{cliente.telefone}</td>
+                    <td>
+                      {cliente.endereco}, {cliente.numero}
+                    </td>
+                    <td width={10}>
+                      <button
+                        onClick={() =>
+                          ExcluirCadastro(cliente.id_Cliente)
+                        }
+                      >
+                        <MdCancel size={30} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       </main>
+
+      {/* Tela De Edição*/}
       <div>
         <div className={clientes.length > 0 ? "TelaDeSucesso" : "null"}>
           {clientes.map((cliente) => (
