@@ -133,7 +133,7 @@ namespace Backend.Controllers
         }
 
 
-        [HttpGet("HistoricoDeVendasRealizadas")]
+        [HttpGet("VendasRealizadas")]
         public async Task<ActionResult> HistoricoDeVendasRealizadas()
         {
             try
@@ -141,7 +141,9 @@ namespace Backend.Controllers
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM Venda ORDER BY DataDaVenda DESC";
+                    var query = @"SELECT * FROM Venda 
+WHERE CAST(DataDaVenda AS DATE) = CAST(GETDATE() AS DATE)
+ORDER BY DataDaVenda DESC;";
                     var command = new SqlCommand(query, connection);
                     await connection.OpenAsync();
                     using (var reader = await command.ExecuteReaderAsync())
@@ -152,10 +154,13 @@ namespace Backend.Controllers
                             var venda = new VendaRealizadaProp
                             {
                                 NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
+                                Comprador = reader["NomeDoComprado"].ToString(),
                                 PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
-                                QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
+                                quantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
                                 FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
+                                IdVenda = Convert.ToInt32(reader["IdVenda"]),
                             };
                             vendas.Add(venda);
                         }
@@ -181,7 +186,7 @@ namespace Backend.Controllers
 
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@comprado", "%" + Filtrar.NomeDoComprado + "%");
-                    command.Parameters.AddWithValue("@formaDePagamento", Filtrar.FormaDePagamento );
+                    command.Parameters.AddWithValue("@formaDePagamento", Filtrar.FormaDePagamento);
 
 
                     await connection.OpenAsync();
@@ -212,7 +217,7 @@ namespace Backend.Controllers
             }
         }
         [HttpPost("AbaterValor/{idVenda}")]
-        public async Task<ActionResult> AbaterValorNaFicha(int idVenda , [FromBody] VendaRealizadaProp Atualizar)
+        public async Task<ActionResult> AbaterValorNaFicha(int idVenda, [FromBody] VendaRealizadaProp Atualizar)
         {
             try
             {
@@ -246,6 +251,8 @@ namespace Backend.Controllers
                 return BadRequest($"Erro ao abater valor: {ex.Message}");
             }
         }
+
+
 
 
     }

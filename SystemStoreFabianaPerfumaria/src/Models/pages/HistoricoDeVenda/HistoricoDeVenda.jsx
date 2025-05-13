@@ -10,6 +10,7 @@ import { MdCancel } from "react-icons/md";
 import { format } from "date-fns";
 function HistoricoDeVenda() {
   const [vendas, setVendas] = useState([]);
+  const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
   const [busca, setBusca] = useState("");
   const [detalhes, setDetalhes] = useState(false);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
@@ -47,7 +48,7 @@ function HistoricoDeVenda() {
       );
       
       console.log(response.data);
-      setVendas(response.data);
+      setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -97,6 +98,23 @@ function HistoricoDeVenda() {
     setValor(valorFormatado);
     setValorLimpo(valorNumero);
   }
+
+  async function FechandoCaixa(){
+    try{
+      const response = await axios.get("http://localhost:5080/api/RealizarVenda/VendasRealizadas");
+      setHistoricoDeVendasDeHoje(response.data);
+    } catch (error) {
+      alert("Erro ao Fechar Caixa", error);
+      console.error(
+        "Erro ao fechar caixa:",
+        error
+      );
+    }
+  }
+
+  useEffect(() => {
+    FechandoCaixa();
+  }, []);
   return (
     <>
       <div className="navBar">
@@ -142,7 +160,7 @@ function HistoricoDeVenda() {
               </tr>
             </thead>
             <tbody>
-              {vendas.map((venda) => (
+              {HistoricoDeVendasDeHoje.map((venda) => (
                 <tr key={venda.IdVenda}>
                   <td>{venda.comprador}</td>
                   <td>{venda.nomeDoProduto}</td>
