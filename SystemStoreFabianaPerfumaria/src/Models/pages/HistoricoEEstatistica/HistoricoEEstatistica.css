@@ -1,115 +1,69 @@
-.estatistica {
+.TotalVendidoDoDia {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 2rem;
-  width: 100%;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+  top: -0.1rem;
   height: 30rem;
 
-  & .grafico {
+  & .containerGrafico {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(237, 238, 238);
-    height: 25rem;
     flex-direction: column;
-    flex-wrap: wrap;
-    text-align: center;
-    width: 80%;
-    box-shadow: 6px 1px 3px 0px rgba(0, 0, 0, 0.75);
-    border-radius: 22px;
-    margin-bottom: 20rem;
-  }
-}
-.estatisticaProduto {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 25rem;
-  & .graficoProduto {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    padding-top: 20px;
-    flex-direction: column;
-    background-color: rgb(237, 238, 238);
-    height: 20rem;
-    border-radius: 15px;
-    box-shadow: 6px 1px 3px 0px rgba(0, 0, 0, 0.75);
-    margin-bottom: 25rem;
-  }
-}
-.Historico {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-top: 4rem;
-  flex-wrap: wrap;
-  & input[type="date"] {
-    width: 20rem;
-    font-size: 1rem;
-    text-align: center;
-    height: 2rem;
-    border-radius: 23px;
-    padding-right: 10px;
-    border: 1px solid black;
-    padding-left: 10px;
-    cursor: pointer;
-    position: relative;
-    top: -1rem;
-    box-shadow: 2px 1px 2px 0px rgba(0, 0, 0, 0.75);
-  }
-  & .PesquisaHistorico {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5rem;
-    & input[type="text"] {
-      width: 20rem;
-      height: 2rem;
+    gap: 8rem;
+    width: 90%;
+    height: 30rem;
+    background-color: #2525256b;
+    border-radius: 12px;
+    box-shadow: 4px 4px 5px -1px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 4px 4px 5px -1px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 4px 4px 5px -1px rgba(0, 0, 0, 0.75);
+    & .TotalVendido {
       position: relative;
       top: -1rem;
-      border-radius: 23px;
-      border: 1px solid black;
-      padding-left: 10px;
-      box-shadow: 2px 1px 2px 0px rgba(0, 0, 0, 0.75);
-      font-size: 1rem;
+      left: 23rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      font-size: 2rem;
+      background-color: black;
+      color: white;
+      border-radius: 12px;
+      padding: 10px;
+    }
+    & .TabelaDeVendasDeHoje {
+      width: 100%;
+      height: 90%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      & table {
+        border-collapse: collapse;
+        border: 1px solid black;
+        text-align: center;
+        width: 95%;
+        margin-top: 1rem;
+        font-size: 1.1rem;
+        & th {
+          border: 1px solid black;
+          background-color: rgb(4, 50, 255);
+          color: white;
+          height: 2rem;
+        }
+        & tr:nth-child(odd) {
+          background-color: #770707;
+          color: #fff;
+        }
+        & tr:nth-child(even) {
+          background-color: #252525;
+          color: #fff;
+        }
+      }
     }
   }
-  & .detalhesBtn {
-    width: 100%;
-    cursor: pointer;
-    background: rgb(159, 71, 4);
-    background: linear-gradient(
-      90deg,
-      rgba(159, 71, 4, 1) 7%,
-      rgba(219, 95, 0, 1) 48%,
-      rgba(251, 149, 14, 1) 61%
-    );
-    color: white;
-    border: none;
-    height: 2rem;
-    transition: all 0.5s ease;
-  }
-  & table {
-    border-collapse: collapse;
-    border: 1px solid black;
-    text-align: center;
-    margin-bottom: 10rem;
-  }
-}
-.detalhesBtn:hover {
-  transform: scale(1.1);
-  background: rgb(126, 255, 5);
-  color: black;
-}
-
-.ShowDetalhes{
-    position:absolute;
-    width: 60%;
-    height: 60%;
-    background-color: royalblue;
 }

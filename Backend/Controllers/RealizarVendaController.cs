@@ -182,13 +182,52 @@ ORDER BY DataDaVenda DESC;";
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado OR FormaDePagamento = @formaDePagamento ";
+                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado OR FormaDePagamento = @formaDePagamento ORDER BY NomeDoComprado";
 
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@comprado", "%" + Filtrar.NomeDoComprado + "%");
                     command.Parameters.AddWithValue("@formaDePagamento", Filtrar.FormaDePagamento);
 
 
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var vendas = new List<object>();
+                        while (await reader.ReadAsync())
+                        {
+                            vendas.Add(new
+                            {
+                                Id_Venda = Convert.ToInt32(reader["IdVenda"]),
+                                Comprador = reader["NomeDoComprado"].ToString(),
+                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
+                                quantidadeTotal = Convert.ToInt32(reader["quantidadeTotal"]),
+                                NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
+                                DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
+                            });
+                        }
+                        return Ok(vendas);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("FiltrarVendasPelaData")]
+        public async Task<ActionResult> FiltrarVendasPelaData ([FromBody] FiltrarVendasPelaData FiltrarData )
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY DataDaVenda DESC";
+                    var command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@dataInicial", FiltrarData.DataInicio);
+                    command.Parameters.AddWithValue("@dataFinal", FiltrarData.DataFim);
                     await connection.OpenAsync();
                     using (var reader = await command.ExecuteReaderAsync())
                     {
