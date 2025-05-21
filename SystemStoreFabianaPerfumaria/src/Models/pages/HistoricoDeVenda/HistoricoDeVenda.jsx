@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./HistoricoDeVenda.css";
 import axios from "axios";
-import GraficoDeVendasDoDia from "../../../components/Graficos/GraficoDeVendasDoDia";
 
 import { FaUser } from "react-icons/fa";
 import { BiSolidUserDetail } from "react-icons/bi";
@@ -12,6 +11,7 @@ import { format } from "date-fns";
 function HistoricoDeVenda() {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
   const [busca, setBusca] = useState("");
+  const [formaDePagamento, setFormaDePagamento] = useState("");
   const [detalhes, setDetalhes] = useState(false);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
 
@@ -72,7 +72,7 @@ function HistoricoDeVenda() {
         "http://localhost:5080/api/RealizarVenda/FiltrarVendas",
         {
           nomeDoComprado: busca,
-          formaDePagamento: busca,
+          formaDePagamento: formaDePagamento,
         },
         {
           headers: {
@@ -88,13 +88,13 @@ function HistoricoDeVenda() {
     }
   }
   useEffect(() => {
-    if (busca.trim().length > 0) {
+    if (busca||formaDePagamento.trim().length > 0) {
       BuscandoVendas();
       console.log("Forma De pagamento:", busca);
     } else {
       setHistoricoDeVendasDeHoje([]);
     }
-  }, [busca]);
+  }, [busca , formaDePagamento]);
 
   // eslint-disable-next-line no-redeclare
   async function AbaterFicha() {
@@ -150,7 +150,6 @@ function HistoricoDeVenda() {
         <div className="BuscarHistorico">
           <div className="InputsPesquisaDeVenda">
             <form>
-              {/* <input type="date" onChange={(e) => setBusca(e.target.value)}/> */}
               <input
                 type="text"
                 placeholder="Nome do Cliente"
@@ -158,7 +157,7 @@ function HistoricoDeVenda() {
               />
               <select
                 className="select"
-                onChange={(e) => setBusca(e.target.value)}
+                onChange={(e) => setFormaDePagamento(e.target.value)}
               >
                 <option value="">Pesquisar Pela Forma De Pagamento</option>
                 <option value="Espécie">Dinheiro</option>

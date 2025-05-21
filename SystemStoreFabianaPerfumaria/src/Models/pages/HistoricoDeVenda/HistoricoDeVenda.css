@@ -69,7 +69,6 @@
       }
       & td {
         border: 1px solid #000000;
-        color: white;
         & button {
           width: 100%;
           border: none;
@@ -87,6 +86,10 @@
       & tr:nth-child(even) {
         background-color: rgb(82, 82, 82);
         color: white;
+      }
+      & tr:nth-child(odd) {
+        background-color: rgb(212, 212, 212);
+        color: black;
       }
     }
   }
@@ -184,13 +187,7 @@
     flex-direction: column;
     gap: 1.3rem;
     transition: all 0.5s ease-in-out;
-    background: #2a7b9b;
-    background: linear-gradient(
-      90deg,
-      rgba(42, 123, 155, 1) 0%,
-      rgba(87, 199, 133, 1) 50%,
-      rgba(237, 221, 83, 1) 100%
-    );
+    background-image: url("../../../img/BackgroundDasDivs/ranger-4df6c1b6.png");
     box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
     -webkit-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
@@ -254,22 +251,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #E2642A;
   height: 32rem;
   justify-content: flex-start;
   position: relative;
-  top: -0.1rem;
+  top: -3rem;
   gap: 2rem;
-  & h2{
+  & h2 {
     color: white;
-    font-size: 2rem
+    font-size: 2rem;
   }
   & .Conteudo {
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-color: antiquewhite;
-    height: 25rem;
+    background-color: #07070741;
+    box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    height: 30rem;
     width: 90%;
     border-radius: 12px;
     gap: 2rem;
@@ -286,7 +286,7 @@
         height: 2.5rem;
         font-size: 1rem;
         border-radius: 10px;
-        border : 1px solid #0037eb;
+        border: 1px solid #0037eb;
       }
     }
     & .TabelaDeVendasEntreDatas {
@@ -325,6 +325,10 @@
         }
         & tr:nth-child(even) {
           background-color: #195fbb;
+          color: #fff;
+        }
+        & tr:nth-child(odd) {
+          background-color: #252525;
           color: #fff;
         }
       }

@@ -182,11 +182,18 @@ ORDER BY DataDaVenda DESC;";
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM Venda WHERE NomeDoComprado LIKE @comprado OR FormaDePagamento = @formaDePagamento ORDER BY NomeDoComprado";
+                    var query = @"
+                                SELECT *
+                                FROM Venda
+                                WHERE (@comprado IS NULL OR NomeDoComprado LIKE '%' + @comprado + '%')
+                                  AND (@formaDePagamento IS NULL OR FormaDePagamento = @formaDePagamento)
+                                ORDER BY NomeDoComprado";
 
                     var command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@comprado", "%" + Filtrar.NomeDoComprado + "%");
-                    command.Parameters.AddWithValue("@formaDePagamento", Filtrar.FormaDePagamento);
+
+                    command.Parameters.AddWithValue("@comprado", string.IsNullOrWhiteSpace(Filtrar.NomeDoComprado) ? (object)DBNull.Value : Filtrar.NomeDoComprado);
+                    command.Parameters.AddWithValue("@formaDePagamento", string.IsNullOrWhiteSpace(Filtrar.FormaDePagamento) ? (object)DBNull.Value : Filtrar.FormaDePagamento);
+
 
 
                     await connection.OpenAsync();
@@ -217,14 +224,14 @@ ORDER BY DataDaVenda DESC;";
             }
         }
         [HttpPost("FiltrarVendasPelaData")]
-        public async Task<ActionResult> FiltrarVendasPelaData ([FromBody] FiltrarVendasPelaData FiltrarData )
+        public async Task<ActionResult> FiltrarVendasPelaData([FromBody] FiltrarVendasPelaData FiltrarData)
         {
             try
             {
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY DataDaVenda DESC";
+                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY NomeDoComprado";
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@dataInicial", FiltrarData.DataInicio);
                     command.Parameters.AddWithValue("@dataFinal", FiltrarData.DataFim);
@@ -288,6 +295,49 @@ ORDER BY DataDaVenda DESC;";
             catch (Exception ex)
             {
                 return BadRequest($"Erro ao abater valor: {ex.Message}");
+            }
+        }
+        [HttpPost("ClientesComFichaEmAberto")]
+
+        public async Task<ActionResult> ClienteComValorDaFichaEmAberto([FromBody] FiltrarVendasPelaFicha FiltrarData)
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    await connection.OpenAsync();
+
+                    var query = "SELECT * FROM Venda WHERE ValorNaFicha > 0 AND NomeDoComprado = @NomeDoComprado";
+
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@NomeDoComprado", FiltrarData.FichaEmAberto);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            var vendas = new List<object>();
+                            while (await reader.ReadAsync())
+                            {
+                                vendas.Add(new
+                                {
+                                    Id_Venda = Convert.ToInt32(reader["IdVenda"]),
+                                    Comprador = reader["NomeDoComprado"].ToString(),
+                                    PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
+                                    quantidadeTotal = Convert.ToInt32(reader["quantidadeTotal"]),
+                                    NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
+                                    DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                                    FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                                    ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
+                                });
+                            }
+                            return Ok(vendas);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

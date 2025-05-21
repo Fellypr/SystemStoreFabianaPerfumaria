@@ -20,8 +20,8 @@ function RealizarVendaTest() {
   const [ficha, setFicha] = useState("R$ 0,00");
   const [cliente, setcliente] = useState([]);
   const [pesquisarCliente, setPesquisarCliente] = useState("");
-
   const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
+  const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
 
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
@@ -49,7 +49,6 @@ function RealizarVendaTest() {
           },
         }
       );
-      console.log([response.data]);
       setcliente(
         Array.isArray(response.data) ? response.data : [response.data]
       );
@@ -177,7 +176,12 @@ function RealizarVendaTest() {
 
   const FinalizarVenda = async () => {
     window.scrollTo(0, 0);
-    window.confirm("Deseja finalizar a venda?");
+    const confirmar = window.confirm("Deseja finalizar a venda?");
+    if (!confirmar) return;
+    if (produtosVendidos.length === 0) {
+      alert("Não há produtos na venda!");
+      return;
+    }
     try {
       const precoLimpo = precoTotal.replace(/\D/g, "");
       const Data = new Date();
@@ -216,11 +220,9 @@ function RealizarVendaTest() {
         }
       );
 
-      console.log("Venda realizada com sucesso:", response.data);
-
       alert("Venda realizada com sucesso!");
+      window.location.reload();
 
-      // Limpar os dados
       setProdutosVendidos([]);
       setQuantidadeTotal(0);
       setPrecoTotal("R$ 0,00");
@@ -251,6 +253,29 @@ function RealizarVendaTest() {
     }
   };
 
+  async function ClienteComFichaEmAberto() {
+    try {
+      const response = await axios.post(
+        "http://localhost:5080/api/RealizarVenda/ClientesComFichaEmAberto",
+        {
+          fichaEmAberto: pesquisarCliente,
+        }
+      );
+      console.log("Aqui esta os que estão com ficha em aberto", response.data);
+      setValorDaFichaEmAberto(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    if (pesquisarCliente.length > 2) {
+      ClienteComFichaEmAberto();
+      setTimeout(() => {
+        setValorDaFichaEmAberto([]);
+      },5505)
+    }
+  }, [pesquisarCliente]);
+
   return (
     <>
       <div className="body">
@@ -280,6 +305,7 @@ function RealizarVendaTest() {
                 placeholder="Digite o Nome Do Cliente "
                 value={pesquisarCliente}
                 onChange={(e) => setPesquisarCliente(e.target.value)}
+                required
               />
             </div>
             <div className="ClientesEncontrados">
@@ -481,6 +507,13 @@ function RealizarVendaTest() {
               </button>
             </div>
           </div>
+          {valorDaFichaEmAberto.length > 0 ? (
+            <div className="AlertaDeFichaNaoPaga">
+              <h2>⚠️ Alerta De Ficha Não Paga</h2>
+              <p>O Cliente Estar Na Lista De Ficha Pendentes</p>
+              <div className="Tempo"></div>
+            </div>
+          ): ""}
         </section>
       </div>
     </>

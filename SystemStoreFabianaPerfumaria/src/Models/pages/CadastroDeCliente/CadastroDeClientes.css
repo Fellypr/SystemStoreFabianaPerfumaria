@@ -21,6 +21,10 @@
           color: #fff;
           
         }
+        & tr:nth-child(odd) {
+          background-color: #252525;
+          color: #fff;
+        }
       }
 
       & .ExcluirContainer {
@@ -29,19 +33,21 @@
         display: flex;
         align-items: center;
         flex-direction: column;
+        height: 32rem;
         width: 90%;
         gap: 1.5rem;
-        background-color: #ecebeb;
+        background-color: rgba(0, 0, 0, 0.233);
         box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
         border-radius: 12px;
         padding-top: 20px;
-        & input {
+        overflow-y: auto;
+        color: #fff;
+        & .ExcluirInput{
           width: 50%;
-          height: 2rem;
           border: 1px solid #000000;
-          border-radius: 10px;
+          border-radius: 5px;
           padding-left: 10px;
-          font-size: 1rem;
+          font-size: 1.5rem;
           transition: all 0.5s ease-in;
           text-align: center;
         }
@@ -52,6 +58,7 @@
           height: 70px;
           margin-bottom: 28rem;
           border: 1px solid black;
+          
          
       
           & th {
@@ -63,6 +70,10 @@
           }
           & tr:nth-child(even) {
             background-color: #5c5c5c;
+            color: #fff;
+          }
+          & tr:nth-child(odd) {
+            background-color: #252525;
             color: #fff;
           }
           & button{
@@ -82,7 +93,7 @@
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(2, 1fr);
-    background-color: rgb(243, 237, 237);
+    background-color: rgba(0, 0, 0, 0.233);
     width: 60%;
     height: 25rem;
     border-radius: 20px;
@@ -438,6 +449,10 @@
         animation: pushReleaseFromLeft 1.5s ease-in;
       }
     }
+  }
+  .TelaDeSucessoBody{
+    background-color: #F27C22;
+    height: 100%;
   }
 
   @keyframes blurIn {

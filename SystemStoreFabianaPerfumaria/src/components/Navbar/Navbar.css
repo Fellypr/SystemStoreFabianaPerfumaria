@@ -1,12 +1,7 @@
 .navBar {
   display: flex;
-  background: rgb(159, 71, 4);
-  background: linear-gradient(
-    90deg,
-    rgba(159, 71, 4, 1) 7%,
-    rgba(219, 95, 0, 1) 48%,
-    rgba(251, 149, 14, 1) 61%
-  );
+  background-color: rgba(0, 0, 0, 0.486);
+  backdrop-filter: blur(5px);
   height: 5rem;
   padding: 1rem;
   color: white;

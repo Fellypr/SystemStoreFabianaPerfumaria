@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 //react icons
 import { GiDelicatePerfume,GiWallet } from "react-icons/gi";
 import { MdDeleteForever } from "react-icons/md";
-import { FaHistory,FaUserEdit  } from "react-icons/fa";
+import {FaUserEdit  } from "react-icons/fa";
+import { FaCashRegister } from "react-icons/fa6";
 import { LiaEdit } from "react-icons/lia";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
@@ -32,8 +33,8 @@ const ScreenMain = () => {
           </div>
           <div className="Item" style={{ backgroundColor: "rgb(0, 81, 255)" }}>
             <Link className="Link" to={"/HistoricoEEstatistica"}>
-              <FaHistory size={50} />
-              Historico De Vendas e Estatísticas
+              <FaCashRegister size={50} />
+              Fechamento De Caixa
             </Link>
           </div>
           <div className="Item" style={{ backgroundColor: "rgb(0, 0, 0)" }}>

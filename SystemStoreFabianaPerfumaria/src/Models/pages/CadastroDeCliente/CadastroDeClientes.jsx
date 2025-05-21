@@ -261,6 +261,7 @@ function CadastroDeClientes() {
               placeholder="Coloque o Nome Do Cliente"
               value={termoBusca}
               onChange={(e) => setTermoBusca(e.target.value)}
+              className="ExcluirInput"
             />
             <table className="tableEditar">
               <thead>

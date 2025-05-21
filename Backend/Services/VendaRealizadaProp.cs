@@ -54,6 +54,11 @@ namespace Backend.Services
         [JsonPropertyName("dataFim")]
         public DateTime? DataFim { get; set; }
     }
+    public class FiltrarVendasPelaFicha
+    {
+        [JsonPropertyName("fichaEmAberto")]
+        public string? FichaEmAberto { get; set; }
+    }
     
 
 }
