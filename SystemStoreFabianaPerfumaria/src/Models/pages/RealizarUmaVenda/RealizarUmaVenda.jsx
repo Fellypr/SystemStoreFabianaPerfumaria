@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -16,7 +17,6 @@ function RealizarVendaTest() {
   const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
   const [formaDePagamento, setFormaDePagamento] = useState("");
   const [dinheiroRecebido, setDinheiroRecebido] = useState("R$ 0,00");
-  const [troco, setTroco] = useState("R$ 0,00");
   const [ficha, setFicha] = useState("R$ 0,00");
   const [cliente, setcliente] = useState([]);
   const [pesquisarCliente, setPesquisarCliente] = useState("");
@@ -153,27 +153,6 @@ function RealizarVendaTest() {
     );
   };
 
-  const calcularTroco = () => {
-    const recebido = parseFloat(dinheiroRecebido.replace(/\D/g, "")) / 100;
-    const total = parseFloat(precoTotal.replace(/\D/g, "")) / 100;
-
-    if (!isNaN(recebido) && recebido >= total) {
-      const trocoCalc = (recebido - total).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-      setTroco(trocoCalc);
-    } else {
-      setTroco("R$ 0,00");
-    }
-  };
-
-  useEffect(() => {
-    if (formaDePagamento === "dinheiro") {
-      calcularTroco();
-    }
-  }, [dinheiroRecebido, precoTotal, formaDePagamento]);
-
   const FinalizarVenda = async () => {
     window.scrollTo(0, 0);
     const confirmar = window.confirm("Deseja finalizar a venda?");
@@ -227,7 +206,6 @@ function RealizarVendaTest() {
       setQuantidadeTotal(0);
       setPrecoTotal("R$ 0,00");
       setDinheiroRecebido("R$ 0,00");
-      setTroco("R$ 0,00");
       setFormaDePagamento("");
       setFicha("R$ 0,00");
       setcliente("");
@@ -247,7 +225,6 @@ function RealizarVendaTest() {
       setQuantidadeTotal(0);
       setPrecoTotal("R$ 0,00");
       setDinheiroRecebido("R$ 0,00");
-      setTroco("R$ 0,00");
       setFormaDePagamento("");
       setFicha("R$ 0,00");
     }
@@ -468,24 +445,6 @@ function RealizarVendaTest() {
                 <option value="Crediario">Ficha</option>
               </select>
             </div>
-
-            {formaDePagamento === "Espécie" && (
-              <div className="IfItIsWithMoneyContainer">
-                <div className="IfItIsWithMoney">
-                  <h3>Dinheiro Recebido</h3>
-                  <input
-                    type="text"
-                    value={dinheiroRecebido}
-                    onChange={(e) => formatarMoeda(e, setDinheiroRecebido)}
-                  />
-                </div>
-                <FaEquals fontSize={30} />
-                <div className="IfItIsWithMoney">
-                  <h3>Troco</h3>
-                  <p>{troco}</p>
-                </div>
-              </div>
-            )}
 
             <div className="Botoes">
               <button id="btn" style={{ backgroundColor: "rgb(0, 68, 255)" }}>

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using StoreSystemFabianaPerfumaria.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using Backend.Services;
 
 namespace StoreSystemFabianaPerfumaria.Controllers
 
@@ -88,7 +89,6 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 Preco = Convert.ToDecimal(reader["Preco"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
-                                UrlImagem = reader["UrlImagem"].ToString(),
                             };
                             produtos.Add(produto);
                         }
@@ -161,6 +161,62 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return BadRequest($"Erro ao excluir o produto: {ex.Message}");
             }
         }
+        [HttpPost("BuscarProdutoEstoque")]
+        public async Task<IActionResult> Buscar([FromBody] BuscarPorEstoque search)
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = @"
+                SELECT * FROM AdicionarProduto 
+                WHERE 
+                    (@Nome IS NULL OR NomeDoProduto LIKE @Nome) AND
+                    (@Marca IS NULL OR Marca LIKE @Marca) AND
+                    (@Codigo IS NULL OR CodigoDeBarra LIKE @Codigo)";
+
+                    var command = new SqlCommand(query, connection);
+
+                    command.Parameters.AddWithValue("@Nome", string.IsNullOrEmpty(search.NomeDoProduto) ? (object)DBNull.Value : "%" + search.NomeDoProduto + "%");
+                    command.Parameters.AddWithValue("@Marca", string.IsNullOrEmpty(search.Marca) ? (object)DBNull.Value : "%" + search.Marca + "%");
+                    command.Parameters.AddWithValue("@Codigo", string.IsNullOrEmpty(search.CodigoDeBarra) ? (object)DBNull.Value : "%" + search.CodigoDeBarra + "%");
+
+                    await connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var listaDeProduto = new List<object>();
+
+                        while (await reader.ReadAsync())
+                        {
+                            listaDeProduto.Add(new
+                            {
+                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                                Marca = reader["Marca"].ToString(),
+                                Preco = Convert.ToDecimal(reader["Preco"]),
+                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                                CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
+                                UrlImagem = reader["UrlImagem"].ToString(),
+                            });
+                        }
+
+                        if (listaDeProduto.Count == 0)
+                        {
+                            return NotFound("Nenhum produto encontrado.");
+                        }
+
+                        return Ok(listaDeProduto);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
 
     }
 

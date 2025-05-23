@@ -15,6 +15,7 @@ import RealizarUmaVenda from './Models/pages/RealizarUmaVenda/RealizarUmaVenda.j
 import CadastroDeClientes from './Models/pages/CadastroDeCliente/CadastroDeClientes.jsx'
 import EditarCliente from './Models/pages/EditarClientes/EditarCliente.jsx'
 import HistoricoDeVenda from './Models/pages/HistoricoDeVenda/HistoricoDeVenda.jsx'
+import ProdutosEmEstoque from './Models/pages/ProdudosEmEstoques/ProdutosEmEstoque.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -32,6 +33,9 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/CadastroDeClientes' element={<CadastroDeClientes/>}/>
                   <Route path='/EditarCliente' element={<EditarCliente/>}/>
                   <Route path='/HistoricoDeVenda' element={<HistoricoDeVenda/>}/>
+                  <Route path='/ProdutosEmEstoques' element={<ProdutosEmEstoque/>}/>
+                  
+                  
 
                   
 

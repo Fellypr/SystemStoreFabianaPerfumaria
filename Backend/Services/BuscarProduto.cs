@@ -10,4 +10,10 @@ namespace Backend.Services
         public string CodigoDeBarra { get; set; }
         public string NomeDoProduto { get; set; }
     }
+    public class BuscarPorEstoque
+    {
+        public string? NomeDoProduto { get; set; }
+        public string? Marca { get; set; }
+        public string? CodigoDeBarra { get; set; }
+    }
 }

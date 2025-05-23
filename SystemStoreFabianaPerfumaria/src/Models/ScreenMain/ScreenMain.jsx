@@ -8,6 +8,7 @@ import { FaCashRegister } from "react-icons/fa6";
 import { LiaEdit } from "react-icons/lia";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
+import { BiAlignLeft } from "react-icons/bi";
 
 import Navbar from "../../components/Navbar/Navbar";
 const ScreenMain = () => {
@@ -65,6 +66,12 @@ const ScreenMain = () => {
             <Link className="Link" to={"/HistoricoDeVenda"}>
               <GiWallet size={50}  />
               Historico De Vendas
+            </Link>
+          </div>
+          <div className="Item" style={{ backgroundColor: "rgb(206, 223, 50)" }}>
+            <Link className="Link" to={"/ProdutosEmEstoques"}>
+              <BiAlignLeft size={50}  />
+              Produtos Em Estoque
             </Link>
           </div>
         </div>
