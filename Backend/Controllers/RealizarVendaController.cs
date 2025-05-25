@@ -231,7 +231,7 @@ ORDER BY DataDaVenda DESC;";
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY NomeDoComprado";
+                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY DataDaVenda DESC";
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@dataInicial", FiltrarData.DataInicio);
                     command.Parameters.AddWithValue("@dataFinal", FiltrarData.DataFim);

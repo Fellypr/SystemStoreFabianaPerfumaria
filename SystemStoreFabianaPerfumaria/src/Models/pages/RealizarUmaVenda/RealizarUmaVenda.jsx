@@ -5,11 +5,13 @@ import axios from "axios";
 import "./RealizarUmaVenda.css";
 
 import { FaEquals } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
+import { FaUser,FaRegTrashAlt  } from "react-icons/fa";
+import { FcPaid } from "react-icons/fc";
 
 function RealizarVendaTest() {
   const [pesquisaProduto, setPesquisaProduto] = useState("");
   const [produto, setProduto] = useState([]);
+  const [produtosArmazenados, setProdutosArmazenados] = useState([]);
   const [produtosVendidos, setProdutosVendidos] = useState([]);
   const [quantidade, setQuantidade] = useState(1);
   const [quantidadeTotal, setQuantidadeTotal] = useState(0);
@@ -76,9 +78,8 @@ function RealizarVendaTest() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/BuscarProduto",
+        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
-          CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
         },
         {
@@ -88,31 +89,41 @@ function RealizarVendaTest() {
         }
       );
       setProduto(response.data);
+      setProdutosArmazenados(response.data);
     } catch (error) {
       console.error(error);
       setProduto(null);
     }
   };
+  const produtosFiltrados = (produto || []).filter((item) =>
+    item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
+  );
 
   useEffect(() => {
-    if (pesquisaProduto.trim().length > 0) {
+    if ((pesquisaProduto || "").trim().length > 0) {
       buscarProduto();
     } else {
-      setProduto(null);
+      setProduto([]);
+      setProdutosArmazenados([]);
     }
   }, [pesquisaProduto]);
 
+  function SelecionandoProdutos(produto) {
+    setPesquisaProduto(produto);
+    setProduto([]);
+  }
+
   const adicionarProduto = () => {
-    if (!produto) return;
+    if (!produtosArmazenados) return;
 
     const produtoComQuantidadeEDesconto = {
-      ...produto,
+      ...produtosArmazenados[0],
       quantidade,
       desconto,
     };
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
 
-    setProduto(null);
+    setProdutosArmazenados(null);
     setPesquisaProduto("");
     setQuantidade(1);
     setDesconto("R$ 0,00");
@@ -249,9 +260,12 @@ function RealizarVendaTest() {
       ClienteComFichaEmAberto();
       setTimeout(() => {
         setValorDaFichaEmAberto([]);
-      },5505)
+      }, 5505);
     }
   }, [pesquisarCliente]);
+  useEffect(() => {
+    console.log("Produtos Vendidos:", produtosVendidos);
+  });
 
   return (
     <>
@@ -277,6 +291,35 @@ function RealizarVendaTest() {
                 value={pesquisaProduto}
                 onChange={(e) => setPesquisaProduto(e.target.value)}
               />
+              <div
+                className={
+                  produtosFiltrados.length > 0
+                    ? "ContainerButtonBuscarDeProdutos"
+                    : "ContainerButtonBuscarDeProdutosOcultar"
+                }
+              >
+                {produtosFiltrados.length > 0 &&
+                  produtosFiltrados.map((produtos, index) => (
+                    <button
+                      onClick={() =>
+                        SelecionandoProdutos(produtos.nomeDoProduto)
+                      }
+                      key={index}
+                    >
+                      <div className="FiltroDeProdutos">
+                        <img
+                          src={produtos.urlImagem}
+                          alt=""
+                          width={60}
+                          height={60}
+                        />
+                        <p>{produtos.nomeDoProduto}</p>
+                        <p>{produtos.marca}</p>
+                        <p>{produtos.codigoDeBarra}</p>
+                      </div>
+                    </button>
+                  ))}
+              </div>
               <input
                 type="text"
                 placeholder="Digite o Nome Do Cliente "
@@ -311,61 +354,80 @@ function RealizarVendaTest() {
 
             <div className="TabelaDeProdutos">
               <div className="ProdutosEncontrados">
-                <div className="ImageProduct">
-                  <img
-                    src={produto?.urlImagem || " "}
-                    width={200}
-                    height={200}
-                    alt="Produto Nao Encontrado"
-                  />
-                </div>
-                <div className="InformationProtuctAll">
-                  <div className="InformationProtuct">
-                    <h3>Nome do Produto:</h3>
-                    <p>{produto?.nomeDoProduto || "Produto não encontrado"}</p>
-                  </div>
+                {(produtosArmazenados || []).length > 0 ? (
+                  produtosArmazenados.slice(0, 1).map((produtos) => (
+                    <React.Fragment key={produtos.id_produto}>
+                      <div className="ImageProduct">
+                        <img
+                          src={produtos?.urlImagem || " "}
+                          width={200}
+                          height={200}
+                          alt="Produto Nao Encontrado"
+                        />
+                      </div>
 
-                  <div className="InformationProtuct">
-                    <h3>Preço:</h3>
-                    <p>
-                      {produto?.preco !== undefined
-                        ? parseFloat(produto.preco).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })
-                        : "R$ 0,00"}
-                    </p>
-                  </div>
+                      <div className="InformationProtuctAll">
+                        <div className="InformationProtuct">
+                          <h3>Nome do Produto:</h3>
+                          <p>
+                            {produtos?.nomeDoProduto ||
+                              "Produto não encontrado"}
+                          </p>
+                        </div>
 
-                  <div className="InformationProtuct">
-                    <h3>Quantidade:</h3>
-                    <input
-                      type="number"
-                      min={1}
-                      value={quantidade}
-                      onChange={(e) => setQuantidade(e.target.value)}
-                    />
-                  </div>
+                        <div className="InformationProtuct">
+                          <h3>Preço:</h3>
+                          <p>
+                            {produtos?.preco !== undefined
+                              ? parseFloat(produtos.preco).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )
+                              : "R$ 0,00"}
+                          </p>
+                        </div>
 
-                  <div className="InformationProtuct">
-                    <h3>Desconto:</h3>
-                    <input
-                      type="text"
-                      value={desconto}
-                      onChange={(e) => formatarMoeda(e, setDesconto)}
-                    />
-                  </div>
-                </div>
+                        <div className="InformationProtuct">
+                          <h3>Quantidade:</h3>
+                          <input
+                            type="number"
+                            min={1}
+                            value={quantidade}
+                            onChange={(e) => setQuantidade(e.target.value)}
+                          />
+                        </div>
 
-                <button
-                  className="BtnAdicionar"
-                  type="submit"
-                  title="Adicionar"
-                  aria-label="Adicionar"
-                  onClick={adicionarProduto}
-                >
-                  Adicionar
-                </button>
+                        <div className="InformationProtuct">
+                          <h3>Desconto:</h3>
+                          <input
+                            type="text"
+                            value={desconto}
+                            onChange={(e) => formatarMoeda(e, setDesconto)}
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        className="BtnAdicionar"
+                        type="submit"
+                        title="Adicionar"
+                        aria-label="Adicionar"
+                        onClick={adicionarProduto}
+                      >
+                        Adicionar
+                      </button>
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <div className="SemProdutos">
+                    <FcPaid fontSize={150} />
+                    <p>Sistema Online</p>
+                  </div>
+                  
+                )}
               </div>
 
               <div className="TabelaDeProdutosAdicionados">
@@ -402,8 +464,8 @@ function RealizarVendaTest() {
                           })}
                         </td>
                         <td>
-                          <button onClick={() => removerProduto(index)}>
-                            X
+                          <button onClick={() => removerProduto(index)} className="BtnRemoverDaTabela">
+                            <FaRegTrashAlt fontSize={20} />
                           </button>
                         </td>
                       </tr>
@@ -472,7 +534,9 @@ function RealizarVendaTest() {
               <p>O Cliente Estar Na Lista De Ficha Pendentes</p>
               <div className="Tempo"></div>
             </div>
-          ): ""}
+          ) : (
+            ""
+          )}
         </section>
       </div>
     </>
