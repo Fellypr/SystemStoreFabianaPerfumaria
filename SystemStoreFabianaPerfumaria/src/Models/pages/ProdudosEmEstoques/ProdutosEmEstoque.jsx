@@ -42,6 +42,11 @@ function ProdutosEmEstoque() {
   const produtosFiltrados = (produtos || []).filter((item) =>
     item.nomeDoProduto||item.marca.toLowerCase().includes(termoNomeProduto||termoMarca.toLowerCase())
   );
+  function limitarNome(nome, limite = 4) {
+    const palavras = nome.split(" ");
+    if (palavras.length <= limite) return nome;
+    return palavras.slice(0, limite).join(" ") + " ...";
+  }
 
   return (
     <>
@@ -86,10 +91,11 @@ function ProdutosEmEstoque() {
                 {produtosFiltrados.map((produto, index) => (
                   <div className="BodyDate" key={index}>
                     <img src={produto.urlImagem}  width={85} height={80}/>
-                    <p><span>Nome do Produto:</span><br />{produto.nomeDoProduto}</p>
+                    <p><span>Nome do Produto:</span><br />{limitarNome(produto.nomeDoProduto,5)}</p>
                     <p><span>Marca:</span><br />{produto.marca}</p>
                     <p><span>Quantidade:</span><br />{produto.quantidade}</p>
                     <p><span>Preço:</span><br />R$ {parseFloat(produto.preco).toFixed(2)}</p>
+                    <p><span>Código:</span><br />{produto.codigoDeBarra}</p>
                   </div>
                 ))}
             </div>

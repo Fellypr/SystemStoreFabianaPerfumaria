@@ -5,7 +5,7 @@ import axios from "axios";
 import "./RealizarUmaVenda.css";
 
 import { FaEquals } from "react-icons/fa";
-import { FaUser,FaRegTrashAlt  } from "react-icons/fa";
+import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 
 function RealizarVendaTest() {
@@ -267,6 +267,12 @@ function RealizarVendaTest() {
     console.log("Produtos Vendidos:", produtosVendidos);
   });
 
+  function limitarNome(nome, limite = 4) {
+    const palavras = nome.split(" ");
+    if (palavras.length <= limite) return nome;
+    return palavras.slice(0, limite).join(" ") + " ...";
+  }
+
   return (
     <>
       <div className="body">
@@ -313,7 +319,7 @@ function RealizarVendaTest() {
                           width={60}
                           height={60}
                         />
-                        <p>{produtos.nomeDoProduto}</p>
+                        <p>{limitarNome(produtos.nomeDoProduto,5)}</p>
                         <p>{produtos.marca}</p>
                         <p>{produtos.codigoDeBarra}</p>
                       </div>
@@ -370,7 +376,7 @@ function RealizarVendaTest() {
                         <div className="InformationProtuct">
                           <h3>Nome do Produto:</h3>
                           <p>
-                            {produtos?.nomeDoProduto ||
+                            {limitarNome(produtos?.nomeDoProduto,5) ||
                               "Produto não encontrado"}
                           </p>
                         </div>
@@ -426,7 +432,6 @@ function RealizarVendaTest() {
                     <FcPaid fontSize={150} />
                     <p>Sistema Online</p>
                   </div>
-                  
                 )}
               </div>
 
@@ -464,7 +469,10 @@ function RealizarVendaTest() {
                           })}
                         </td>
                         <td>
-                          <button onClick={() => removerProduto(index)} className="BtnRemoverDaTabela">
+                          <button
+                            onClick={() => removerProduto(index)}
+                            className="BtnRemoverDaTabela"
+                          >
                             <FaRegTrashAlt fontSize={20} />
                           </button>
                         </td>

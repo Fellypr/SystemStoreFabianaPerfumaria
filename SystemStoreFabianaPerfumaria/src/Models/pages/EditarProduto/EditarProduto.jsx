@@ -16,9 +16,8 @@ function EditarProduto() {
   const buscarProdutos = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/BuscarProduto",
+        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
-          CodigoDeBarra: termoBusca,
           NomeDoProduto: termoBusca,
         },
         {
@@ -28,14 +27,14 @@ function EditarProduto() {
         }
       );
       console.log(response.data);
-      setProdutos([response.data]);
+      setProdutos(response.data);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
     }
   };
 
   useEffect(() => {
-    if (termoBusca.trim() !== "") {
+    if ((termoBusca||"").trim().length > 0) {
       console.log(produtos);
       buscarProdutos();
     } else {
@@ -70,7 +69,7 @@ function EditarProduto() {
     }
   };
 
-  const produtosFiltrados = produtos.filter((produto) =>
+  const produtosFiltrados = produtos||[].filter((produto) =>
     produto.nomeDoProduto.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
@@ -112,7 +111,7 @@ function EditarProduto() {
                   color: "white",
                 }}
               >
-                <th>Id</th>
+                <th>CodigoDoProduto</th>
                 <th>Nome Produto</th>
                 <th>Marca</th>
                 <th>Quantidade</th>
@@ -123,7 +122,7 @@ function EditarProduto() {
             <tbody>
               {produtosFiltrados.map((produto) => (
                 <tr key={produto.id_Produto}>
-                  <td width={50}>{produto.id_Produto}</td>
+                  <td width={50}>{produto.codigoDeBarra}</td>
                   <td width={200}>{produto.nomeDoProduto}</td>
                   <td width={100}>{produto.marca}</td>
                   <td width={50}>{produto.quantidade}</td>
