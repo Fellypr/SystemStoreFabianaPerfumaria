@@ -64,7 +64,7 @@ function EditarProduto() {
       setProdutoSelecionado(null);
       buscarProdutos();
     } catch (error) {
-      console.error("Erro ao atualizar produto:", error);
+      console.error(`Erro ao atualizar produto:${produtoSelecionado.id_Produto}`, error );
       alert("Erro ao atualizar o produto.");
     }
   };

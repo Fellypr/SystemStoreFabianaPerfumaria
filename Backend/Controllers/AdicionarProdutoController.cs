@@ -192,6 +192,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                         {
                             listaDeProduto.Add(new
                             {
+                                Id_Produto = Convert.ToInt32(reader["Id_Produto"]),
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
