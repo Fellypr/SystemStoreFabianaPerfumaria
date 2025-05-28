@@ -216,6 +216,54 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("BuscarProdutoParaRealizarVenda")]
+        public async Task<IActionResult> BuscarParaRealizarVenda([FromBody] BuscarPorEstoque searchvenda)
+        {
+            try
+            {
+                var connectionString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra LIKE @CodigoDeBarra OR NomeDoProduto LIKE @NomeDoProduto";
+                    var command = new SqlCommand(query, connection);
+
+                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", "%" + searchvenda.CodigoDeBarra + "%"));
+                    command.Parameters.Add(new SqlParameter("@NomeDoProduto", "%" + searchvenda.NomeDoProduto + "%"));
+
+                    await connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var listaDeProduto = new List<object>();
+
+                        while (await reader.ReadAsync())
+                        {
+                            listaDeProduto.Add(new
+                            {
+                                Id_Produto = Convert.ToInt32(reader["Id_Produto"]),
+                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                                Marca = reader["Marca"].ToString(),
+                                Preco = Convert.ToDecimal(reader["Preco"]),
+                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                                CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
+                                UrlImagem = reader["UrlImagem"].ToString(),
+                            });
+                        }
+
+                        if (listaDeProduto.Count == 0)
+                        {
+                            return NotFound("Nenhum produto encontrado.");
+                        }
+
+                        return Ok(listaDeProduto);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
 

@@ -78,9 +78,11 @@ function RealizarVendaTest() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
+        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoParaRealizarVenda",
         {
+          CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
+          
         },
         {
           headers: {
@@ -96,7 +98,7 @@ function RealizarVendaTest() {
     }
   };
   const produtosFiltrados = (produto || []).filter((item) =>
-    item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
+    item.codigoDeBarra||item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
   );
 
   useEffect(() => {
@@ -308,7 +310,7 @@ function RealizarVendaTest() {
                   produtosFiltrados.map((produtos, index) => (
                     <button
                       onClick={() =>
-                        SelecionandoProdutos(produtos.nomeDoProduto)
+                        SelecionandoProdutos(produtos.codigoDeBarra)
                       }
                       key={index}
                     >
@@ -319,7 +321,7 @@ function RealizarVendaTest() {
                           width={60}
                           height={60}
                         />
-                        <p>{limitarNome(produtos.nomeDoProduto,5)}</p>
+                        <p>{limitarNome(produtos.nomeDoProduto,3)}</p>
                         <p>{produtos.marca}</p>
                         <p>{produtos.codigoDeBarra}</p>
                       </div>
@@ -376,7 +378,7 @@ function RealizarVendaTest() {
                         <div className="InformationProtuct">
                           <h3>Nome do Produto:</h3>
                           <p>
-                            {limitarNome(produtos?.nomeDoProduto,5) ||
+                            {limitarNome(produtos?.nomeDoProduto,4) ||
                               "Produto não encontrado"}
                           </p>
                         </div>
