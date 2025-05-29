@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./RealizarUmaVenda.css";
+import QRCodeInsta from "../../../components/qrCode/Qrcode";
+
 
 import { FaEquals } from "react-icons/fa";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
@@ -24,7 +26,7 @@ function RealizarVendaTest() {
   const [pesquisarCliente, setPesquisarCliente] = useState("");
   const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
-
+  const [abrirNota, setAbrirNota] = useState(null);
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
     const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
@@ -36,7 +38,9 @@ function RealizarVendaTest() {
     );
     setValor(valorFormatado);
   }
-
+  function AbrirNota(nota) {
+    setAbrirNota(nota);
+  }
   const buscarCliente = async () => {
     try {
       const response = await axios.post(
@@ -82,7 +86,6 @@ function RealizarVendaTest() {
         {
           CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
-          
         },
         {
           headers: {
@@ -97,8 +100,10 @@ function RealizarVendaTest() {
       setProduto(null);
     }
   };
-  const produtosFiltrados = (produto || []).filter((item) =>
-    item.codigoDeBarra||item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
+  const produtosFiltrados = (produto || []).filter(
+    (item) =>
+      item.codigoDeBarra ||
+      item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
   );
 
   useEffect(() => {
@@ -321,7 +326,7 @@ function RealizarVendaTest() {
                           width={60}
                           height={60}
                         />
-                        <p>{limitarNome(produtos.nomeDoProduto,3)}</p>
+                        <p>{limitarNome(produtos.nomeDoProduto, 3)}</p>
                         <p>{produtos.marca}</p>
                         <p>{produtos.codigoDeBarra}</p>
                       </div>
@@ -378,7 +383,7 @@ function RealizarVendaTest() {
                         <div className="InformationProtuct">
                           <h3>Nome do Produto:</h3>
                           <p>
-                            {limitarNome(produtos?.nomeDoProduto,4) ||
+                            {limitarNome(produtos?.nomeDoProduto, 4) ||
                               "Produto não encontrado"}
                           </p>
                         </div>
@@ -519,7 +524,11 @@ function RealizarVendaTest() {
             </div>
 
             <div className="Botoes">
-              <button id="btn" style={{ backgroundColor: "rgb(0, 68, 255)" }}>
+              <button
+                id="btn"
+                onClick={AbrirNota}
+                style={{ backgroundColor: "rgb(0, 68, 255)" }}
+              >
                 Olhar Nota
               </button>
               <button
@@ -549,6 +558,86 @@ function RealizarVendaTest() {
           )}
         </section>
       </div>
+      
+      {abrirNota && (
+          <div id="nota-fiscal" className="NotaFiscal">
+            {produtosVendidos.length > 0 && (
+              <div
+                style={{
+                  fontFamily: "monospace",
+                  border: "1px dashed #000",
+                  padding: "16px",
+                  width: "350px",
+                  height: "auto",
+                  backgroundColor: "rgb(255, 255, 255)",
+                }}
+              >
+                <h3 style={{ textAlign: "center" }}>Fabiana Perfumaria</h3>
+                <p style={{ textAlign: "center" }}>Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL </p>
+                <hr />
+                <p style={{ textAlign: "center" }}>
+                  Documento Auxiliar da Nota Fiscal de
+                  <br />
+                  Consumidor Eletrônica
+                </p>
+                <hr />
+                <p style={{ textAlign: "center" }}>
+                  Compra Realizada em: {new Date().toLocaleDateString("pt-BR")}
+                </p>
+                <p>Pelo/a Cliente: {pesquisarCliente}</p>
+
+                <hr />
+                <table style={{ width: "100%", fontSize: "12px" }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: "left" }}>Cód</th>
+                      <th style={{ textAlign: "left" }}>Descrição</th>
+                      <th>Unidade</th>
+                      <th>Desconto</th>
+                      <th>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {produtosVendidos.map((item, index) => {
+                      const preco = parseFloat(item.preco);
+                      const quantidade = item.quantidade;
+                      const desconto =
+                        parseFloat(item.desconto?.replace(/\D/g, "") || 0) /
+                        100;
+                      const precoTotal = preco * quantidade - desconto;
+
+                      return (
+                        <tr key={index}>
+                          <td>{item.codigo || "----"}</td>
+                          <td>{limitarNome(item.nomeDoProduto, 4)}</td>
+                          <td>{quantidade}</td>
+                          <td>{desconto.toFixed(2)}</td>
+                          <td>{precoTotal.toFixed(2)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <hr />
+                <br />
+                <br />
+                <p style={{ fontSize: "16px" }}>
+                  QTD: TOTAL DE ITENS: {quantidadeTotal}
+                </p>
+                <p style={{ fontSize: "16px" }}>DESCONTO Na Venda: {DescontoNaVenda}</p>
+                <p style={{ fontSize: "16px" }}>VALOR TOTAL R$: {precoTotal}</p>
+                <p style={{ fontSize: "16px" }}>
+                  FORMA DE PAGAMENTO: {formaDePagamento}
+                </p>
+                <div className="qrCode">
+                  <QRCodeInsta />
+                </div>
+              </div>
+            )}
+            <button onClick={() => setAbrirNota(null)} className="fecharNota">fechar</button>
+            <button onClick={() => window.print()} className="baixarNota">Baixar Nota</button>
+          </div>
+      )}
     </>
   );
 }

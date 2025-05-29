@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "html2pdf.js": "^0.10.3",
+    "qr-code-styling": "^1.9.2",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",

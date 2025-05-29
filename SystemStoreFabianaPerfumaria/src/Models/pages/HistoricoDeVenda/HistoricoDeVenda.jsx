@@ -6,7 +6,6 @@ import axios from "axios";
 import { FaUser } from "react-icons/fa";
 import { BiSolidUserDetail } from "react-icons/bi";
 import { MdCancel } from "react-icons/md";
-
 import { format } from "date-fns";
 function HistoricoDeVenda() {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);

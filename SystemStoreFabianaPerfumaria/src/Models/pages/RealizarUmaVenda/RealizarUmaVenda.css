@@ -1,8 +1,9 @@
 .body {
   background-color: rgb(77, 119, 161);
-  height: 150vh;
+  height: 140vh;
   overflow-x: hidden;
   animation: blurIn 0.7s ease-in;
+  z-index: 4;
 
   & .BuscarProduto {
     height: 4rem;
@@ -137,7 +138,7 @@
           background-color: rgb(204, 204, 204);
         }
       }
-      & .BtnRemoverDaTabela{
+      & .BtnRemoverDaTabela {
         background-color: transparent;
         border: none;
         color: rgb(124, 124, 124);
@@ -145,7 +146,7 @@
         width: 100%;
         cursor: pointer;
       }
-      & .BtnRemoverDaTabela:hover{
+      & .BtnRemoverDaTabela:hover {
         color: rgb(0, 0, 0);
       }
     }
@@ -305,10 +306,11 @@
   to {
     width: 0%;
   }
-  
 }
 @keyframes moveFromRight {
-    from { transform: translateX(800px) }
+  from {
+    transform: translateX(800px);
+  }
 }
 .ClientesEncontrados {
   position: absolute;
@@ -356,7 +358,7 @@
     }
   }
 }
-.ContainerButtonBuscarDeProdutos{
+.ContainerButtonBuscarDeProdutos {
   position: absolute;
   width: 37.5rem;
   height: 29rem;
@@ -369,37 +371,36 @@
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-    & button{
-      width: 90%;
-      border-radius: 12px;
-      height: 4rem;
-      border: 1px solid blue;
-      cursor: pointer;
-        & .FiltroDeProdutos{
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1rem;
-          gap: 2rem;
-            & p{              
-              width: 7rem;
-              height: auto;
-              word-wrap: break-word;
-            }
-
-        }
-        & button:hover{
-          background-color: rgb(172, 171, 171);
-          transition: all 0.3s ease-in-out;
-        }
+  & button {
+    width: 90%;
+    border-radius: 12px;
+    height: 4rem;
+    border: 1px solid blue;
+    cursor: pointer;
+    & .FiltroDeProdutos {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      gap: 2rem;
+      & p {
+        width: 7rem;
+        height: auto;
+        word-wrap: break-word;
+      }
     }
+    & button:hover {
+      background-color: rgb(172, 171, 171);
+      transition: all 0.3s ease-in-out;
+    }
+  }
 }
-.ContainerButtonBuscarDeProdutosOcultar{
+.ContainerButtonBuscarDeProdutosOcultar {
   display: none;
 }
-.SemProdutos{
+.SemProdutos {
   width: 100%;
   height: 100%;
   display: flex;
@@ -408,6 +409,99 @@
   flex-direction: column;
   font-size: 1.5rem;
 }
+
+.NotaFiscal {
+  & #nota-fiscal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    position: relative;
+    top: -10rem;
+    & img {
+      position: relative;
+      top: -2rem;
+    }
+    & .InformationInGeral {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      left: 0.2rem;
+      gap: 0.4rem;
+    }
+  }
+}
+.NotaFiscal {
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.fecharNota {
+  position: absolute;
+  top: 130%;
+  right: 23rem;
+  cursor: pointer;
+  background-color: red;
+  border-radius: 10%;
+  width: 100px;
+  height: 40px;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  color: #fff;
+  padding: 5px;
+}
+.baixarNota{
+  position: absolute;
+  top: 130%;
+  right: 55rem;
+  cursor: pointer;
+  background-color: rgb(37, 223, 0);
+  border-radius: 10%;
+  width: 100px;
+  height: 40px;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  color: #fff;
+}
+.qrCode{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  text-align: center;
+
+}
+
+@media print {
+  body,
+  * {
+    visibility: hidden;
+  }
+
+  #nota-fiscal,
+  #nota-fiscal * {
+    visibility: visible;
+  }
+
+  #nota-fiscal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+
 @keyframes blurIn {
   from {
     filter: blur(20px);
