@@ -31,7 +31,7 @@
         flex-wrap: wrap;
         & input {
           border-radius: 12px;
-          width: 30rem;
+          width: 20rem;
           height: 2rem;
           border: 1px solid #000000;
           padding-left: 10px;
@@ -46,7 +46,7 @@
           border: 1px solid black;
         }
         & .select {
-          width: 30rem;
+          width: 15rem;
           height: 2rem;
           border-radius: 12px;
           border: 1px solid #000000;
@@ -243,6 +243,50 @@
     }
   }
 }
+@media screen and (max-width: 653px) {
+  .TabelaHistoricoDeVenda{
+    width: 100%;
+    & td,th{
+      font-size: 0.7rem;
+    }
+  }
+  .PesquisaPelaData{
+    width: 100%;
+  }
+  .TabelaDeVendasEntreDatas{
+    & td,th{
+      font-size: 0.7rem;
+    }
+  }
+  
+  
+}
+@media screen and (max-width: 423px) {
+  .TabelaHistoricoDeVenda{
+    width: 100%;
+    & td,th{
+      font-size: 0.5rem;
+    }
+  }
+  .PesquisaPelaData{
+    width: 100%;
+  }
+  .TabelaDeVendasEntreDatas{
+    & td,th{
+      font-size: 0.5rem;
+    }
+  }
+  
+}
+@media screen and (max-width: 710px) {
+  & .ConteudoDoHistorico{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    padding: 20px;
+  }
+}
 .HiddenAbater {
   display: none;
 }
@@ -290,7 +334,7 @@
       }
     }
     & .TabelaDeVendasEntreDatas {
-      width: 90%;
+      width: 100%;
       height: 90%;
       display: flex;
       align-items: center;
@@ -298,7 +342,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       & table {
-        width: 100%;
+        width: 90%;
         border-collapse: collapse;
         height: 2rem;
         & th {
@@ -375,3 +419,14 @@
     opacity: 1;
   }
 }
+
+.NotaFiscal{
+  background-color: #0037eb00;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+

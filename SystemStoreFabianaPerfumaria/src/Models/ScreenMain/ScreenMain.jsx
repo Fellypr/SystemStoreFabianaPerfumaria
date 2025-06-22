@@ -45,12 +45,12 @@ const ScreenMain = () => {
             </Link>
           </div>
           <div className="Item" style={{ backgroundColor: "rgb(89, 0, 255)" }}>
-            <Link className="Link" to={"/RealizarUmaVenda"}>
+            <Link className="Link" to={"/RealizarUmaVenda"} target="_blank">
               <MdOutlineAddShoppingCart size={50} />
               Realizar uma Venda
             </Link>
           </div>
-          <div className="Item" style={{ backgroundColor: "rgb(255, 102, 0)" }}>
+          <div className="Item" style={{ backgroundColor: "rgb(214, 77, 162)" }}>
             <Link className="Link" to={"/CadastroDeClientes"}>
               <IoPersonAdd size={50}  />
               Cadastro de Clientes

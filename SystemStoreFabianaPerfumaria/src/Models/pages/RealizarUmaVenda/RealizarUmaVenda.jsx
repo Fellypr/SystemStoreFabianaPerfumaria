@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./RealizarUmaVenda.css";
+import "./RealizarVendaMobile.css";
 import QRCodeInsta from "../../../components/qrCode/Qrcode";
 
 
@@ -247,6 +248,14 @@ function RealizarVendaTest() {
       setFicha("R$ 0,00");
     }
   };
+  function ScreenDefaull(){
+    if(window.screen.width < 1348){
+      return;
+    }
+  }
+  useEffect(() => {
+    ScreenDefaull();
+  },[])
 
   async function ClienteComFichaEmAberto() {
     try {
@@ -570,6 +579,7 @@ function RealizarVendaTest() {
                   width: "350px",
                   height: "auto",
                   backgroundColor: "rgb(255, 255, 255)",
+                  color: "black",
                 }}
               >
                 <h3 style={{ textAlign: "center" }}>Fabiana Perfumaria</h3>
@@ -638,6 +648,9 @@ function RealizarVendaTest() {
             <button onClick={() => window.print()} className="baixarNota">Baixar Nota</button>
           </div>
       )}
+      <div className={ScreenDefaull?"ScreenDefaull":"ScreenNormal"}>
+        <p>🙄Tela Ainda Não Adaptavel Para Mobile, Por Enquanto vendas apenas em Desktop🙄</p>
+      </div>
     </>
   );
 }

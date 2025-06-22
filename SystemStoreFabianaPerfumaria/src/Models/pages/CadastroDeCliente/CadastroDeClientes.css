@@ -45,7 +45,7 @@
         & .ExcluirInput{
           width: 50%;
           border: 1px solid #000000;
-          border-radius: 5px;
+          border-radius: 10px;
           padding-left: 10px;
           font-size: 1.5rem;
           transition: all 0.5s ease-in;
@@ -102,6 +102,9 @@
     position: relative;
     top: -2rem;
     padding-top: 5rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     & .Icon {
       position: absolute;
@@ -137,8 +140,7 @@
       border-radius: 10px;
       cursor: pointer;
       position: relative;
-      top: -0.2rem;
-      left: 83%;
+      left: 84%;
       overflow: hidden;
       transition: all 0.5s ease-in-out;
       font-size: 1.2rem;
@@ -192,6 +194,36 @@
       transform: translateY(-50px) scale(0) rotate(120deg);
     }
   }
+  @media screen and (max-width: 735px) {
+    & .CadastroDeClientesForm {
+      display: flex;
+      height: auto;
+      justify-content: center;
+      align-items: center;
+      width: 90%;
+      gap: 0rem;
+      & input{
+        width: 90%;
+        height: 2.5rem;
+
+      }
+      & .button{
+        position: relative;
+        left: 0;
+        top: 0.5rem;
+      }
+      & .Icon{
+        position: absolute;
+        top: 2rem;
+        left: 45%;
+      }
+    }
+    .CadastradoRecente , .tableEditar{
+      font-size: 0.7rem;
+    }
+    
+  }
+  
   
   .TelaDeSucesso {
     position: absolute;
@@ -250,6 +282,12 @@
         transform: scale(1.2);
       }
     }
+  }
+  @media screen and (max-width: 500px) {
+    .TelaDeSucesso{
+      width: 100%;
+      height: auto;
+    } 
   }
 
   .blur {

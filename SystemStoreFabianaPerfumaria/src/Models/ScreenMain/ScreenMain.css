@@ -4,7 +4,8 @@
     & .Cards{
         display:flex;
         flex-wrap: wrap;
-        animation: blurIn 1s ease-in;    
+        animation: blurIn 1s ease-in;
+        height: 78vh;   
         
         & .Item{
             flex-grow: 1;

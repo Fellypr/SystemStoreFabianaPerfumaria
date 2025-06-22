@@ -39,7 +39,7 @@ function HistoricoEEstatistica() {
           />
         </Link>
 
-        <h1>Historico De Vendas e Estatísticas</h1>
+        <h1>Vendas De Hoje</h1>
       </div>
       <div className="TotalVendidoDoDia">
         <div className="containerGrafico">

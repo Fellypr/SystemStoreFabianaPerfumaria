@@ -158,7 +158,7 @@ function HistoricoDeVenda() {
                 className="select"
                 onChange={(e) => setFormaDePagamento(e.target.value)}
               >
-                <option value="">Pesquisar Pela Forma De Pagamento</option>
+                <option value="">Forma De Pagamento</option>
                 <option value="Espécie">Dinheiro</option>
                 <option value="CartaoDeCredito">Cartão de Credito</option>
                 <option value="CartaoDeDebito">Cartão de Debito</option>
@@ -393,6 +393,7 @@ function HistoricoDeVenda() {
           </div>
         </div>
       </div>
+
     </>
   );
 }

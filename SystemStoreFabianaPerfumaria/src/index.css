@@ -3,10 +3,13 @@
   padding: 0;
 }
 body {
+  overflow-x: hidden;
   background-image: url("./img/FundoSistemaPrincipal/pexels-pixabay-531880.jpg");
   height: auto;
   background-size: cover;
   background-repeat: no-repeat;
+
+  color: aliceblue;
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;

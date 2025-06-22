@@ -23,7 +23,6 @@
     & .TotalVendido {
       position: relative;
       top: -1rem;
-      left: 23rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -33,6 +32,8 @@
       color: white;
       border-radius: 12px;
       padding: 10px;
+      min-width: 30rem;
+      min-width: 10rem;
     }
     & .TabelaDeVendasDeHoje {
       width: 100%;
@@ -66,4 +67,20 @@
       }
     }
   }
+}
+
+@media screen and (max-width: 600px) {
+  .TotalVendidoDoDia{
+    & .containerGrafico{
+      & .TabelaDeVendasDeHoje{
+        & table{
+          font-size: 0.8rem;
+        }
+      }
+      & .TotalVendido{
+        font-size: 1.2rem;
+      }
+    }
+  }
+  
 }

@@ -6,6 +6,7 @@
 }
 
 
+
 .TabelaDePesquisa {
   display: flex;
   flex-wrap: wrap;
@@ -13,11 +14,20 @@
   margin-top: 5rem;
   gap: 10px;
   flex-wrap: wrap;
+  height: 100vh;
 
+  & input{
+    width: 60%;
+    border-radius: 12px;
+    padding-left: 10px;
+    height: 2rem;
+    
+  }
   & table {
     border-collapse: collapse;
-    min-width:160%;
+    width:80%;
     box-shadow: 10px 6px 20px -3px rgba(0,0,0,0.75);
+    color: #000;
 
     & th {
       height: 2rem;
@@ -34,9 +44,12 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    height: 25rem;
+    height:auto;
     text-align: center;
     border-collapse: collapse;
+    width: 100%;
+    padding: 10px;
+    
   }
   & .TabelaDeClientes {
     display: flex;
@@ -52,12 +65,22 @@
     padding: 10px;
     color: white;
     font-weight: bold;
+    height: 100%;
   }
   & .BotaoEditar:hover {
     cursor: pointer;
     transform: scale(1.1);
     transition: all 0.3s ease-in-out;
   }
+  
+}
+@media screen and (max-width: 1060px) {
+  .TabelaDePesquisa{
+    & table{
+      font-size: 0.8rem;
+    }
+  }
+  
 }
 
 /* input */
@@ -112,8 +135,9 @@
     rgba(45, 52, 253, 1) 100%
   );
   height: 35rem;
-  top: 5rem;
-  left: 28rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 27rem;
   display: flex;
   flex-direction: column;

@@ -107,7 +107,7 @@ namespace Backend.Controllers
                     var insertProduto = @"
                 INSERT INTO RealizarVendas 
                 (NomeDoProduto, PrecoTotal, QuantidadeTotal, DataDaVenda, FormaDePagamento, IdVenda)
-                VALUES (@NomeDoProduto, @Preco, @Quantidade, @Data, @FormaPagamento, @IdVenda)";
+                VALUES (@NomeDoProduto, @Preco, @Quantidade, @Data, @FormaPagamento, @IdVenda);";
 
                     var cmdItem = new SqlCommand(insertProduto, connection);
                     cmdItem.Parameters.AddWithValue("@NomeDoProduto", venda.NomeDoProduto);

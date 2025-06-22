@@ -129,25 +129,108 @@ export default function EditarCliente() {
       </div>
       {clienteSelecionado && (
         <div className="ScreenEdit">
-        <div className="Edit">
-          <FaUserCog size={130} className="IconUser" />
-          <form onSubmit={handleAtualizarCliente} key={clienteSelecionado.Id_Cliente}>
-            <input type="text" placeholder="Nome Do Cliente" value={clienteSelecionado.nomeDoCliente} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, nomeDoCliente: e.target.value })}/>
+          <div className="Edit">
+            <FaUserCog size={100} className="IconUser" />
+            <form
+              onSubmit={handleAtualizarCliente}
+              key={clienteSelecionado.Id_Cliente}
+            >
+              <input
+                type="text"
+                placeholder="Nome Do Cliente"
+                value={clienteSelecionado.nomeDoCliente}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    nomeDoCliente: e.target.value,
+                  })
+                }
+              />
 
-            <input type="text" placeholder="Telefone" value={clienteSelecionado.telefone} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, telefone: e.target.value })} />
-            <input type="text" placeholder="Cpf" value={clienteSelecionado.cpf} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, cpf: e.target.value })}/>
-            <input type="text" placeholder="Endereço" value={clienteSelecionado.endereco} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, endereco: e.target.value })} />
-            <input type="text" placeholder="Numero Da Residencia" value={clienteSelecionado.numero} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, numero: e.target.value })}/>
-            <input type="text" placeholder="Bairro" value={clienteSelecionado.bairro} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, bairro: e.target.value })}/>
-            <input type="text" placeholder="Ponto De Referencia" value={clienteSelecionado.pontoDeReferencia} onChange={(e) => setClienteSelecionado({ ...clienteSelecionado, pontoDeReferencia: e.target.value })} />
-          </form>
-        </div>
+              <input
+                type="text"
+                placeholder="Telefone"
+                value={clienteSelecionado.telefone}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    telefone: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Cpf"
+                value={clienteSelecionado.cpf}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    cpf: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Endereço"
+                value={clienteSelecionado.endereco}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    endereco: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Numero Da Residencia"
+                value={clienteSelecionado.numero}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    numero: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Bairro"
+                value={clienteSelecionado.bairro}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    bairro: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Ponto De Referencia"
+                value={clienteSelecionado.pontoDeReferencia}
+                onChange={(e) =>
+                  setClienteSelecionado({
+                    ...clienteSelecionado,
+                    pontoDeReferencia: e.target.value,
+                  })
+                }
+              />
+            </form>
+          </div>
 
-        <div className="Botoes">
-          <button style={{ backgroundColor: "green" }} onClick={handleAtualizarCliente}>Editar</button>
-          <button style={{ backgroundColor: "red" }} onClick={() => setClienteSelecionado(null)}>Cancelar</button>
+          <div className="Botoes">
+            <button
+              style={{ backgroundColor: "green" }}
+              onClick={handleAtualizarCliente}
+            >
+              Editar
+            </button>
+            <button
+              style={{ backgroundColor: "red" }}
+              onClick={() => setClienteSelecionado(null)}
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
-      </div>
       )}
     </>
   );

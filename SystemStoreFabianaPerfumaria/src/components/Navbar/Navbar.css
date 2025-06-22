@@ -1,24 +1,29 @@
 .navBar {
   display: flex;
-  background-color: rgba(0, 0, 0, 0.486);
-  backdrop-filter: blur(5px);
-  height: 5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  height: 6rem;
   padding: 1rem;
   color: white;
   justify-content: space-between;
   align-items: center;
   padding-left: 5rem;
   padding-right: 5rem;
-    & .logo{
-        position: relative;
-        left: 45%;
-    }
-
-  
+  & .logo {
+    position: relative;
+    left: 45%;
+  }
+  & h1 {
+    flex-wrap: wrap;
+    text-align: center;
+  }
 }
 @media screen and (max-width: 600px) {
-    .logo{
-      left: 0rem !important;
-    }
-
+  .logo {
+    left: 0rem !important;
+  }
+  .navBar {
+    flex-direction: column;
+    height: auto;
+  }
 }

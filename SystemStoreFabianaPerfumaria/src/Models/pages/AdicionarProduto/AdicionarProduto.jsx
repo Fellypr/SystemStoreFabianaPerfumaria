@@ -92,48 +92,75 @@ function AdicionarProduto() {
       </div>
       <div className="containerAdicionarProduto">
         <form className="FormAdicionarProduto" onSubmit={AdicionarProduto}>
-          <input
-            type="text"
-            placeholder="URL da Imagem"
-            value={urlImagem}
-            onChange={(e) => setUrlImagem(e.target.value)}
-          />
-          <input
-            type="text"
-            required
-            placeholder="Nome do Produto"
-            value={nomeDoProduto}
-            onChange={(e) => setNomeDoProduto(e.target.value)}
-          />
-          <input
-            type="text"
-            required
-            placeholder="Marca do Produto"
-            value={marca}
-            onChange={(e) => setMarca(e.target.value)}
-          />
-          <input
-            type="text"
-            required
-            placeholder="Preço"
-            value={preco}
-            onChange={Preco}
-          />
-          <input
-            type="number"
-            required
-            placeholder="Quantidade"
-            value={quantidade}
-            onChange={(e) => setQuantidade(parseInt(e.target.value))}
-          />
-          <input
-            type="text"
-            placeholder="Código de Barras"
-            value={codigoDeBarras}
-            onChange={(e) => setCodigoDeBarras(e.target.value)}
-          />
+          <div className="ContainerInputs">
+            <div className="inputAdd">
+              <label htmlFor="urlImagem">Link da Imagem</label>
+              <input
+                type="text"
+                placeholder="URL da Imagem"
+                value={urlImagem}
+                id="urlImagem"
+                onChange={(e) => setUrlImagem(e.target.value)}
+              />
+            </div>
+            <div className="inputAdd">
+              <label htmlFor="nomeDoProduto">Nome do Produto</label>
+              <input
+                id="nomeDoProduto"
+                type="text"
+                required
+                placeholder="Nome do Produto"
+                value={nomeDoProduto}
+                onChange={(e) => setNomeDoProduto(e.target.value)}
+              />
+            </div>
 
-          <button type="submit">Adicionar</button>
+            <div className="inputAdd">
+              <label htmlFor="marca">Marca do Produto</label>
+              <input
+                id="marca"
+                type="text"
+                required
+                placeholder="Marca do Produto"
+                value={marca}
+                onChange={(e) => setMarca(e.target.value)}
+              />
+            </div>
+
+            <div className="inputAdd">
+              <label htmlFor="preco">Preço</label>
+              <input
+                id="preco"
+                type="text"
+                required
+                placeholder="Preço"
+                value={preco}
+                onChange={Preco}
+              />
+            </div>
+            <div className="inputAdd">
+              <label htmlFor="quantidade">Quantidade</label>
+              <input
+                id="quantidade"
+                type="number"
+                required
+                placeholder="Quantidade"
+                value={quantidade}
+                onChange={(e) => setQuantidade(parseInt(e.target.value))}
+              />
+            </div>
+            <div className="inputAdd">
+              <label htmlFor="codigoDeBarras">Código de Barras</label>
+              <input
+                id="codigoDeBarras"
+                type="text"
+                placeholder="Código de Barras"
+                value={codigoDeBarras}
+                onChange={(e) => setCodigoDeBarras(e.target.value)}
+              />
+            </div>
+            <button type="submit">Adicionar</button>
+          </div>
         </form>
         <div className="TabelaProdutosContainer">
           <h2>Produtos Adicionados Recentemente</h2>
