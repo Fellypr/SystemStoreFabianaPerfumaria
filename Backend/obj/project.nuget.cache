@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lT0uPsGyEoM=",
+  "dgSpecHash": "lpqQ9iJ8NE0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+  "projectFilePath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Fellype\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Fellype\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

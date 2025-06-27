@@ -1713,11 +1713,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+      "projectUniqueName": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+      "projectPath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
       "packagesPath": "C:\\Users\\Fellype\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
+      "outputPath": "C:\\Users\\Fellype\\Documents\\Programação\\React\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

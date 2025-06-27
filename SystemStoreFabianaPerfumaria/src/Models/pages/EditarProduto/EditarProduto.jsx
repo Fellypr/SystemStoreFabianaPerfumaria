@@ -5,9 +5,8 @@ import axios from "axios";
 
 import "./EditarProduto.css";
 import { NumericFormat } from "react-number-format";
-
 import { ImCancelCircle } from "react-icons/im";
-
+import CardProduct from "../../../components/CardProduct/CardProduct";
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
@@ -44,6 +43,7 @@ function EditarProduto() {
   }, [termoBusca]);
 
   const handleEditarProduto = (produto) => {
+    window.scrollTo(0, 0);
     setProdutoSelecionado(produto);
   };
 
@@ -92,13 +92,12 @@ function EditarProduto() {
             />
           </Link>
 
-          <h1>Editar Produtos e Clientes</h1>
+          <h1>Editar Produtos</h1>
         </div>
 
         <div className="TabelaDePesquisa">
           {/* Produtos */}
           <div className="TabelaDeProdutos">
-            <h2>Editar Produtos</h2>
 
             {/* Campo de busca */}
             <input
@@ -108,51 +107,9 @@ function EditarProduto() {
               onChange={(e) => setTermoBusca(e.target.value)}
               
             />
-
-            <table border={1}>
-              <thead>
-                <tr
-                  style={{
-                    backgroundColor: "rgb(105, 105, 105)",
-                    color: "white",
-                  }}
-                >
-                  <th>CodigoDoProduto</th>
-                  <th>Nome Produto</th>
-                  <th>Marca</th>
-                  <th>Quantidade</th>
-                  <th>Preço</th>
-                  <th>Editar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtosFiltrados.map((produto) => (
-                  <tr key={produto.id_Produto}>
-                    <td width={50}>{produto.codigoDeBarra}</td>
-                    <td width={200}>{produto.nomeDoProduto}</td>
-                    <td width={100}>{produto.marca}</td>
-                    <td width={50}>{produto.quantidade}</td>
-                    <td width={100}>
-                      {produto?.preco !== undefined
-                        ? parseFloat(produto.preco).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })
-                        : "R$ 0,00"}
-                    </td>
-                    <td width={20}>
-                      <button
-                        type="button"
-                        className="BotaoEditar"
-                        onClick={() => handleEditarProduto(produto)}
-                      >
-                        <FaRegEdit />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="CardContainer">
+              <CardProduct produtos={produtosFiltrados} onEditar={handleEditarProduto}/>
+            </div>
           </div>
         </div>
       </div>

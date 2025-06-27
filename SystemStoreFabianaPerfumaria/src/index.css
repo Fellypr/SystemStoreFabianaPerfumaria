@@ -5,8 +5,8 @@
 body {
   overflow-x: hidden;
   background-image: url("./img/FundoSistemaPrincipal/pexels-pixabay-531880.jpg");
-  height: auto;
-  background-size: cover;
+  height: 100%;
+  /* background-size: cover; */
   background-repeat: no-repeat;
 
   color: aliceblue;

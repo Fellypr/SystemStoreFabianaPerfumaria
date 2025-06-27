@@ -1,32 +1,29 @@
-.overlay{
+.overlay {
   width: 100vw;
   height: 100vh;
   filter: blur(10px);
   transition: all 0.8s ease-in-out;
 }
 
-
-
 .TabelaDePesquisa {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 5rem;
+  margin-top: 2rem;
   gap: 10px;
   flex-wrap: wrap;
   height: 100vh;
 
-  & input{
+  & input {
     width: 60%;
     border-radius: 12px;
     padding-left: 10px;
     height: 2rem;
-    
   }
   & table {
     border-collapse: collapse;
-    width:80%;
-    box-shadow: 10px 6px 20px -3px rgba(0,0,0,0.75);
+    width: 80%;
+    box-shadow: 10px 6px 20px -3px rgba(0, 0, 0, 0.75);
     color: #000;
 
     & th {
@@ -44,12 +41,11 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    height:auto;
+    height: auto;
     text-align: center;
     border-collapse: collapse;
     width: 100%;
     padding: 10px;
-    
   }
   & .TabelaDeClientes {
     display: flex;
@@ -72,15 +68,13 @@
     transform: scale(1.1);
     transition: all 0.3s ease-in-out;
   }
-  
 }
 @media screen and (max-width: 1060px) {
-  .TabelaDePesquisa{
-    & table{
+  .TabelaDePesquisa {
+    & table {
       font-size: 0.8rem;
     }
   }
-  
 }
 
 /* input */
@@ -340,6 +334,57 @@
   outline: none;
 }
 
+/* Card */
+.CardContainer{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+}
+.Card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 225px;
+  border-radius: 10px;
+  padding: 20px;
+  height: auto;
+  background-color: #ececec;
+  color: #000;
+  border: 2px solid #092eff;
+    & picture{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+        & img{
+          width: 60%;
+          height: auto;
+          border-radius: 10px;
+        }
+
+    }
+    & button{
+      background-color: #003cff;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    & button:hover{
+      background-color: #000;
+      scale: 1.1;
+    }
+}
+
+/* Animation */
 @keyframes blurInRight {
   from {
     transform: translateX(-100%);

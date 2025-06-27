@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
         [HttpPost("Login")]
         public ActionResult Login ([FromBody] Login AutenticacaoDeUsuario){
-            if(AutenticacaoDeUsuario.Email == "admin" && AutenticacaoDeUsuario.Senha == "admin"){
+            if(AutenticacaoDeUsuario.Email == "galemiliano" && AutenticacaoDeUsuario.Senha == "101490"){
                 return  Ok("Logado com sucesso");
             }
             return Unauthorized();
