@@ -108,6 +108,7 @@
   -moz-box-shadow: 6px 6px 5px 0px rgba(0, 0, 0, 0.75);
   border-radius: 22px;
   animation: zoomInRight 0.3s ease-in;
+  color: #000000;
 }
 
 .ConteudoDoHistorico {

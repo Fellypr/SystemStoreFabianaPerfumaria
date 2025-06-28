@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   overflow: hidden;
   gap: 5%;
   flex-wrap: wrap;
@@ -39,6 +40,8 @@
       & label {
         font-size: 1.2rem;
         font-weight: 600;
+        position: relative;
+
       }
     }
   }
@@ -74,7 +77,7 @@
     cursor: pointer;
     position: absolute;
     left: 100%;
-    top: 50%;
+    top: 100%;
     transform: translate(-50%, -50%);
     width: 10rem;
     height: 3rem;
@@ -111,38 +114,54 @@ input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.TabelaProdutosContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-  gap: 1rem;
-  width: 100%;
-}
-.TabelaProdutos {
-  margin-bottom: 20rem;
-  border: 1px solid black;
-  border-collapse: collapse;
-  text-align: center;
-  width: 84%;
-  color: #212121;
-  & tr:nth-child(even) {
-    background-color: rgb(182, 182, 182);
-  }
-  & tr:nth-child(odd) {
-    background-color: rgb(100, 18, 18);
-    color: aliceblue;
-  }
-  & th {
-    background-color: seagreen;
-    color: aliceblue;
-  }
-}
+
 .upload-container {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.ProductsRecents{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  margin-top: 2rem;
+    & .CardRecent{
+      background-color: #f77206;
+      color: rgb(0, 0, 0);
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 2rem;
+      height: 300px;
+      width: 200px;
+      display: flex;
+      gap: 5px;
+      border: 2px solid #16181a;
+      flex-direction: column;
+      justify-content: flex-start;
+        & h2{
+          font-size: 1.2rem;
+          
+        }
+        & picture{
+          background-color: #ffffff;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          border-radius: 12px;
+            & img{
+              width: 70%;
+              height: auto;
+              border-radius: 10px;
+            }
+
+        }
+    }  
 }
 
 .botao-upload {

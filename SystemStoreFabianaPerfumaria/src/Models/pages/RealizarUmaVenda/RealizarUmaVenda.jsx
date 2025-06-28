@@ -6,7 +6,6 @@ import "./RealizarUmaVenda.css";
 import "./RealizarVendaMobile.css";
 import QRCodeInsta from "../../../components/qrCode/Qrcode";
 
-
 import { FaEquals } from "react-icons/fa";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
@@ -41,6 +40,9 @@ function RealizarVendaTest() {
   }
   function AbrirNota(nota) {
     setAbrirNota(nota);
+    setTimeout(() => {
+      window.print();
+    }, 500);
   }
   const buscarCliente = async () => {
     try {
@@ -248,14 +250,14 @@ function RealizarVendaTest() {
       setFicha("R$ 0,00");
     }
   };
-  function ScreenDefaull(){
-    if(window.screen.width < 1348){
+  function ScreenDefaull() {
+    if (window.screen.width < 1348) {
       return;
     }
   }
   useEffect(() => {
     ScreenDefaull();
-  },[])
+  }, []);
 
   async function ClienteComFichaEmAberto() {
     try {
@@ -567,90 +569,90 @@ function RealizarVendaTest() {
           )}
         </section>
       </div>
-      
+
       {abrirNota && (
-          <div id="nota-fiscal" className="NotaFiscal">
-            {produtosVendidos.length > 0 && (
-              <div
-                style={{
-                  fontFamily: "monospace",
-                  border: "1px dashed #000",
-                  padding: "16px",
-                  width: "350px",
-                  height: "auto",
-                  backgroundColor: "rgb(255, 255, 255)",
-                  color: "black",
-                }}
-              >
-                <h3 style={{ textAlign: "center" }}>Fabiana Perfumaria</h3>
-                <p style={{ textAlign: "center" }}>Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL </p>
-                <hr />
-                <p style={{ textAlign: "center" }}>
-                  Documento Auxiliar da Nota Fiscal de
-                  <br />
-                  Consumidor Eletrônica
-                </p>
-                <hr />
-                <p style={{ textAlign: "center" }}>
-                  Compra Realizada em: {new Date().toLocaleDateString("pt-BR")}
-                </p>
-                <p>Pelo/a Cliente: {pesquisarCliente}</p>
-
-                <hr />
-                <table style={{ width: "100%", fontSize: "12px" }}>
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: "left" }}>Cód</th>
-                      <th style={{ textAlign: "left" }}>Descrição</th>
-                      <th>Unidade</th>
-                      <th>Desconto</th>
-                      <th>Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {produtosVendidos.map((item, index) => {
-                      const preco = parseFloat(item.preco);
-                      const quantidade = item.quantidade;
-                      const desconto =
-                        parseFloat(item.desconto?.replace(/\D/g, "") || 0) /
-                        100;
-                      const precoTotal = preco * quantidade - desconto;
-
-                      return (
-                        <tr key={index}>
-                          <td>{item.codigo || "----"}</td>
-                          <td>{limitarNome(item.nomeDoProduto, 4)}</td>
-                          <td>{quantidade}</td>
-                          <td>{desconto.toFixed(2)}</td>
-                          <td>{precoTotal.toFixed(2)}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <hr />
+        <div id="nota-fiscal" className="NotaFiscal">
+          {produtosVendidos.length > 0 && (
+            <div
+              style={{
+                fontFamily: "monospace",
+                border: "1px dashed #000",
+                padding: "16px",
+                fontSize: "1.4rem",
+                width: "350px",
+                height: "100%",
+                backgroundColor: "rgb(255, 255, 255)",
+                color: "black",
+              }}
+              className="notaCard"
+            >
+              <h3 style={{ textAlign: "center" }}>Fabiana Perfumaria</h3>
+              <p style={{ textAlign: "center" }}>
+                Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL{" "}
+              </p>
+              <hr />
+              <p style={{ textAlign: "center" }}>
+                Documento Auxiliar da Nota Fiscal de
                 <br />
-                <br />
-                <p style={{ fontSize: "16px" }}>
-                  QTD: TOTAL DE ITENS: {quantidadeTotal}
-                </p>
-                <p style={{ fontSize: "16px" }}>DESCONTO Na Venda: {DescontoNaVenda}</p>
-                <p style={{ fontSize: "16px" }}>VALOR TOTAL R$: {precoTotal}</p>
-                <p style={{ fontSize: "16px" }}>
-                  FORMA DE PAGAMENTO: {formaDePagamento}
-                </p>
-                <div className="qrCode">
-                  <QRCodeInsta />
-                </div>
+                Consumidor Eletrônica
+              </p>
+              <hr />
+              <p style={{ textAlign: "center" }}>
+                Comprar Realizada em: {new Date().toLocaleDateString("pt-BR")}
+              </p>
+              <p>Pelo/a Cliente: {pesquisarCliente}</p><br />
+              <hr />
+              <table style={{ width: "100%", fontSize: "1rem" }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: "left" }}>Cód</th>
+                    <th style={{ textAlign: "left" }}>Descrição</th>
+                    <th>Unidade</th>
+                    <th>Desconto</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {produtosVendidos.map((item, index) => {
+                    const preco = parseFloat(item.preco);
+                    const quantidade = item.quantidade;
+                    const desconto =
+                      parseFloat(item.desconto?.replace(/\D/g, "") || 0) / 100;
+                    const precoTotal = preco * quantidade - desconto;
+
+                    return (
+                      <tr key={index}>
+                        <td>{item.codigo || "----"}</td>
+                        <td>{limitarNome(item.nomeDoProduto, 4)}</td>
+                        <td>{quantidade}</td>
+                        <td>{desconto.toFixed(2)}</td>
+                        <td>{precoTotal.toFixed(2)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <hr />
+              <br />
+              <br />
+              <p style={{ fontSize: "16px" }}>
+                QTD: TOTAL DE ITENS: {quantidadeTotal}
+              </p>
+              <p style={{ fontSize: "16px" }}>
+                DESCONTO Na Venda: {DescontoNaVenda}
+              </p>
+              <p style={{ fontSize: "16px" }}>VALOR TOTAL R$: {precoTotal}</p>
+              <p style={{ fontSize: "16px" }}>
+                FORMA DE PAGAMENTO: {formaDePagamento}
+              </p>
+              <div className="qrCode">
+                <QRCodeInsta />
               </div>
-            )}
-            <button onClick={() => setAbrirNota(null)} className="fecharNota">fechar</button>
-            <button onClick={() => window.print()} className="baixarNota">Baixar Nota</button>
-          </div>
+            </div>
+          )}
+          
+        </div>
       )}
-      <div className={ScreenDefaull?"ScreenDefaull":"ScreenNormal"}>
-        <p>🙄Tela Ainda Não Adaptavel Para Mobile, Por Enquanto vendas apenas em Desktop🙄</p>
-      </div>
     </>
   );
 }

@@ -36,7 +36,7 @@ function AdicionarProduto() {
           },
         }
       );
-      console.log(response.data);
+
       alert("Produto Adicionado com sucesso");
 
       setProdutos([...produtos, produto]);
@@ -162,30 +162,26 @@ function AdicionarProduto() {
             <button type="submit">Adicionar</button>
           </div>
         </form>
-        <div className="TabelaProdutosContainer">
-          <h2>Produtos Adicionados Recentemente</h2>
-          <table border={1} className="TabelaProdutos">
-            <thead>
-              <tr>
-                <th>Nome Do Produto</th>
-                <th>Marca Do Produto</th>
-                <th width={100}>Preço</th>
-                <th>Quantidade</th>
-                <th>Código De Barras</th>
-              </tr>
-            </thead>
-            <tbody>
-              {produtos.map((produto, index) => (
-                <tr key={index}>
-                  <td>{produto.NomeDoProduto}</td>
-                  <td>{produto.Marca}</td>
-                  <td>{produto.Preco}</td>
-                  <td>{produto.Quantidade}</td>
-                  <td>{produto.CodigoDeBarra}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <br />
+        <h2>Produtos Adicionados Recentemente</h2>
+        <div className="ProductsRecents">
+          {produtos.map((produto, index) => (
+            <div className="CardRecent" key={index}>
+              <picture>
+                <img src={produto.UrlImagem} alt="Imagem do Produto" />
+              </picture>
+              <h2>{produto.NomeDoProduto}</h2>
+              <p>Marca: {produto.Marca}</p>
+              <p>Preco: {produto?.Preco !== undefined
+              ? parseFloat(produto.Preco).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })
+              : "R$ 0,00"}</p>
+              <p>Quantidade: {produto.Quantidade}</p>
+              <p>Codigo de Barras: {produto.CodigoDeBarra}</p>
+            </div>
+          ))}
         </div>
       </div>
     </>

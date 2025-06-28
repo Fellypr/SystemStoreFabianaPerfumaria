@@ -16,8 +16,7 @@ import CadastroDeClientes from './Models/pages/CadastroDeCliente/CadastroDeClien
 import EditarCliente from './Models/pages/EditarClientes/EditarCliente.jsx'
 import HistoricoDeVenda from './Models/pages/HistoricoDeVenda/HistoricoDeVenda.jsx'
 import ProdutosEmEstoque from './Models/pages/ProdudosEmEstoques/ProdutosEmEstoque.jsx'
-// teste
-import CardProduct from './components/CardProduct/CardProduct.jsx'
+
 
 
 createRoot(document.getElementById('root')).render(
@@ -36,7 +35,6 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/EditarCliente' element={<EditarCliente/>}/>
                   <Route path='/HistoricoDeVenda' element={<HistoricoDeVenda/>}/>
                   <Route path='/ProdutosEmEstoques' element={<ProdutosEmEstoque/>}/>
-                  <Route path='/CardProduct' element={<CardProduct/>}/>
               </Route>
           </Routes> 
     </BrowserRouter>
