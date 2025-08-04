@@ -14,7 +14,6 @@ function HistoricoEEstatistica() {
       );
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
-      alert("Erro ao Fechar Caixa", error);
       console.error("Erro ao fechar caixa:", error);
     }
   }
@@ -32,7 +31,7 @@ function HistoricoEEstatistica() {
       <div className="navBar">
         <Link to={"/ScreenMain"}>
           <img
-            src="/src/img/logo-removebg-preview.png"
+            src="img/SUBLOGO- BRONZE.png"
             width={100}
             height={100}
             alt="Logo"

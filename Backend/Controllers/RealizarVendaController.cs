@@ -341,6 +341,40 @@ ORDER BY DataDaVenda DESC;";
             }
         }
 
+        [HttpGet("VendasDaSemana")]
+        public async Task<ActionResult> HistoricoDeVendasRealizadasPelaSemana()
+        {
+            try
+            {
+                var connectString = _config.GetConnectionString("DefaultConnection");
+                using (var connection = new SqlConnection(connectString))
+                {
+                    var query = @"SET DATEFIRST 1; SELECT DATENAME(WEEKDAY, DataDaVenda) AS DiaDaSemana, COUNT(*) AS Quantidade FROM Venda WHERE CAST(DataDaVenda AS DATE) >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) AND CAST(DataDaVenda AS DATE) <= DATEADD(DAY, 6 - DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) GROUP BY DATENAME(WEEKDAY, DataDaVenda) ORDER BY MIN(DATEPART(WEEKDAY, DataDaVenda));";
+                    var command = new SqlCommand(query, connection);
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        var vendas = new List<VendaRealizadaProp>();
+                        while (await reader.ReadAsync())
+                        {
+                            var venda = new VendaRealizadaProp
+                            {   
+                                QuantidadeDoDia = Convert.ToInt32(reader["Quantidade"]),
+                                DiaDaSemana = reader["DiaDaSemana"].ToString(),
+                            };
+                            vendas.Add(venda);
+                        }
+                        return Ok(vendas);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
 
 
 

@@ -36,6 +36,10 @@ namespace Backend.Services
 
         [JsonPropertyName("comprador")]
         public string? Comprador { get; set; }
+        [JsonPropertyName("diaDaSemana")]
+        public string? DiaDaSemana { get; set; }
+        [JsonPropertyName("qunatidadeDoDia")]
+        public int? QuantidadeDoDia { get; set; }
 
     }
     public class FiltrarVendas
@@ -59,6 +63,9 @@ namespace Backend.Services
         [JsonPropertyName("fichaEmAberto")]
         public string? FichaEmAberto { get; set; }
     }
-    
+    public class AlertQuantidade
+    {
+        public int QuantidadeDoProduto { get; set; }
+    }
 
 }

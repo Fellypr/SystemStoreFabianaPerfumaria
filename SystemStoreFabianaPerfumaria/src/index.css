@@ -4,12 +4,12 @@
 }
 body {
   overflow-x: hidden;
-  background-image: url("./img/FundoSistemaPrincipal/pexels-pixabay-531880.jpg");
-  height: 100%;
-  /* background-size: cover; */
+  background-image:url("img/blue-curve-background/rm222batch2-mind-03.jpg") ;
+  background-size: cover;
   background-repeat: no-repeat;
-
-  color: aliceblue;
+  height: auto;
+  background-attachment: fixed;
+  color: rgb(0, 0, 0);
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;

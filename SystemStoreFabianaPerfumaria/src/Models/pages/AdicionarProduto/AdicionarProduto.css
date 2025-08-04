@@ -4,29 +4,46 @@
   justify-content: center;
   flex-direction: column;
   overflow: hidden;
-  gap: 5%;
   flex-wrap: wrap;
   animation: blurInRight 0.6s ease-in;
+  color: white;
 }
 
 .FormAdicionarProduto {
-  background-color: rgba(34, 33, 33, 0.24);
+  background-color: rgba(46, 46, 46, 0.644);
   backdrop-filter: blur(5px);
-  margin-top: 3rem;
-  height: 26rem;
+  margin-top: 1rem;
+  height: auto;
   width: 60%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   border-radius: 12px;
-  padding-top: 2rem;
-  box-shadow: 2px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  padding: 2rem;
+  box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+  border: 1px solid rgb(114, 114, 114);
+  & picture {
+    width: auto;
+    height: 9rem;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid black;
+    & img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+  }
 
   & .ContainerInputs {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    
+
     justify-content: center;
     gap: 1rem;
     padding: 20px;
@@ -41,7 +58,6 @@
         font-size: 1.2rem;
         font-weight: 600;
         position: relative;
-
       }
     }
   }
@@ -76,10 +92,10 @@
     overflow: hidden;
     cursor: pointer;
     position: absolute;
-    left: 100%;
-    top: 100%;
+    left: 50%;
+    top: 70%;
     transform: translate(-50%, -50%);
-    width: 10rem;
+    width: 21rem;
     height: 3rem;
 
     position: relative;
@@ -120,7 +136,7 @@ input[type="number"]::-webkit-inner-spin-button {
   align-items: center;
   gap: 10px;
 }
-.ProductsRecents{
+.ProductsRecents {
   width: 100%;
   height: auto;
   display: flex;
@@ -128,40 +144,41 @@ input[type="number"]::-webkit-inner-spin-button {
   justify-content: center;
   gap: 10px;
   padding: 10px;
-  margin-top: 2rem;
-    & .CardRecent{
-      background-color: #f77206;
-      color: rgb(0, 0, 0);
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 2rem;
-      height: 300px;
-      width: 200px;
-      display: flex;
-      gap: 5px;
-      border: 2px solid #16181a;
-      flex-direction: column;
-      justify-content: flex-start;
-        & h2{
-          font-size: 1.2rem;
-          
-        }
-        & picture{
-          background-color: #ffffff;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          border-radius: 12px;
-            & img{
-              width: 70%;
-              height: auto;
-              border-radius: 10px;
-            }
+  margin-top: 0rem;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
 
-        }
-    }  
+  & .CardRecent {
+    background-color: #f77206;
+    color: rgb(0, 0, 0);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 2rem;
+    height: 300px;
+    width: 200px;
+    display: flex;
+    gap: 5px;
+    border: 2px solid #16181a;
+    flex-direction: column;
+    justify-content: flex-start;
+    & h2 {
+      font-size: 1.2rem;
+    }
+    & picture {
+      background-color: #ffffff;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      border-radius: 12px;
+      & img {
+        width: 70%;
+        height: auto;
+        border-radius: 10px;
+      }
+    }
+  }
 }
 
 .botao-upload {
@@ -185,6 +202,9 @@ input[type="number"]::-webkit-inner-spin-button {
   color: #333;
 }
 
+.productsFound {
+  display: none;
+}
 @keyframes blurInRight {
   from {
     transform: translateX(-100%);
@@ -212,12 +232,11 @@ input[type="number"]::-webkit-inner-spin-button {
       flex-direction: column;
       height: 100%;
       gap: 1rem;
-        & button{
-          position: relative;
-          left: 50%;
-          transform: translateX(-50%);
-
-        }
+      & button {
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
     & input[type="text"],
     input[type="number"] {
@@ -225,7 +244,7 @@ input[type="number"]::-webkit-inner-spin-button {
       text-align: center;
     }
   }
-  .TabelaProdutosContainer{
+  .TabelaProdutosContainer {
     display: none;
   }
 }

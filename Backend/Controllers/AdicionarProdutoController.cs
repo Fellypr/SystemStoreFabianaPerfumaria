@@ -33,7 +33,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 {
 
 
-                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem)";
+                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido)";
                     var command = new SqlCommand(query, connection);
 
                     command.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
@@ -42,6 +42,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     command.Parameters.Add(new SqlParameter("@Quantidade", AdicionarProdutos.Quantidade));
                     command.Parameters.Add(new SqlParameter("@CodigoDeBarra", AdicionarProdutos.CodigoDeBarra));
                     command.Parameters.Add(new SqlParameter("@UrlImagem", AdicionarProdutos.UrlImagem));
+                    command.Parameters.Add(new SqlParameter("@PrecoAdquirido", AdicionarProdutos.PrecoAdquirido));
 
                     await connection.OpenAsync();
                     var result = await command.ExecuteNonQueryAsync();
@@ -87,6 +88,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
+                                PrecoAdquirido = Convert.ToDecimal(reader["PrecoAdquirido"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                             };
@@ -112,7 +114,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
 
                 var query = @"
                 UPDATE AdicionarProduto
-                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido
                 WHERE Id_Produto = @Id";
 
                 var cmd = new SqlCommand(query, connection);
@@ -121,6 +123,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 cmd.Parameters.AddWithValue("@Quantidade", produtoAtualizado.Quantidade);
                 cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
                 cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id_Produto);
+                cmd.Parameters.AddWithValue("@PrecoAdquirido", produtoAtualizado.PrecoAdquirido);
 
                 var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
 
@@ -196,6 +199,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
+                                PrecoAdquirido = Convert.IsDBNull(reader["PrecoAdquirido"]) ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),
@@ -244,6 +248,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
+                                PrecoAdquirido = Convert.IsDBNull(reader["PrecoAdquirido"]) ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),

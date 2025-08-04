@@ -1,17 +1,21 @@
+
 .navBar {
   display: flex;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(78, 78, 78, 0.753);
   backdrop-filter: blur(15px);
-  height: 6rem;
+  height: 3rem;
   padding: 1rem;
   color: white;
   justify-content: space-between;
   align-items: center;
   padding-left: 5rem;
   padding-right: 5rem;
+  transition: all 0.3s ease-in-out;
   & .logo {
+    width: 6rem;
+    height: 6rem;
     position: relative;
-    left: 45%;
+    left: 47%;
   }
   & h1 {
     flex-wrap: wrap;

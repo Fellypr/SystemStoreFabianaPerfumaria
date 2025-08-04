@@ -2,11 +2,13 @@ import "./AdicionarProduto.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { AiOutlinePicture } from "react-icons/ai";
 
 function AdicionarProduto() {
   const [nomeDoProduto, setNomeDoProduto] = useState("");
   const [marca, setMarca] = useState("");
   const [preco, setPreco] = useState("R$ 0,00");
+  const [precoAdquirido, setPrecoAdquirido] = useState("R$ 0,00");
   const [quantidade, setQuantidade] = useState("");
   const [codigoDeBarras, setCodigoDeBarras] = useState("");
   const [urlImagem, setUrlImagem] = useState("");
@@ -18,6 +20,9 @@ function AdicionarProduto() {
     const precoLimpo = preco.replace(/\D/g, "");
     const precoNumerico = Number(precoLimpo) / 100;
 
+    const precoAdquiridoLimpo = precoAdquirido.replace(/\D/g, "");
+    const precoAdquiridoNumerica = Number(precoAdquiridoLimpo) / 100;
+
     const produto = {
       NomeDoProduto: nomeDoProduto,
       Marca: marca,
@@ -25,6 +30,7 @@ function AdicionarProduto() {
       Quantidade: quantidade,
       CodigoDeBarra: codigoDeBarras,
       UrlImagem: urlImagem,
+      PrecoAdquirido: precoAdquiridoNumerica,
     };
     try {
       const response = await axios.post(
@@ -47,6 +53,7 @@ function AdicionarProduto() {
       setQuantidade("");
       setCodigoDeBarras("");
       setUrlImagem("");
+      setPrecoAdquirido("");
     } catch (error) {
       console.error("Erro ao adicionar produto:", error);
     }
@@ -61,6 +68,17 @@ function AdicionarProduto() {
       currency: "BRL",
     });
     setPreco(valorFormatado);
+  };
+
+  const PrecoAdquirido = (e) => {
+    let valorDigitado = e.target.value;
+    valorDigitado = valorDigitado.replace(/\D/g, "");
+    const valorNumerico = (Number(valorDigitado) / 100).toFixed(2);
+    const valorFormatado = Number(valorNumerico).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    setPrecoAdquirido(valorFormatado);
   };
 
   useEffect(() => {
@@ -82,7 +100,7 @@ function AdicionarProduto() {
       <div className="navBar">
         <Link to={"/ScreenMain"}>
           <img
-            src="/src/img/logo-removebg-preview.png"
+            src="img/SUBLOGO- BRONZE.png"
             width={100}
             height={100}
             alt="Logo"
@@ -92,6 +110,16 @@ function AdicionarProduto() {
       </div>
       <div className="containerAdicionarProduto">
         <form className="FormAdicionarProduto" onSubmit={AdicionarProduto}>
+          <h1>Adicione um Produto</h1>
+
+          <picture>
+            <img
+              src={urlImagem}
+              alt="Imagem do Produto"
+              height={100}
+              width={100}
+            />
+          </picture>
           <div className="ContainerInputs">
             <div className="inputAdd">
               <label htmlFor="urlImagem">Link da Imagem</label>
@@ -159,11 +187,26 @@ function AdicionarProduto() {
                 onChange={(e) => setCodigoDeBarras(e.target.value)}
               />
             </div>
+
+            <div className="inputAdd">
+              <label htmlFor="precoAdquirido">Preço Adquirido</label>
+              <input
+                id="precoAdquirido"
+                type="text"
+                placeholder="Preço Adquirido"
+                value={precoAdquirido}
+                onChange={PrecoAdquirido}
+              />
+            </div>
             <button type="submit">Adicionar</button>
           </div>
         </form>
         <br />
-        <h2>Produtos Adicionados Recentemente</h2>
+        <h2
+          className={produtos.length > 0 ? "ProductsRecents" : "productsFound"}
+        >
+          Produtos Adicionados Recentemente
+        </h2>
         <div className="ProductsRecents">
           {produtos.map((produto, index) => (
             <div className="CardRecent" key={index}>
@@ -172,12 +215,15 @@ function AdicionarProduto() {
               </picture>
               <h2>{produto.NomeDoProduto}</h2>
               <p>Marca: {produto.Marca}</p>
-              <p>Preco: {produto?.Preco !== undefined
-              ? parseFloat(produto.Preco).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })
-              : "R$ 0,00"}</p>
+              <p>
+                Preco:{" "}
+                {produto?.Preco !== undefined
+                  ? parseFloat(produto.Preco).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })
+                  : "R$ 0,00"}
+              </p>
               <p>Quantidade: {produto.Quantidade}</p>
               <p>Codigo de Barras: {produto.CodigoDeBarra}</p>
             </div>

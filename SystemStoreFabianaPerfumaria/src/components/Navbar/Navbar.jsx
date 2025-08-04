@@ -4,7 +4,7 @@ function Navbar() {
   return (
     <div className="navBar">
       <img
-        src="/src/img/logo-removebg-preview.png"
+        src="img/SUBLOGO- BRONZE.png"
         
         width={110}
         height={110}

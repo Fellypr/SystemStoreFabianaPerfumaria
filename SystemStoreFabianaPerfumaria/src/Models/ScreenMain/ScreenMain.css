@@ -1,72 +1,245 @@
-.Main{
-    overflow-x: hidden;
-    
-    & .Cards{
-        display:flex;
-        flex-wrap: wrap;
-        animation: blurIn 1s ease-in;
-        height: 78vh;   
-        
-        & .Item{
-            flex-grow: 1;
-            flex-basis: 200;
-            background-color: rgb(0, 204, 255);
-            padding: 20px;
-            margin: 20px; 
-            width: 20rem;
-            height: 5rem;
-            border-radius: 15px;
-            gap: 8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease-in;
+.Main {
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 87.7vh;
+  & .Options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: blurIn 1s ease-in;
+    background-color: rgb(211, 112, 0);
+    height: 100%;
+    width: 45px;
+    gap: 3.3rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: none;
+    color: #fffefe;
+    transition: all 1s ease-in-out;
+    z-index: 3;
+  }
+  & .OptionsOpen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: blurIn 1s ease-in;
+    background-color: rgb(211, 112, 0);
+    height: 100%;
+    width: 300px;
+    gap: 1.4rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: none;
+    color: #fffefe;
+    z-index: 3;
+    transition: all 0.5s ease-in;
+    border: 1px solid black;
+    border-radius: 0px 12px 12px 0px  ;
+  }
+  & .Cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    animation: blurIn 1s ease-in;
+    height: 79vh;
+    width: 90%;
+    backdrop-filter: blur(5px);
+    margin-left: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+    padding: 20px;
+    & .Item {
+      flex-grow: 1;
+      flex-basis: 200;
+      background-color: rgb(1, 204, 255);
+      padding: 20px;
+      margin: 20px;
+      width: 20rem;
+      height: 7rem;
+      border-radius: 15px;
+      gap: 8rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease-in;
 
-            & .Link{
-                text-decoration: none;
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 7rem;
-            }
-
-        }  
-
-        & .Item:hover{
-            transform: scale(1.1);
-            transition: all 0.3s ease-in-out;
-        }
-        
-    }
-    & .TabelaProdutos{
+      & .Link {
+        text-decoration: none;
+        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        border: none;
-
-            & table{
-                border-collapse: collapse;
-                text-align: center;
-                
-                
-                
-
-                & tr:nth-child(even){
-                    background-color: rgb(207, 200, 200);
-                }
-            }
+        gap: 7rem;
+      }
     }
+
+    & .Item:hover {
+      transform: scale(0.9);
+      transition: all 0.3s ease-in-out;
+    }
+  }
+  & .TabelaProdutos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    border: none;
+
+    & table {
+      border-collapse: collapse;
+      text-align: center;
+
+      & tr:nth-child(even) {
+        background-color: rgb(207, 200, 200);
+      }
+    }
+  }
 }
 
-@keyframes blurIn {
-    from {
-        filter: blur(20px);
-        opacity: 0;
+.GraficoComFechamento {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+  padding: 10px;
+
+  & .FechamentoDeCaixa:hover {
+    transform: scale(0.9);
+    transition: all 0.3s ease-in-out;
+  }
+  & .Grafico {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 42%;
+    height: 100%;
+    border-radius: 12px;
+  }
+}
+.realizarVendasComProdutosEstoques {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40%;
+  padding: 10px;
+}
+
+.LinkDeOptions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 3rem;
+  align-items: center;
+  width: 90%;
+  padding-left: 20px;
+  height: 74px;
+  transition: all 0.5s ease-in-out;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgb(22, 22, 22);
+  color: white;
+  cursor: pointer;
+}
+.LinkDeOptions:hover {
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.LinkDeOptions:nth-child(3) {
+  background-color: rgb(0, 255, 42);
+}
+.LinkDeOptions:nth-child(4) {
+  background-color: rgb(238, 1, 1);
+}
+.LinkDeOptions:nth-child(5) {
+  background-color: rgb(0, 107, 207);
+}
+.LinkDeOptions:nth-child(6) {
+  background-color: rgb(214, 193, 0);
+}
+.LinkDeOptions:nth-child(7) {
+  background-color: rgb(65, 3, 116);
+}
+.LinkDeOptions:nth-child(8) {
+  background-color: rgb(0, 90, 71);
+}
+.LinkDeOptionsClose {
+  display: none;
+  transition: all 0.1s ease-in-out;
+}
+.Menuclose {
+  display: none;
+}
+.MenuOpen {
+  font-size: 1.6rem;
+}
+.TextClose {
+  display: none;
+}
+
+.FechamentoDeCaixa {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  height: 100%;
+  border-radius: 12px;
+  z-index: 2;
+  & .Linktabela {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    & .TotalVendidoHoje {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 99%;
+      height: 90%;
+      padding-right: 10px;
+      font-size: 3rem;
+      font-weight: bold;
+      color: rgb(143, 253, 0);
+      gap: 2rem;
     }
+  }
+}
+
+
+.Loading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  animation: blurIn 1s ease-in;
+}
+@keyframes blurIn {
+  from {
+    filter: blur(20px);
+    opacity: 0;
+  }
 }

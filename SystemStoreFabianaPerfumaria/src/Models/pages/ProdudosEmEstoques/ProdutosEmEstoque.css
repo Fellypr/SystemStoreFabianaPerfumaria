@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: center;
     height: 82vh;
+    color: aliceblue;
   & .StockSection {
     display: flex;
     padding: 20px;

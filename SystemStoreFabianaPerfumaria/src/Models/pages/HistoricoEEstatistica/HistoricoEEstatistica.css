@@ -57,7 +57,7 @@
           height: 2rem;
         }
         & tr:nth-child(odd) {
-          background-color: #770707;
+          background-color: #6d910a;
           color: #fff;
         }
         & tr:nth-child(even) {

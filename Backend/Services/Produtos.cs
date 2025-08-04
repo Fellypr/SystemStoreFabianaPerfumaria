@@ -13,6 +13,8 @@ public class Produtos
 
     [JsonPropertyName("Preco")]
     public decimal Preco { get; set; }
+    [JsonPropertyName("PrecoAdquirido")]
+    public decimal? PrecoAdquirido { get; set; }
 
     [JsonPropertyName("Quantidade")]
     public int Quantidade { get; set; }

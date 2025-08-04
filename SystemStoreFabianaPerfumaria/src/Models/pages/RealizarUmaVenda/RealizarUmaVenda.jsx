@@ -96,6 +96,7 @@ function RealizarVendaTest() {
           },
         }
       );
+      console.log(response.data);
       setProduto(response.data);
       setProdutosArmazenados(response.data);
     } catch (error) {
@@ -297,7 +298,7 @@ function RealizarVendaTest() {
         <nav className="navBar">
           <Link to="/screenMain">
             <img
-              src="./src/img/logo-removebg-preview.png"
+              src="img/SUBLOGO- BRONZE.png"
               width={100}
               height={100}
               alt="Logo"
@@ -425,12 +426,18 @@ function RealizarVendaTest() {
                         </div>
 
                         <div className="InformationProtuct">
-                          <h3>Desconto:</h3>
-                          <input
-                            type="text"
-                            value={desconto}
-                            onChange={(e) => formatarMoeda(e, setDesconto)}
-                          />
+                          <h3>Preço Adquirido:</h3>
+                          <p>
+                            {produtos?.precoAdquirido !== undefined
+                              ? parseFloat(produtos.precoAdquirido).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )
+                              : "R$ 0,00"}
+                          </p>
                         </div>
                       </div>
 
@@ -540,7 +547,7 @@ function RealizarVendaTest() {
                 onClick={AbrirNota}
                 style={{ backgroundColor: "rgb(0, 68, 255)" }}
               >
-                Olhar Nota
+                Imprimir Nota
               </button>
               <button
                 id="btn"

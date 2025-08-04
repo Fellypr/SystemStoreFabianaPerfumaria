@@ -60,6 +60,7 @@ function EditarProduto() {
           },
         }
       );
+      console.log(produtoSelecionado);
       alert("Produto atualizado com sucesso!");
       setProdutoSelecionado(null);
       buscarProdutos();
@@ -85,7 +86,7 @@ function EditarProduto() {
         <div className="navBar">
           <Link to={"/ScreenMain"}>
             <img
-              src="/src/img/logo-removebg-preview.png"
+              src="img/SUBLOGO- BRONZE.png"
               width={100}
               height={100}
               alt="Logo"
@@ -193,6 +194,25 @@ function EditarProduto() {
                   setProdutoSelecionado({
                     ...produtoSelecionado,
                     preco: value,
+                  });
+                }}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                allowNegative={false}
+              />
+            </div>
+
+            <div className="coolinput">
+              <label for="input">Preço Adquirido:</label>
+              <NumericFormat
+                placeholder="R$ 0,00"
+                value={produtoSelecionado.precoAdquirido}
+                onValueChange={(values) => {
+                  const { value } = values;
+                  setProdutoSelecionado({
+                    ...produtoSelecionado,
+                    precoAdquirido: value,
                   });
                 }}
                 thousandSeparator="."

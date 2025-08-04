@@ -11,9 +11,8 @@ function ExcluirProdutos() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/BuscarProduto",
+        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
-          CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
         },
         {
@@ -38,17 +37,28 @@ function ExcluirProdutos() {
     }
   }, [pesquisaProduto]);
 
+  const produtosFiltrados = (produtos || []).filter(
+    (items) =>
+      items.nomeDoProduto ||
+      items.marca.toLowerCase().includes(pesquisaProduto.toLowerCase())
+  );
+
   const handleExcluirProduto = async () => {
-    const confirmar = window.confirm("Tem certeza que deseja excluir este produto?");
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir este produto?"
+    );
     if (!confirmar) return;
 
-    console.log(produtos);  
+    console.log(produtos);
     try {
-      await axios.delete(`http://localhost:5080/api/AdicionarProduto/ExcluirProduto/${produtos.id_Produto}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await axios.delete(
+        `http://localhost:5080/api/AdicionarProduto/ExcluirProduto/${produtos.id_Produto}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("Produto excluído com sucesso!");
       setProdutos([]);
     } catch (error) {
@@ -62,7 +72,7 @@ function ExcluirProdutos() {
         <div className="navBar">
           <Link to={"/ScreenMain"}>
             <img
-              src="/src/img/logo-removebg-preview.png"
+              src="img/SUBLOGO- BRONZE.png"
               width={100}
               height={100}
               alt="Logo"
@@ -81,19 +91,14 @@ function ExcluirProdutos() {
           >
             <input
               type="text"
-              placeholder="Digite o Codigo de Barras ou Nome do Produto"
+              placeholder="Digite o Nome do Produto"
               required
               value={pesquisaProduto}
               onChange={(e) => setPesquisaProduto(e.target.value)}
             />
-            <button>
-              <MdOutlineScreenSearchDesktop size={25} />
-            </button>
           </form>
 
-          {produtos.length === 0 ? (
-            <p> </p>
-          ) : (
+          {produtosFiltrados.map((produtos) => (
             <div className="Produto" key={produtos.Id_Produto}>
               <img
                 src={produtos.urlImagem || "imagem"}
@@ -105,12 +110,12 @@ function ExcluirProdutos() {
                 <p>{produtos.nomeDoProduto}</p>
                 <p>{produtos.marca}</p>
                 <p>
-                {produtos?.preco !== undefined
-                ? produtos.preco.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })
-                : "R$ 0,00"}
+                  {produtos?.preco !== undefined
+                    ? produtos.preco.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    : "R$ 0,00"}
                 </p>
                 <p>{produtos.quantidade}</p>
                 <p>{produtos.codigoDeBarra}</p>
@@ -119,7 +124,7 @@ function ExcluirProdutos() {
                 <MdCancel size={40} color="red" />
               </button>
             </div>
-          )}
+          ))}
         </section>
       </main>
     </>
