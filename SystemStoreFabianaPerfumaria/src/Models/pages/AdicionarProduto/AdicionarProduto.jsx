@@ -12,14 +12,15 @@ function AdicionarProduto() {
   const [quantidade, setQuantidade] = useState("");
   const [codigoDeBarras, setCodigoDeBarras] = useState("");
   const [urlImagem, setUrlImagem] = useState("");
+  const [error, setError] = useState(null);
 
   const [produtos, setProdutos] = useState([]);
 
   async function AdicionarProduto(e) {
     e.preventDefault();
+    setError(null);
     const precoLimpo = preco.replace(/\D/g, "");
     const precoNumerico = Number(precoLimpo) / 100;
-
     const precoAdquiridoLimpo = precoAdquirido.replace(/\D/g, "");
     const precoAdquiridoNumerica = Number(precoAdquiridoLimpo) / 100;
 
@@ -46,7 +47,6 @@ function AdicionarProduto() {
       alert("Produto Adicionado com sucesso");
 
       setProdutos([...produtos, produto]);
-
       setNomeDoProduto("");
       setMarca("");
       setPreco("");
@@ -55,7 +55,7 @@ function AdicionarProduto() {
       setUrlImagem("");
       setPrecoAdquirido("");
     } catch (error) {
-      console.error("Erro ao adicionar produto:", error);
+      console.error(error);
     }
   }
 
@@ -94,11 +94,18 @@ function AdicionarProduto() {
       window.removeEventListener("keydown", handleScan);
     };
   }, [codigoDeBarras]);
+  useEffect(() => {
+    if (error !== null) {
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  }, [error]);
 
   return (
     <>
       <div className="navBar">
-        <Link to={"/ScreenMain"}>
+        <Link to={"/"}>
           <img
             src="img/SUBLOGO- BRONZE.png"
             width={100}
@@ -110,15 +117,20 @@ function AdicionarProduto() {
       </div>
       <div className="containerAdicionarProduto">
         <form className="FormAdicionarProduto" onSubmit={AdicionarProduto}>
-          <h1>Adicione um Produto</h1>
-
           <picture>
-            <img
-              src={urlImagem}
-              alt="Imagem do Produto"
-              height={100}
-              width={100}
-            />
+            {urlImagem ? (
+              <img
+                src={urlImagem}
+                alt="Imagem do Produto"
+                height={100}
+                width={100}
+              />
+            ) : (
+              <div className="ContainerImagem">
+                <AiOutlinePicture size={100} />
+                <p>Selecione uma Imagem</p>
+              </div>
+            )}
           </picture>
           <div className="ContainerInputs">
             <div className="inputAdd">
@@ -230,6 +242,12 @@ function AdicionarProduto() {
           ))}
         </div>
       </div>
+      {error && (
+        <div className="error">
+          <p>{error}</p>
+          <div className="lineCarregamento"></div>
+        </div>
+      )}
     </>
   );
 }

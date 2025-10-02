@@ -31,7 +31,17 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 var connectionString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectionString))
                 {
+                    await connection.OpenAsync();
 
+                    var checkProdutoQuery = "SELECT COUNT(*) FROM AdicionarProduto WHERE NomeDoProduto = @NomeDoProduto";
+                    var checkCommand = new SqlCommand(checkProdutoQuery, connection);
+                    checkCommand.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
+
+                    var count = (int)await checkCommand.ExecuteScalarAsync();
+                    if (count > 0)
+                    {
+                        return Conflict($"O Nome do produto {AdicionarProdutos.NomeDoProduto} Já Existe");
+                    }
 
                     var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido)";
                     var command = new SqlCommand(query, connection);
@@ -44,7 +54,6 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     command.Parameters.Add(new SqlParameter("@UrlImagem", AdicionarProdutos.UrlImagem));
                     command.Parameters.Add(new SqlParameter("@PrecoAdquirido", AdicionarProdutos.PrecoAdquirido));
 
-                    await connection.OpenAsync();
                     var result = await command.ExecuteNonQueryAsync();
 
                     if (result > 0)

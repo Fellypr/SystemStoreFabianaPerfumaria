@@ -43,7 +43,7 @@ function ExcluirProdutos() {
       items.marca.toLowerCase().includes(pesquisaProduto.toLowerCase())
   );
 
-  const handleExcluirProduto = async () => {
+  const handleExcluirProduto = async (id) => {
     const confirmar = window.confirm(
       "Tem certeza que deseja excluir este produto?"
     );
@@ -52,7 +52,7 @@ function ExcluirProdutos() {
     console.log(produtos);
     try {
       await axios.delete(
-        `http://localhost:5080/api/AdicionarProduto/ExcluirProduto/${produtos.id_Produto}`,
+        `http://localhost:5080/api/AdicionarProduto/ExcluirProduto/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function ExcluirProdutos() {
     <>
       <main>
         <div className="navBar">
-          <Link to={"/ScreenMain"}>
+          <Link to={"/"}>
             <img
               src="img/SUBLOGO- BRONZE.png"
               width={100}

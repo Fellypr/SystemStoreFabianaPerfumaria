@@ -1,8 +1,7 @@
 
 .navBar {
   display: flex;
-  background-color: rgba(78, 78, 78, 0.753);
-  backdrop-filter: blur(15px);
+  background-color: #3c4b64;
   height: 3rem;
   padding: 1rem;
   color: white;

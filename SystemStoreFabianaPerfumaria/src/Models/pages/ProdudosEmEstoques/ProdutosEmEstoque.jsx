@@ -54,7 +54,7 @@ function ProdutosEmEstoque() {
   return (
     <>
       <nav className="navBar">
-        <Link to="/screenMain">
+        <Link to="/">
           <img
             src="img/SUBLOGO- BRONZE.png"
             width={100}

@@ -132,8 +132,10 @@ function RealizarVendaTest() {
       quantidade,
       desconto,
     };
+    if(produtosArmazenados[0].quantidade === 1){
+      alert("Atenção,esse produto possui apenas uma unidade em estoque! click em ok para prosseguir com a venda.");
+    }
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
-
     setProdutosArmazenados(null);
     setPesquisaProduto("");
     setQuantidade(1);
@@ -296,7 +298,7 @@ function RealizarVendaTest() {
     <>
       <div className="body">
         <nav className="navBar">
-          <Link to="/screenMain">
+          <Link to="/">
             <img
               src="img/SUBLOGO- BRONZE.png"
               width={100}
@@ -340,6 +342,7 @@ function RealizarVendaTest() {
                         />
                         <p>{limitarNome(produtos.nomeDoProduto, 3)}</p>
                         <p>{produtos.marca}</p>
+                        <p>{produtos.quantidade}</p>
                         <p>{produtos.codigoDeBarra}</p>
                       </div>
                     </button>

@@ -3,16 +3,15 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 //react icons
-import { GiDelicatePerfume, GiWallet } from "react-icons/gi";
 import { MdDeleteForever } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
-import { FaCashRegister } from "react-icons/fa6";
 import { LiaEdit } from "react-icons/lia";
 import { MdOutlineAddShoppingCart, MdOutlineAdd } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
 import { BiAlignLeft } from "react-icons/bi";
 import { TiThMenu } from "react-icons/ti";
 import { TbChartHistogram } from "react-icons/tb";
+import { LuHouse } from "react-icons/lu";
 import Example from "../../components/Grafico/Grafico";
 import Navbar from "../../components/Navbar/Navbar";
 import Loading from "../../components/Loading/Loading";
@@ -54,13 +53,13 @@ const ScreenMain = () => {
           onMouseEnter={() => ToggleOptions(true)}
           onMouseLeave={() => ToggleOptions(false)}
         >
-          <h2 className={Options ? "MenuOpen" : "TextClose"}>Menu</h2>
-          <TiThMenu size={40} className={Options ? "Menuclose" : ""} />
+          <div className={Options ? "MenuOpen" : "TextClose"}><LuHouse size={30}/>Dashboard</div>
+          <TiThMenu size={30} className={Options ? "Menuclose" : ""} />
           <Link
             to={"/AdicionarProduto"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <MdOutlineAdd size={40} />
+            <MdOutlineAdd size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Adicionar
             </p>
@@ -69,7 +68,7 @@ const ScreenMain = () => {
             to={"/ExcluirProdutos"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <MdDeleteForever size={40} />
+            <MdDeleteForever size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Excluir Produtos
             </p>
@@ -78,7 +77,7 @@ const ScreenMain = () => {
             to={"/EditarProduto"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <LiaEdit size={40} />
+            <LiaEdit size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Editar Produtos
             </p>
@@ -87,7 +86,7 @@ const ScreenMain = () => {
             to={"/CadastroDeClientes"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <IoPersonAdd size={40} />
+            <IoPersonAdd size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Cadastrar Clientes
             </p>
@@ -96,7 +95,7 @@ const ScreenMain = () => {
             to={"/EditarCliente"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <FaUserEdit size={40} />
+            <FaUserEdit size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Editar Clientes
             </p>
@@ -105,7 +104,7 @@ const ScreenMain = () => {
             to={"/HistoricoDeVenda"}
             className={Options ? "LinkDeOptions" : ""}
           >
-            <TbChartHistogram size={40} />
+            <TbChartHistogram size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Historico De Venda
             </p>

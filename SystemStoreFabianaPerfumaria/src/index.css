@@ -4,9 +4,7 @@
 }
 body {
   overflow-x: hidden;
-  background-image:url("img/blue-curve-background/rm222batch2-mind-03.jpg") ;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-color: aliceblue;
   height: auto;
   background-attachment: fixed;
   color: rgb(0, 0, 0);

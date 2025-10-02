@@ -71,7 +71,7 @@ export default function EditarCliente() {
     <>
       <div className="BodyEditarClientes">
         <div className="navBar">
-          <Link to={"/ScreenMain"}>
+          <Link to={"/"}>
             <img
               src="img/SUBLOGO- BRONZE.png"
               width={100}
