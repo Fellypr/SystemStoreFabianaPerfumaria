@@ -27,7 +27,7 @@ const ScreenMain = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:5080/api/RealizarVenda/VendasRealizadas"
+        "http://192.168.0.139:5080/api/RealizarVenda/VendasRealizadas"
       );
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
@@ -145,7 +145,7 @@ const ScreenMain = () => {
                 fontSize: "30px",
               }}
             >
-              <Link className="Link" to={"/RealizarUmaVenda"} target="_blank">
+              <Link className="Link" to={"/RealizarUmaVenda"}>
                 <MdOutlineAddShoppingCart size={100} />
                 Realizar uma Venda
               </Link>

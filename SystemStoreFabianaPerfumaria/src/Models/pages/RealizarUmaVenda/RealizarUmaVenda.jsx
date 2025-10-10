@@ -10,6 +10,8 @@ import { FaEquals } from "react-icons/fa";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 
+const API_URL = "http://192.168.0.139:5080/api";
+
 function RealizarVendaTest() {
   const [pesquisaProduto, setPesquisaProduto] = useState("");
   const [produto, setProduto] = useState([]);
@@ -27,6 +29,8 @@ function RealizarVendaTest() {
   const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
   const [abrirNota, setAbrirNota] = useState(null);
+  const [alertaQuantidade, setAlertaQuantidade] = useState(null);
+
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
     const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
@@ -38,16 +42,18 @@ function RealizarVendaTest() {
     );
     setValor(valorFormatado);
   }
+
   function AbrirNota(nota) {
     setAbrirNota(nota);
     setTimeout(() => {
       window.print();
     }, 500);
   }
+
   const buscarCliente = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/CadastroDeCliente/BuscarCliente",
+        `${API_URL}/CadastroDeCliente/BuscarCliente`,
         {
           NomeDoCliente: pesquisarCliente,
           Cpf: pesquisarCliente,
@@ -66,6 +72,7 @@ function RealizarVendaTest() {
       setcliente([]);
     }
   };
+
   useEffect(() => {
     if ((pesquisarCliente || "").trim().length > 0) {
       buscarCliente();
@@ -82,10 +89,11 @@ function RealizarVendaTest() {
     setPesquisarCliente(nome);
     setcliente([]);
   }
+
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoParaRealizarVenda",
+        `${API_URL}/AdicionarProduto/BuscarProdutoParaRealizarVenda`, 
         {
           CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
@@ -96,7 +104,6 @@ function RealizarVendaTest() {
           },
         }
       );
-      console.log(response.data);
       setProduto(response.data);
       setProdutosArmazenados(response.data);
     } catch (error) {
@@ -104,6 +111,7 @@ function RealizarVendaTest() {
       setProduto(null);
     }
   };
+  
   const produtosFiltrados = (produto || []).filter(
     (item) =>
       item.codigoDeBarra ||
@@ -126,14 +134,13 @@ function RealizarVendaTest() {
 
   const adicionarProduto = () => {
     if (!produtosArmazenados) return;
-
     const produtoComQuantidadeEDesconto = {
       ...produtosArmazenados[0],
       quantidade,
       desconto,
     };
-    if(produtosArmazenados[0].quantidade === 1){
-      alert("Atenção,esse produto possui apenas uma unidade em estoque! click em ok para prosseguir com a venda.");
+    if (produtosArmazenados[0].quantidade === 1) {
+      setAlertaQuantidade(!alertaQuantidade);
     }
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
     setProdutosArmazenados(null);
@@ -141,7 +148,16 @@ function RealizarVendaTest() {
     setQuantidade(1);
     setDesconto("R$ 0,00");
     setQuantidadeTotal((prevTotal) => prevTotal + Number(quantidade));
+    console.log("aqui estar os produtos na caixar:", produtosVendidos);
   };
+
+  useEffect(() => {
+    if (alertaQuantidade !== null) {
+      setTimeout(() => {
+        setAlertaQuantidade(null);
+      }, 5000);
+    }
+  }, [alertaQuantidade]);
 
   const calcularTotalGeral = () => {
     const totalSemDescontoGeral = produtosVendidos.reduce((acc, item) => {
@@ -182,7 +198,7 @@ function RealizarVendaTest() {
     const confirmar = window.confirm("Deseja finalizar a venda?");
     if (!confirmar) return;
     if (produtosVendidos.length === 0) {
-      alert("Não há produtos na venda!");
+      alert("Não há produtos na venda!");
       return;
     }
     try {
@@ -214,7 +230,7 @@ function RealizarVendaTest() {
       );
 
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/RealizarVenda",
+        `${API_URL}/RealizarVenda/RealizarVenda`, 
         dadosParaEnvio,
         {
           headers: {
@@ -253,11 +269,13 @@ function RealizarVendaTest() {
       setFicha("R$ 0,00");
     }
   };
+
   function ScreenDefaull() {
     if (window.screen.width < 1348) {
       return;
     }
   }
+
   useEffect(() => {
     ScreenDefaull();
   }, []);
@@ -265,17 +283,17 @@ function RealizarVendaTest() {
   async function ClienteComFichaEmAberto() {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/ClientesComFichaEmAberto",
+        `${API_URL}/RealizarVenda/ClientesComFichaEmAberto`, 
         {
           fichaEmAberto: pesquisarCliente,
         }
       );
-      console.log("Aqui esta os que estão com ficha em aberto", response.data);
       setValorDaFichaEmAberto(response.data);
     } catch (error) {
       console.log(error);
     }
   }
+  
   useEffect(() => {
     if (pesquisarCliente.length > 2) {
       ClienteComFichaEmAberto();
@@ -284,9 +302,6 @@ function RealizarVendaTest() {
       }, 5505);
     }
   }, [pesquisarCliente]);
-  useEffect(() => {
-    console.log("Produtos Vendidos:", produtosVendidos);
-  });
 
   function limitarNome(nome, limite = 4) {
     const palavras = nome.split(" ");
@@ -432,13 +447,12 @@ function RealizarVendaTest() {
                           <h3>Preço Adquirido:</h3>
                           <p>
                             {produtos?.precoAdquirido !== undefined
-                              ? parseFloat(produtos.precoAdquirido).toLocaleString(
-                                  "pt-BR",
-                                  {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  }
-                                )
+                              ? parseFloat(
+                                  produtos.precoAdquirido
+                                ).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -610,7 +624,8 @@ function RealizarVendaTest() {
               <p style={{ textAlign: "center" }}>
                 Comprar Realizada em: {new Date().toLocaleDateString("pt-BR")}
               </p>
-              <p>Pelo/a Cliente: {pesquisarCliente}</p><br />
+              <p>Pelo/a Cliente: {pesquisarCliente}</p>
+              <br />
               <hr />
               <table style={{ width: "100%", fontSize: "1rem" }}>
                 <thead>
@@ -660,7 +675,13 @@ function RealizarVendaTest() {
               </div>
             </div>
           )}
-          
+        </div>
+      )}
+      {alertaQuantidade && (
+        <div className="alertaQuantidade">
+          <p>⚠️Lembrete⚠️</p>
+          <p>Esse Produto Tem Apenas 1 Unidade</p>
+          <div className="line"></div>
         </div>
       )}
     </>

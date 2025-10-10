@@ -39,7 +39,7 @@ function HistoricoDeVenda() {
   async function BuscaVendasComData() {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/FiltrarVendasPelaData",
+        "http://192.168.0.139:5080/api/RealizarVenda/FiltrarVendasPelaData",
         {
           dataInicio: dataInicio,
           dataFim: dataFim,
@@ -68,7 +68,7 @@ function HistoricoDeVenda() {
   async function BuscandoVendas() {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/RealizarVenda/FiltrarVendas",
+        "http://192.168.0.139:5080/api/RealizarVenda/FiltrarVendas",
         {
           nomeDoComprado: busca,
           formaDePagamento: formaDePagamento,
@@ -101,7 +101,7 @@ function HistoricoDeVenda() {
     try {
       // eslint-disable-next-line no-unused-vars
       const response = await axios.post(
-        `http://localhost:5080/api/RealizarVenda/AbaterValor/${vendaSelecionada.id_Venda}`,
+        `http://192.168.0.139:5080/api/RealizarVenda/AbaterValor/${vendaSelecionada.id_Venda}`,
         {
           IdVenda: vendaSelecionada.id_venda,
           ValorNaFicha: valorLimpo,

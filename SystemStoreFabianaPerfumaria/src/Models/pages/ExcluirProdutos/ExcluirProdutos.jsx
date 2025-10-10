@@ -11,7 +11,7 @@ function ExcluirProdutos() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
+        "http://192.168.0.139:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
           NomeDoProduto: pesquisaProduto,
         },
@@ -52,7 +52,7 @@ function ExcluirProdutos() {
     console.log(produtos);
     try {
       await axios.delete(
-        `http://localhost:5080/api/AdicionarProduto/ExcluirProduto/${id}`,
+        `http://192.168.0.139:5080/api/AdicionarProduto/ExcluirProduto/${id}`,
         {
           headers: {
             "Content-Type": "application/json",

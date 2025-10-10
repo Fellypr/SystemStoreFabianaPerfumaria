@@ -35,7 +35,7 @@ function AdicionarProduto() {
     };
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/AdicionarProduto/CadastroDeProdutos",
+        "http://192.168.0.139:5080/api/AdicionarProduto/CadastroDeProdutos",
         produto,
         {
           headers: {

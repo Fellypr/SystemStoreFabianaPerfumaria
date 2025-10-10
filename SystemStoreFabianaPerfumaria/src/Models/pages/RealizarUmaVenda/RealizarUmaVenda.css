@@ -517,9 +517,45 @@
   
 }
 
+.alertaQuantidade{
+  position: absolute;
+  width: auto;
+  height: 5rem;
+  width: 20rem;
+  top: 20rem;
+  left: 62rem;
+  border-radius: 12px;
+  z-index: 4;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  background-color: rgb(0, 119, 255);
+  color: #fff;
+  animation: alerta 2s ease 0s 1 normal forwards;
+  
+    & .line{
+      width: 100%;
+      height: 1.5rem;
+      background-color: #fff;
+      animation: Carregar 5s linear forwards;
+    }
+}
+
 .ScreenNormal{
   display: none;
 
+}
+
+@keyframes Carregar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+  
 }
 
 @keyframes blurIn {
@@ -532,4 +568,35 @@
   from {
     transform: translateY(800px);
   }
+}
+@keyframes alerta{
+	0%,
+	100% {
+		transform: rotate(0deg);
+		transform-origin: 50% 0;
+	}
+
+	10% {
+		transform: rotate(2deg);
+	}
+
+	20%,
+	40%,
+	60% {
+		transform: rotate(-4deg);
+	}
+
+	30%,
+	50%,
+	70% {
+		transform: rotate(4deg);
+	}
+
+	80% {
+		transform: rotate(-2deg);
+	}
+
+	90% {
+		transform: rotate(2deg);
+	}
 }

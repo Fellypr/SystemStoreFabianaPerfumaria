@@ -32,7 +32,6 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-
                     var checkProdutoQuery = "SELECT COUNT(*) FROM AdicionarProduto WHERE NomeDoProduto = @NomeDoProduto";
                     var checkCommand = new SqlCommand(checkProdutoQuery, connection);
                     checkCommand.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
@@ -123,7 +122,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
 
                 var query = @"
                 UPDATE AdicionarProduto
-                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra
                 WHERE Id_Produto = @Id";
 
                 var cmd = new SqlCommand(query, connection);
@@ -133,13 +132,14 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
                 cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id_Produto);
                 cmd.Parameters.AddWithValue("@PrecoAdquirido", produtoAtualizado.PrecoAdquirido);
+                cmd.Parameters.AddWithValue("@CodigoDeBarra", produtoAtualizado.CodigoDeBarra);
 
                 var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
 
                 if (linhasAfetadas == 0)
                     return NotFound("Produto não encontrado.");
 
-                return Ok("Produto atualizado com sucesso!");
+                return Ok("Produto atualizado com sucesso!");   
             }
         }
         [HttpDelete("ExcluirProduto/{Id}")]

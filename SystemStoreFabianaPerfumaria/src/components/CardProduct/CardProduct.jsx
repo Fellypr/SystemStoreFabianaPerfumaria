@@ -1,21 +1,16 @@
 import React from "react";
 import "./CardProduct.css";
-import { MdOutlineModeEdit } from "react-icons/md";
+import ButtonEdição from "../Button/ButtonEdição";
 
-function CardProduct({ produtos,onEditar }) {
+function CardProduct({ produtos, onEditar }) {
   return (
     <>
       {produtos.map((produto) => (
         <div className="Card" key={produto.id_Produto}>
           <picture>
-            <img
-              src={produto.urlImagem}
-              alt=""
-              width={100}
-              height={100}
-            />
+            <img src={produto.urlImagem} alt="" width={100} height={100} />
           </picture>
-          <h3>{produto.nomeDoProduto}</h3>
+          <h3 className="TitleProduct">{produto.nomeDoProduto}</h3>
           <p>
             <strong>Marca:</strong> {produto.marca}
           </p>
@@ -34,9 +29,11 @@ function CardProduct({ produtos,onEditar }) {
           <p>
             <strong>Codigo:</strong> {produto.codigoDeBarra}
           </p>
-          <button onClick={() => onEditar && onEditar(produto)}>
-            Editar <MdOutlineModeEdit />
-          </button>
+
+          <div className="buttonEditar">
+            <ButtonEdição onEditar={onEditar} produto={produto} />
+          </div>
+
         </div>
       ))}
     </>

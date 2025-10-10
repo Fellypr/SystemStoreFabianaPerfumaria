@@ -7,6 +7,7 @@ import "./EditarProduto.css";
 import { NumericFormat } from "react-number-format";
 import { ImCancelCircle } from "react-icons/im";
 import CardProduct from "../../../components/CardProduct/CardProduct";
+import ButtonSalvar from "../../../components/Button/ButtonSalvar";
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
@@ -15,7 +16,7 @@ function EditarProduto() {
   const buscarProdutos = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5080/api/AdicionarProduto/BuscarProdutoEstoque",
+        "http://192.168.0.139:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
           NomeDoProduto: termoBusca,
         },
@@ -52,7 +53,7 @@ function EditarProduto() {
 
     try {
       await axios.put(
-        `http://localhost:5080/api/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
+        `http://192.168.0.139:5080/api/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
         produtoSelecionado,
         {
           headers: {
@@ -66,10 +67,9 @@ function EditarProduto() {
       buscarProdutos();
     } catch (error) {
       console.error(
-        `Erro ao atualizar produto:${produtoSelecionado.id_Produto}`,
+        `Erro ao atualizar produto:`,
         error
       );
-      alert("Erro ao atualizar o produto.");
     }
   };
 
@@ -97,10 +97,9 @@ function EditarProduto() {
         </div>
 
         <div className="TabelaDePesquisa">
-          {/* Produtos */}
+
           <div className="TabelaDeProdutos">
 
-            {/* Campo de busca */}
             <input
               type="text"
               placeholder="Buscar produto pelo nome..."
@@ -114,12 +113,12 @@ function EditarProduto() {
           </div>
         </div>
       </div>
-      {/* Formulário de Edição */}
+
       {produtoSelecionado && (
         <div className="FormularioEditar">
           <h2>Editar Produto</h2>
           <ImCancelCircle
-            size={40}
+            size={30}
             color="red"
             onClick={() => setProdutoSelecionado(null)}
             style={{ cursor: "pointer" }}
@@ -221,19 +220,26 @@ function EditarProduto() {
                 allowNegative={false}
               />
             </div>
-            <button className="btn-53">
-              <div className="original">Editar</div>
-              <div classname="letters">
-                <span>C</span>
-                <span>O</span>
-                <span>F</span>
-                <span>I</span>
-                <span>R</span>
-                <span>M</span>
-                <span>A</span>
-                <span>R</span>
-              </div>
-            </button>
+
+            <div className="coolinput">
+              <label htmlFor="input">Codigo De Barra:</label>
+              <input
+                type="text"
+                placeholder="Write here..."
+                name="input"
+                classname="input"
+                value={produtoSelecionado.codigoDeBarra}
+                onChange={(e) =>
+                  setProdutoSelecionado({
+                    ...produtoSelecionado,
+                    codigoDeBarra: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="buttonSalvar">
+                <ButtonSalvar  handleAtualizarProduto = {handleAtualizarProduto}/>
+            </div>
           </form>
         </div>
       )}
