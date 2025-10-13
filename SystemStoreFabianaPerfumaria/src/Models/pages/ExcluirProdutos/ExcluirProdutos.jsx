@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { MdCancel } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { AiOutlinePicture } from "react-icons/ai";
+import ButtonTrash from "../../../components/Button/ButtonTrash";
 function ExcluirProdutos() {
   const [produtos, setProdutos] = useState([]);
   const [pesquisaProduto, setPesquisaProduto] = useState("");
@@ -109,7 +109,7 @@ function ExcluirProdutos() {
               <div className="DetalhesDoProduto">
                 <p>{produtos.nomeDoProduto}</p>
                 <p>{produtos.marca}</p>
-                <p>
+                <p style={{color:"green"}}>
                   {produtos?.preco !== undefined
                     ? produtos.preco.toLocaleString("pt-BR", {
                         style: "currency",
@@ -120,9 +120,10 @@ function ExcluirProdutos() {
                 <p>{produtos.quantidade}</p>
                 <p>{produtos.codigoDeBarra}</p>
               </div>
-              <button onClick={() => handleExcluirProduto(produtos.id_Produto)}>
-                <MdCancel size={40} color="red" />
-              </button>
+
+              <div>
+                  <ButtonTrash  handleExcluirProduto = {() => handleExcluirProduto(produtos.id_Produto)}/>  
+              </div>
             </div>
           ))}
         </section>

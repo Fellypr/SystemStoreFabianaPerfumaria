@@ -39,10 +39,19 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     var count = (int)await checkCommand.ExecuteScalarAsync();
                     if (count > 0)
                     {
-                        return Conflict($"O Nome do produto {AdicionarProdutos.NomeDoProduto} Já Existe");
+                        return Conflict($"O Nome do produto Já Existe");
                     }
 
-                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido)";
+                    var queryCheck = "SELECT COUNT(*) FROM AdicionarProduto WHERE CodigoDeBarra = @CodigoDeBarra";
+                    var checkCommand2 = new SqlCommand(queryCheck, connection);
+                    checkCommand2.Parameters.Add(new SqlParameter("@CodigoDeBarra", AdicionarProdutos.CodigoDeBarra));
+                    var count2 = (int)await checkCommand2.ExecuteScalarAsync();
+                    if (count2 > 0)
+                    {
+                        return Conflict("O Codigo de Barra Já Existe");
+                    }   
+
+                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido,Preco_Da_Ficha,Preco_a_vista) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido,@Preco_Da_Ficha,@Preco_a_vista)";
                     var command = new SqlCommand(query, connection);
 
                     command.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
@@ -52,6 +61,8 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     command.Parameters.Add(new SqlParameter("@CodigoDeBarra", AdicionarProdutos.CodigoDeBarra));
                     command.Parameters.Add(new SqlParameter("@UrlImagem", AdicionarProdutos.UrlImagem));
                     command.Parameters.Add(new SqlParameter("@PrecoAdquirido", AdicionarProdutos.PrecoAdquirido));
+                    command.Parameters.Add(new SqlParameter("@Preco_Da_Ficha", AdicionarProdutos.PrecoEmFicha));
+                    command.Parameters.Add(new SqlParameter("@Preco_a_vista", AdicionarProdutos.PrecoAvista));
 
                     var result = await command.ExecuteNonQueryAsync();
 

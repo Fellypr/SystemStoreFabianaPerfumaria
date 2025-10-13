@@ -56,14 +56,14 @@
 .Produto{
     display: flex;
     background-color: rgb(255, 254, 252);
-    border: 2px solid black;
-    width: 70%;
+    border: 1px solid black;
+    width: 85%;
     height: 3rem;
     border-radius: 12px;
     margin-right:1rem ;
     padding: 10px;
     margin-top: 2rem;
-    justify-content: space-between;
+    justify-content: space-around;
     animation: moveFromTop 0.5s ease-in-out;
     color: black;
         & img{

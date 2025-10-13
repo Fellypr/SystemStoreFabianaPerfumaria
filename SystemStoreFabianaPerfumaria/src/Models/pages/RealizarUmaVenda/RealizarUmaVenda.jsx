@@ -161,7 +161,7 @@ function RealizarVendaTest() {
 
   const calcularTotalGeral = () => {
     const totalSemDescontoGeral = produtosVendidos.reduce((acc, item) => {
-      const valor = parseFloat(item.preco);
+      const valor = parseFloat(item.preco); // importante
       const qtd = parseInt(item.quantidade);
       const descontoItem = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
       return acc + (valor * qtd - descontoItem);
