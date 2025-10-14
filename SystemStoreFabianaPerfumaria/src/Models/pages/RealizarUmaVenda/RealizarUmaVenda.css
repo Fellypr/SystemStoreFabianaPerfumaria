@@ -392,9 +392,9 @@
       align-items: center;
       font-size: 1rem;
       gap: 2rem;
-        & img{
-          border-radius: 50%;
-        }
+      & img {
+        border-radius: 50%;
+      }
       & p {
         width: 7rem;
         height: auto;
@@ -403,10 +403,10 @@
     }
   }
   & button:hover {
-      background-color: rgb(226, 223, 223);
-      transition: all 0.3s ease-in-out;
-      scale: 1.1 !important;
-    }
+    background-color: rgb(226, 223, 223);
+    transition: all 0.3s ease-in-out;
+    scale: 1.1 !important;
+  }
 }
 .ContainerButtonBuscarDeProdutosOcultar {
   display: none;
@@ -430,7 +430,7 @@
     gap: 1rem;
     position: relative;
     top: -10rem;
-    
+
     & img {
       position: relative;
       top: -2rem;
@@ -442,7 +442,6 @@
       position: relative;
       left: 0.2rem;
       gap: 0.4rem;
-      
     }
   }
 }
@@ -471,7 +470,7 @@
   color: #fff;
   padding: 5px;
 }
-.baixarNota{
+.baixarNota {
   position: absolute;
   top: 130%;
   right: 55rem;
@@ -487,13 +486,12 @@
   border: none;
   color: #fff;
 }
-.qrCode{
+.qrCode {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
   text-align: center;
-
 }
 
 @media print {
@@ -514,10 +512,9 @@
     width: 100%;
     height: 100%;
   }
-  
 }
 
-.alertaQuantidade{
+.alertaQuantidade {
   position: absolute;
   width: auto;
   height: 5rem;
@@ -534,18 +531,29 @@
   background-color: rgb(0, 119, 255);
   color: #fff;
   animation: alerta 2s ease 0s 1 normal forwards;
-  
-    & .line{
-      width: 100%;
-      height: 1.5rem;
-      background-color: #fff;
-      animation: Carregar 5s linear forwards;
-    }
+
+  & .line {
+    width: 100%;
+    height: 1.5rem;
+    background-color: #fff;
+    animation: Carregar 5s linear forwards;
+  }
 }
 
-.ScreenNormal{
+.ScreenNormal {
   display: none;
+}
 
+.selectPreco {
+  background-color: rgb(4, 0, 255);
+  width: 250px;
+  height: 2.6rem;
+  border-radius: 6px 6px 0px 0px;
+  padding: 5px;
+  font-size: 1.3rem;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 @keyframes Carregar {
@@ -555,7 +563,6 @@
   to {
     width: 0%;
   }
-  
 }
 
 @keyframes blurIn {
@@ -569,34 +576,34 @@
     transform: translateY(800px);
   }
 }
-@keyframes alerta{
-	0%,
-	100% {
-		transform: rotate(0deg);
-		transform-origin: 50% 0;
-	}
+@keyframes alerta {
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: 50% 0;
+  }
 
-	10% {
-		transform: rotate(2deg);
-	}
+  10% {
+    transform: rotate(2deg);
+  }
 
-	20%,
-	40%,
-	60% {
-		transform: rotate(-4deg);
-	}
+  20%,
+  40%,
+  60% {
+    transform: rotate(-4deg);
+  }
 
-	30%,
-	50%,
-	70% {
-		transform: rotate(4deg);
-	}
+  30%,
+  50%,
+  70% {
+    transform: rotate(4deg);
+  }
 
-	80% {
-		transform: rotate(-2deg);
-	}
+  80% {
+    transform: rotate(-2deg);
+  }
 
-	90% {
-		transform: rotate(2deg);
-	}
+  90% {
+    transform: rotate(2deg);
+  }
 }

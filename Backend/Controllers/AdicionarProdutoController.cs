@@ -269,6 +269,8 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
                                 PrecoAdquirido = Convert.IsDBNull(reader["PrecoAdquirido"]) ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
+                                PrecoEmFicha = Convert.IsDBNull(reader["Preco_Da_Ficha"]) ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
+                                PrecoAvista = Convert.IsDBNull(reader["Preco_a_vista"]) ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -6,7 +5,6 @@ import "./RealizarUmaVenda.css";
 import "./RealizarVendaMobile.css";
 import QRCodeInsta from "../../../components/qrCode/Qrcode";
 
-import { FaEquals } from "react-icons/fa";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 
@@ -23,6 +21,7 @@ function RealizarVendaTest() {
   const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
   const [formaDePagamento, setFormaDePagamento] = useState("");
   const [dinheiroRecebido, setDinheiroRecebido] = useState("R$ 0,00");
+  const [precoUnitarioSelecionado, setPrecoUnitarioSelecionado] = useState(0);
   const [ficha, setFicha] = useState("R$ 0,00");
   const [cliente, setcliente] = useState([]);
   const [pesquisarCliente, setPesquisarCliente] = useState("");
@@ -43,8 +42,8 @@ function RealizarVendaTest() {
     setValor(valorFormatado);
   }
 
-  function AbrirNota(nota) {
-    setAbrirNota(nota);
+  function AbrirNota() {
+    setAbrirNota(true);
     setTimeout(() => {
       window.print();
     }, 500);
@@ -68,7 +67,6 @@ function RealizarVendaTest() {
         Array.isArray(response.data) ? response.data : [response.data]
       );
     } catch (error) {
-      console.error(error);
       setcliente([]);
     }
   };
@@ -93,7 +91,7 @@ function RealizarVendaTest() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        `${API_URL}/AdicionarProduto/BuscarProdutoParaRealizarVenda`, 
+        `${API_URL}/AdicionarProduto/BuscarProdutoParaRealizarVenda`,
         {
           CodigoDeBarra: pesquisaProduto,
           NomeDoProduto: pesquisaProduto,
@@ -107,11 +105,10 @@ function RealizarVendaTest() {
       setProduto(response.data);
       setProdutosArmazenados(response.data);
     } catch (error) {
-      console.error(error);
       setProduto(null);
     }
   };
-  
+
   const produtosFiltrados = (produto || []).filter(
     (item) =>
       item.codigoDeBarra ||
@@ -132,23 +129,37 @@ function RealizarVendaTest() {
     setProduto([]);
   }
 
+  useEffect(() => {
+    if (produtosArmazenados && produtosArmazenados.length > 0) {
+      setPrecoUnitarioSelecionado(produtosArmazenados[0].preco);
+    } else {
+      setPrecoUnitarioSelecionado(0);
+    }
+  }, [produtosArmazenados]);
+
   const adicionarProduto = () => {
-    if (!produtosArmazenados) return;
+    if (!produtosArmazenados || produtosArmazenados.length === 0) return;
+
+    const precoVendaNumerico = precoUnitarioSelecionado;
+
     const produtoComQuantidadeEDesconto = {
       ...produtosArmazenados[0],
-      quantidade,
+      quantidade: Number(quantidade),
       desconto,
+      precoVenda: precoVendaNumerico,
     };
+
     if (produtosArmazenados[0].quantidade === 1) {
       setAlertaQuantidade(!alertaQuantidade);
     }
+
     setProdutosVendidos([...produtosVendidos, produtoComQuantidadeEDesconto]);
-    setProdutosArmazenados(null);
+    setProdutosArmazenados([]);
     setPesquisaProduto("");
     setQuantidade(1);
     setDesconto("R$ 0,00");
+    setPrecoUnitarioSelecionado(0);
     setQuantidadeTotal((prevTotal) => prevTotal + Number(quantidade));
-    console.log("aqui estar os produtos na caixar:", produtosVendidos);
   };
 
   useEffect(() => {
@@ -161,10 +172,12 @@ function RealizarVendaTest() {
 
   const calcularTotalGeral = () => {
     const totalSemDescontoGeral = produtosVendidos.reduce((acc, item) => {
-      const valor = parseFloat(item.preco); // importante
+      const preco = parseFloat(item.precoVenda);
       const qtd = parseInt(item.quantidade);
       const descontoItem = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
-      return acc + (valor * qtd - descontoItem);
+
+      
+      return acc + (preco * qtd - descontoItem);
     }, 0);
 
     const descontoVenda =
@@ -202,13 +215,13 @@ function RealizarVendaTest() {
       return;
     }
     try {
-      const precoLimpo = precoTotal.replace(/\D/g, "");
+      const precoLimpo = precoTotal.replace(/\D/g, "").replace(",", "."); 
       const Data = new Date();
 
       const dadosParaEnvio = produtosVendidos.map((produto) => {
         const dados = {
           nomeDoProduto: produto.nomeDoProduto,
-          precoTotal: Number(precoLimpo / 100),
+          precoTotal: Number(parseFloat(precoLimpo) / 100),
           quantidade: produto.quantidade,
           dataDaVenda: Data.toISOString(),
           formaDePagamento: formaDePagamento,
@@ -218,19 +231,14 @@ function RealizarVendaTest() {
         };
 
         if (formaDePagamento === "Crediario") {
-          dados.valorNaFicha = Number(precoLimpo / 100);
+          dados.valorNaFicha = Number(parseFloat(precoLimpo) / 100);
         }
 
         return dados;
       });
 
-      console.log(
-        "Enviando para API:",
-        JSON.stringify(dadosParaEnvio, null, 2)
-      );
-
       const response = await axios.post(
-        `${API_URL}/RealizarVenda/RealizarVenda`, 
+        `${API_URL}/RealizarVenda/RealizarVenda`,
         dadosParaEnvio,
         {
           headers: {
@@ -252,9 +260,9 @@ function RealizarVendaTest() {
       setDescontoNaVenda("R$ 0,00");
     } catch (error) {
       if (error.response) {
-        console.error("Erro ao realizar venda:", error.response.data);
+        alert(`Erro ao realizar venda: ${error.response.data}`);
       } else {
-        console.error("Erro inesperado ao realizar venda:", error.message);
+        alert(`Erro inesperado ao realizar venda: ${error.message}`);
       }
     }
   };
@@ -283,17 +291,15 @@ function RealizarVendaTest() {
   async function ClienteComFichaEmAberto() {
     try {
       const response = await axios.post(
-        `${API_URL}/RealizarVenda/ClientesComFichaEmAberto`, 
+        `${API_URL}/RealizarVenda/ClientesComFichaEmAberto`,
         {
           fichaEmAberto: pesquisarCliente,
         }
       );
       setValorDaFichaEmAberto(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
-  
+
   useEffect(() => {
     if (pesquisarCliente.length > 2) {
       ClienteComFichaEmAberto();
@@ -417,18 +423,38 @@ function RealizarVendaTest() {
                               "Produto não encontrado"}
                           </p>
                         </div>
-
                         <div className="InformationProtuct">
-                          <h3>Preço:</h3>
+                          <select
+                            className="selectPreco"
+                            value={precoUnitarioSelecionado}
+                            onChange={(e) =>
+                              setPrecoUnitarioSelecionado(
+                                Number(e.target.value)
+                              )
+                            }
+                          >
+                            <option value={produtos?.preco}>
+                              Preço Em Revista (R$
+                              {produtos?.preco?.toFixed(2)})
+                            </option>
+                            <option value={produtos?.precoAvista}>
+                              Preço Para Cliente (R$
+                              {produtos?.precoAvista?.toFixed(2)})
+                            </option>
+                            <option value={produtos?.precoEmFicha}>
+                              Preço Na Ficha (R$
+                              {produtos?.precoEmFicha?.toFixed(2)})
+                            </option>
+                          </select>
+
                           <p>
-                            {produtos?.preco !== undefined
-                              ? parseFloat(produtos.preco).toLocaleString(
-                                  "pt-BR",
-                                  {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  }
-                                )
+                            {precoUnitarioSelecionado > 0
+                              ? parseFloat(
+                                  precoUnitarioSelecionado
+                                ).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -442,7 +468,6 @@ function RealizarVendaTest() {
                             onChange={(e) => setQuantidade(e.target.value)}
                           />
                         </div>
-
                         <div className="InformationProtuct">
                           <h3>Preço Adquirido:</h3>
                           <p>
@@ -495,7 +520,7 @@ function RealizarVendaTest() {
                         <td>{item.nomeDoProduto}</td>
                         <td>{item.quantidade}</td>
                         <td>
-                          {parseFloat(item.preco).toLocaleString("pt-BR", {
+                          {parseFloat(item.precoVenda).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                           })}
@@ -503,7 +528,7 @@ function RealizarVendaTest() {
                         <td>{item.desconto}</td>
                         <td>
                           {(
-                            parseFloat(item.preco) * item.quantidade -
+                            item.precoVenda * item.quantidade -
                             parseFloat(item.desconto.replace(/\D/g, "")) / 100
                           ).toLocaleString("pt-BR", {
                             style: "currency",
@@ -639,11 +664,11 @@ function RealizarVendaTest() {
                 </thead>
                 <tbody>
                   {produtosVendidos.map((item, index) => {
-                    const preco = parseFloat(item.preco);
+                    const preco = parseFloat(item.precoVenda);
                     const quantidade = item.quantidade;
                     const desconto =
                       parseFloat(item.desconto?.replace(/\D/g, "") || 0) / 100;
-                    const precoTotal = preco * quantidade - desconto;
+                    const precoTotalItem = preco * quantidade - desconto;
 
                     return (
                       <tr key={index}>
@@ -651,7 +676,7 @@ function RealizarVendaTest() {
                         <td>{limitarNome(item.nomeDoProduto, 4)}</td>
                         <td>{quantidade}</td>
                         <td>{desconto.toFixed(2)}</td>
-                        <td>{precoTotal.toFixed(2)}</td>
+                        <td>{precoTotalItem.toFixed(2)}</td>
                       </tr>
                     );
                   })}
