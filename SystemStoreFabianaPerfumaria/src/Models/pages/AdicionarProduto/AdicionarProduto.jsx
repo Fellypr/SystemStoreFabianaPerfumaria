@@ -2,8 +2,10 @@ import "./AdicionarProduto.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { FaBarcode } from "react-icons/fa6";
 import { AiOutlinePicture } from "react-icons/ai";
 import Loading from "../../../components/Loading/Loading";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 function AdicionarProduto() {
   const [nomeDoProduto, setNomeDoProduto] = useState("");
@@ -18,17 +20,18 @@ function AdicionarProduto() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const [produtos, setProdutos] = useState([]);
 
   async function AdicionarProduto(e) {
     e.preventDefault();
     setError(null);
-    if(setUrlImagem === "") {
+    if (setUrlImagem === "") {
       const deverAdicionar = window.confirm(
         "Tem certeza que deseja adicionar o produto sem imagem?"
       );
-      if(!deverAdicionar) return;
+      if (!deverAdicionar) return;
     }
 
     const precoLimpo = preco.replace(/\D/g, "");
@@ -163,6 +166,50 @@ function AdicionarProduto() {
     }
   }, [error]);
 
+  const iniciarScanner = (e) => {
+    e.preventDefault();
+    setShowScanner(true);
+  };
+
+  useEffect(() => {
+    if (showScanner) {
+      const scannerId = "qr-reader";
+
+      const config = {
+        fps: 10,
+
+        
+        videoConstraints: {
+          facingMode: "environment", 
+        },
+
+        qrbox: {
+          width: window.innerWidth * 0.8,
+          height: 150,
+        },
+        disableFlip: false,
+      };
+
+      const scanner = new Html5QrcodeScanner(scannerId, config, false);
+
+      const scannerSuccess = (decodedText, decodedResult) => {
+        scanner.clear().catch((err) => console.error(err));
+        setShowScanner(false);
+        setCodigoDeBarras(decodedText);
+      };
+
+      const scannerError = (errorMessage) => {};
+
+      scanner.render(scannerSuccess, scannerError);
+
+      return () => {
+        try {
+          scanner.clear().catch((err) => {});
+        } catch (error) {}
+      };
+    }
+  }, [showScanner]);
+
   return (
     <>
       <div className="navBar">
@@ -241,6 +288,7 @@ function AdicionarProduto() {
                 onChange={(e) => setQuantidade(parseInt(e.target.value))}
               />
             </div>
+
             <div className="inputAdd">
               <label htmlFor="codigoDeBarras">Código de Barras</label>
               <input
@@ -249,9 +297,20 @@ function AdicionarProduto() {
                 placeholder="Código de Barras"
                 value={codigoDeBarras}
                 onChange={(e) => setCodigoDeBarras(e.target.value)}
-                required
               />
             </div>
+
+            {showScanner ? (
+              <div id="qr-reader" />
+            ) : (
+              <button
+                className="buttoncam"
+                onClick={iniciarScanner}
+                type="button"
+              >
+                <FaBarcode size={30} />
+              </button>
+            )}
 
             <div className="inputAdd">
               <label htmlFor="preco">Preço Revista</label>

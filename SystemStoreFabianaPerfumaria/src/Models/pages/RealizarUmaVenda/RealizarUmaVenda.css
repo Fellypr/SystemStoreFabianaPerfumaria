@@ -102,8 +102,8 @@
       & .BtnAdicionar {
         height: 3rem;
         position: absolute;
-        top: 77%;
-        left: 5%;
+        top: 70%;
+        left: 4.6%;
         width: 15rem;
         border-radius: 12px;
         border: none;
@@ -159,11 +159,11 @@
     align-items: center;
     background-color: rgb(41, 40, 39);
     height: 7.5rem;
-    width: 53%;
+    width: 54.7%;
     padding-left: 10px;
     padding-right: 10px;
     position: relative;
-    left: 38.5rem;
+    left: 39.5rem;
     color: #fff;
     font-size: 3rem;
     border-radius: 0px 0px 10px 10px;
@@ -490,6 +490,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 1rem;
   text-align: center;
 }
@@ -509,11 +510,12 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    width: auto !important;
+    height: auto;
+    margin: 0;
+    padding: 0;
   }
 }
-
 .alertaQuantidade {
   position: absolute;
   width: auto;

@@ -1,0 +1,59 @@
+.TotalVendidoDoDiaTabela {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+}
+.containerGrafico1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.TabelaDeVendasDeHoje2{
+    height: 255px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;    
+    font-size: 17px;
+    color: rgb(36, 36, 36);
+    scrollbar-width: thin;
+    scrollbar-color: rgb(60, 7, 253) rgb(255, 255, 255);
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: rgb(255, 255, 255);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(20, 3, 253);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+    color: rgb(43, 43, 43);
+    }
+}
+.valorAtual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 25px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgb(254, 254, 254);
+  background-color: black;
+  gap: 0.5rem;
+  border-radius: 0px 0px 12px 12px;
+  padding: 10px 0px;
+
+  & .valorTotalHoje {
+    color: rgb(0, 255, 0);
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}

@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./ProdutosEmEstoque.css";
+import Loading from "../../../components/Loading/Loading";
 
 function ProdutosEmEstoque() {
   const [produtos, setProdutos] = useState([]);
   const [termoNomeProduto, setTermoNomeProduto] = useState("");
   const [termoMarca, setTermoMarca] = useState("");
   const [termoCodigo, setTermoCodigo] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function Buscar() {
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://192.168.0.139:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
@@ -28,6 +31,9 @@ function ProdutosEmEstoque() {
       setProdutos(response.data);
     } catch (error) {
       console.log("error de dados", error);
+    }
+    finally {
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -138,6 +144,7 @@ function ProdutosEmEstoque() {
           </div>
         </div>
       </div>
+      <div className={loading ? "Loading" : ""}>{loading && <Loading />}</div>
     </>
   );
 }

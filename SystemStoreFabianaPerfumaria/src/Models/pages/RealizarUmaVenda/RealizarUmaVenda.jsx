@@ -176,7 +176,6 @@ function RealizarVendaTest() {
       const qtd = parseInt(item.quantidade);
       const descontoItem = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
 
-      
       return acc + (preco * qtd - descontoItem);
     }, 0);
 
@@ -215,7 +214,7 @@ function RealizarVendaTest() {
       return;
     }
     try {
-      const precoLimpo = precoTotal.replace(/\D/g, "").replace(",", "."); 
+      const precoLimpo = precoTotal.replace(/\D/g, "").replace(",", ".");
       const Data = new Date();
 
       const dadosParaEnvio = produtosVendidos.map((produto) => {
@@ -625,41 +624,58 @@ function RealizarVendaTest() {
             <div
               style={{
                 fontFamily: "monospace",
-                border: "1px dashed #000",
-                padding: "16px",
-                fontSize: "1.4rem",
-                width: "350px",
+                border: "none",
+                padding: "0px",
+                margin: "0 auto",
+                fontSize: "0.8rem",
+                width: "200px",
+                lineHeight: "1.2",
                 height: "100%",
                 backgroundColor: "rgb(255, 255, 255)",
                 color: "black",
               }}
               className="notaCard"
             >
-              <h3 style={{ textAlign: "center" }}>Fabiana Perfumaria</h3>
-              <p style={{ textAlign: "center" }}>
-                Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL{" "}
+              <h3
+                style={{
+                  textAlign: "center",
+                  fontSize: "1rem",
+                  margin: "5px 0",
+                }}
+              >
+                Fabiana Perfumaria
+              </h3>
+              <p
+                style={{ textAlign: "center", fontSize: "0.7rem", margin: "0" }}
+              >
+                Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL
               </p>
-              <hr />
-              <p style={{ textAlign: "center" }}>
-                Documento Auxiliar da Nota Fiscal de
-                <br />
-                Consumidor Eletrônica
+              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+              <p style={{ textAlign: "center", margin: "5px 0" }}>
+                DOCUMENTO AUXILIAR DA NFCE
               </p>
-              <hr />
-              <p style={{ textAlign: "center" }}>
-                Comprar Realizada em: {new Date().toLocaleDateString("pt-BR")}
+              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+              <p style={{ margin: "5px 0" }}>
+                Emissão: {new Date().toLocaleDateString("pt-BR")}{" "}
+                {new Date().toLocaleTimeString("pt-BR")}
               </p>
-              <p>Pelo/a Cliente: {pesquisarCliente}</p>
-              <br />
-              <hr />
-              <table style={{ width: "100%", fontSize: "1rem" }}>
+              {pesquisarCliente && (
+                <p style={{ margin: "5px 0" }}>Cliente: {pesquisarCliente}</p>
+              )}
+              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+              <table
+                style={{
+                  width: "100%",
+                  fontSize: "0.75rem",
+                  tableLayout: "fixed",
+                }}
+              >
                 <thead>
-                  <tr>
-                    <th style={{ textAlign: "left" }}>Cód</th>
-                    <th style={{ textAlign: "left" }}>Descrição</th>
-                    <th>Unidade</th>
-                    <th>Desconto</th>
-                    <th>Valor</th>
+                  <tr style={{ borderBottom: "1px solid #000" }}>
+                    <th style={{ textAlign: "left", width: "40%" }}>PRODUTO</th>
+                    <th style={{ textAlign: "center", width: "15%" }}>QTD</th>
+                    <th style={{ textAlign: "center", width: "20%" }}>UN</th>
+                    <th style={{ textAlign: "right", width: "25%" }}>TOTAL</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -668,35 +684,58 @@ function RealizarVendaTest() {
                     const quantidade = item.quantidade;
                     const desconto =
                       parseFloat(item.desconto?.replace(/\D/g, "") || 0) / 100;
-                    const precoTotalItem = preco * quantidade - desconto;
+                    const precoTotalItem = (
+                      preco * quantidade -
+                      desconto
+                    ).toFixed(2);
+                    const nomeCurto = limitarNome(item.nomeDoProduto, 15);
 
                     return (
                       <tr key={index}>
-                        <td>{item.codigo || "----"}</td>
-                        <td>{limitarNome(item.nomeDoProduto, 4)}</td>
-                        <td>{quantidade}</td>
-                        <td>{desconto.toFixed(2)}</td>
-                        <td>{precoTotalItem.toFixed(2)}</td>
+                        <td style={{ textAlign: "left", paddingLeft: "5px" }}>
+                          {nomeCurto}
+                        </td>
+                        <td style={{ textAlign: "center" }}>{quantidade}</td>
+                        <td style={{ textAlign: "center" }}>
+                          {preco.toFixed(2)}
+                        </td>
+                        <td style={{ textAlign: "right" }}>{precoTotalItem}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-              <hr />
-              <br />
-              <br />
-              <p style={{ fontSize: "16px" }}>
-                QTD: TOTAL DE ITENS: {quantidadeTotal}
+              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+                QTD. TOTAL DE ITENS:{" "}
+                <span style={{ float: "right" }}>{quantidadeTotal}</span>
               </p>
-              <p style={{ fontSize: "16px" }}>
-                DESCONTO Na Venda: {DescontoNaVenda}
+              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+                DESCONTO NA VENDA:{" "}
+                <span style={{ float: "right" }}>{DescontoNaVenda}</span>
               </p>
-              <p style={{ fontSize: "16px" }}>VALOR TOTAL R$: {precoTotal}</p>
-              <p style={{ fontSize: "16px" }}>
-                FORMA DE PAGAMENTO: {formaDePagamento}
+              <p
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                  margin: "5px 0",
+                }}
+              >
+                VALOR TOTAL R$:{" "}
+                <span style={{ float: "right" }}>{precoTotal}</span>
               </p>
-              <div className="qrCode">
+              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+                PAGAMENTO:{" "}
+                <span style={{ float: "right" }}>{formaDePagamento}</span>
+              </p>
+              <div
+                className="qrCode"
+                style={{ textAlign: "center", margin: "10px 0" }}
+              >
                 <QRCodeInsta />
+                <p style={{ fontSize: "0.7rem", marginTop: "5px" }}>
+                  Obrigado e volte sempre!
+                </p>
               </div>
             </div>
           )}

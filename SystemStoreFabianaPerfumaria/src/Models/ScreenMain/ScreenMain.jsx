@@ -15,6 +15,7 @@ import { LuHouse } from "react-icons/lu";
 import Example from "../../components/Grafico/Grafico";
 import Navbar from "../../components/Navbar/Navbar";
 import Loading from "../../components/Loading/Loading";
+import TabelaDeFechamento from "../../components/TabelaDeFechamentoDeCaixa/TabelaDeFechamento";
 const ScreenMain = () => {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
   const [Options, setOptions] = useState(false);
@@ -114,19 +115,11 @@ const ScreenMain = () => {
           <div className="GraficoComFechamento">
             <div
               className="FechamentoDeCaixa"
-              style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+              style={{ backgroundColor: "rgba(255, 255, 255, 1)" }}
             >
               <Link className="Linktabela" to={"/HistoricoEEstatistica"}>
                 <div className="TotalVendidoHoje">
-                  <p style={{ color: "white", fontSize: "40px" }}>
-                    Total Vendido Hoje:
-                  </p>
-                  <p>
-                    {totalVendidoHoje.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </p>
+                  <TabelaDeFechamento/>
                 </div>
               </Link>
             </div>
@@ -146,7 +139,7 @@ const ScreenMain = () => {
               }}
             >
               <Link className="Link" to={"/RealizarUmaVenda"}>
-                <MdOutlineAddShoppingCart size={100} />
+                <MdOutlineAddShoppingCart size={130} />
                 Realizar uma Venda
               </Link>
             </div>
@@ -161,8 +154,8 @@ const ScreenMain = () => {
               }}
             >
               <Link className="Link" to={"/ProdutosEmEstoques"}>
-                <BiAlignLeft size={80} />
-                Produtos Em Estoque
+                <BiAlignLeft size={130} />
+                <p>Produtos em estoque</p>
               </Link>
             </div>
           </div>

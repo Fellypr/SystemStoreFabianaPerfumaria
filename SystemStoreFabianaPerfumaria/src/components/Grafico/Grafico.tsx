@@ -56,7 +56,7 @@ export default function Example() {
     async function FechandoCaixa() {
       try {
         const response = await axios.get(
-          "http://localhost:5080/api/RealizarVenda/VendasDaSemana"
+          "http://192.168.0.139:5080/api/RealizarVenda/VendasDaSemana"
         );
         console.log(response.data);
         setHistoricoDeVendasDeHoje(response.data);
