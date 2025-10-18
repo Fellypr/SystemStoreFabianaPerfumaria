@@ -63,7 +63,7 @@ function ExcluirProdutos() {
       setProdutos([]);
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
-      alert("Erro ao excluir produto.");
+      alert("Voce tentou excluir um Produto já excluído!");
     }
   };
   return (

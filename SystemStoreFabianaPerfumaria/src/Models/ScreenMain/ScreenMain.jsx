@@ -125,6 +125,7 @@ const ScreenMain = () => {
             </div>
 
             <div className="Grafico">
+              <p>Vendas Da Semana</p>
               <Example />
             </div>
           </div>
@@ -132,14 +133,15 @@ const ScreenMain = () => {
             <div
               className="Item"
               style={{
-                backgroundColor: "rgb(89, 0, 255)",
+                backgroundColor: "rgba(15, 187, 72, 1)",
                 width: "80%",
                 height: "60%",
+                
                 fontSize: "30px",
               }}
             >
               <Link className="Link" to={"/RealizarUmaVenda"}>
-                <MdOutlineAddShoppingCart size={130} />
+                <img src="/Icons/VendaIcon512x512.png" width={100} />
                 Realizar uma Venda
               </Link>
             </div>
@@ -147,15 +149,14 @@ const ScreenMain = () => {
             <div
               className="Item"
               style={{
-                backgroundColor: "rgba(50, 223, 171, 1)",
+                backgroundColor: "rgba(71, 165, 241, 1)",
                 width: "30%",
                 height: "60%",
-                fontSize: "20px",
               }}
             >
               <Link className="Link" to={"/ProdutosEmEstoques"}>
-                <BiAlignLeft size={130} />
-                <p>Produtos em estoque</p>
+                <img src="/Icons/android-chrome-512x512.png" alt="" width={100}/>
+                <p className="textStok">Produtos em estoque</p>
               </Link>
             </div>
           </div>

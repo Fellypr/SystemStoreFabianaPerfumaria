@@ -10,8 +10,8 @@
 }
 
 .FormAdicionarProduto {
-  background-color: rgba(248, 248, 248, 0.932);
-  margin-top: 0.8rem;
+  background-color: rgba(247, 247, 247, 0.932);
+  margin-top: 3rem;
   height: auto;
   width: 60%;
   display: flex;
@@ -127,6 +127,11 @@
   button:hover::before {
     width: 100%;
   }
+}
+
+#urlImagem {
+ grid-column: span 10 / span 10;
+  
 }
 
 input[type="number"]::-webkit-outer-spin-button,
