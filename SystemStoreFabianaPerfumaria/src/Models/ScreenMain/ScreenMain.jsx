@@ -28,7 +28,7 @@ const ScreenMain = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://192.168.0.139:5080/api/RealizarVenda/VendasRealizadas"
+        "http://192.168.1.190:5080/api/RealizarVenda/VendasRealizadas"
       );
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {

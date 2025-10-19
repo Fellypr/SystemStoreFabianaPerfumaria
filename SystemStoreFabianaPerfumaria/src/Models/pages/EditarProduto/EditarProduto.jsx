@@ -16,7 +16,7 @@ function EditarProduto() {
   const buscarProdutos = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.139:5080/api/AdicionarProduto/BuscarProdutoEstoque",
+        "http://192.168.1.190:5080/api/AdicionarProduto/BuscarProdutoEstoque",
         {
           NomeDoProduto: termoBusca,
         },
@@ -53,7 +53,7 @@ function EditarProduto() {
 
     try {
       await axios.put(
-        `http://192.168.0.139:5080/api/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
+        `http://192.168.1.190:5080/api/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
         produtoSelecionado,
         {
           headers: {

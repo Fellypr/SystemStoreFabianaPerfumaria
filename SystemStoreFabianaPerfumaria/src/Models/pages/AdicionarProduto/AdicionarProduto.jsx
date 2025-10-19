@@ -57,7 +57,7 @@ function AdicionarProduto() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.0.139:5080/api/AdicionarProduto/CadastroDeProdutos",
+        "http://192.168.1.190:5080/api/AdicionarProduto/CadastroDeProdutos",
         produto,
         {
           headers: {

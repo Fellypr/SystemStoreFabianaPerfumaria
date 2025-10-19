@@ -9,7 +9,7 @@ function TabelaDeFechamento() {
   async function FechandoCaixa() {
     try {
       const response = await axios.get(
-        "http://192.168.0.139:5080/api/RealizarVenda/VendasRealizadas"
+        "http://192.168.1.190:5080/api/RealizarVenda/VendasRealizadas"
       );
       console.log("Tabela de vendas", response.data);
       setHistoricoDeVendasDeHoje(response.data);

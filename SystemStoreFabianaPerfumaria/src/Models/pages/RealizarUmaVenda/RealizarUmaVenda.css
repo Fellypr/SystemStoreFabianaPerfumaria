@@ -508,12 +508,13 @@
 
   #nota-fiscal {
     position: absolute;
-    left: 0;
+    left: 10%;
     top: 0;
     width: auto !important;
     height: auto;
     margin: 0;
     padding: 0;
+    
   }
 }
 .alertaQuantidade {

@@ -1707,19 +1707,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Gal\\.nuget\\packages\\": {}
+    "C:\\Users\\COMPUTADOR\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Gal\\Documents\\Projetos\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+      "projectUniqueName": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "C:\\Users\\Gal\\Documents\\Projetos\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\Gal\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Gal\\Documents\\Projetos\\SistemaDaLoja\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\COMPUTADOR\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Gal\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\COMPUTADOR\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -1777,7 +1777,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

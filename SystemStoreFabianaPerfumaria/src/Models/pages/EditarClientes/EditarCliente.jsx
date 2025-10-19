@@ -14,7 +14,7 @@ export default function EditarCliente() {
   const buscarCliente = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.139:5080/api/CadastroDeCliente/BuscarCliente",
+        "http://192.168.1.190:5080/api/CadastroDeCliente/BuscarCliente",
         {
           NomeDoCliente: pesquisa,
           Cpf: pesquisa,
@@ -50,7 +50,7 @@ export default function EditarCliente() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://192.168.0.139:5080/api/CadastroDeCliente/AtualizarCliente/${clienteSelecionado.id_Cliente}`,
+        `http://192.168.1.190:5080/api/CadastroDeCliente/AtualizarCliente/${clienteSelecionado.id_Cliente}`,
         clienteSelecionado,
         {
           headers: {

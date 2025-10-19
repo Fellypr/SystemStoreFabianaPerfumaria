@@ -8,7 +8,7 @@ import QRCodeInsta from "../../../components/qrCode/Qrcode";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 
-const API_URL = "http://192.168.0.139:5080/api";
+const API_URL = "http://192.168.1.190:5080/api";
 
 function RealizarVendaTest() {
   const [pesquisaProduto, setPesquisaProduto] = useState("");
@@ -296,7 +296,7 @@ function RealizarVendaTest() {
         }
       );
       setValorDaFichaEmAberto(response.data);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   useEffect(() => {
@@ -449,11 +449,11 @@ function RealizarVendaTest() {
                           <p>
                             {precoUnitarioSelecionado > 0
                               ? parseFloat(
-                                  precoUnitarioSelecionado
-                                ).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                })
+                                precoUnitarioSelecionado
+                              ).toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -472,11 +472,11 @@ function RealizarVendaTest() {
                           <p>
                             {produtos?.precoAdquirido !== undefined
                               ? parseFloat(
-                                  produtos.precoAdquirido
-                                ).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                })
+                                produtos.precoAdquirido
+                              ).toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -623,14 +623,13 @@ function RealizarVendaTest() {
           {produtosVendidos.length > 0 && (
             <div
               style={{
-                fontFamily: "monospace",
                 border: "none",
                 padding: "0px",
                 margin: "0 auto",
                 fontSize: "0.8rem",
                 width: "200px",
                 lineHeight: "1.2",
-                height: "100%",
+                height: "auto",
                 backgroundColor: "rgb(255, 255, 255)",
                 color: "black",
               }}
@@ -648,7 +647,7 @@ function RealizarVendaTest() {
               <p
                 style={{ textAlign: "center", fontSize: "0.7rem", margin: "0" }}
               >
-                Rua DR.Romulo De Almeida,65 São Miguel Dos Campos/AL
+                Rua DR.Romulo De Almeida,65 <br /> São Miguel Dos Campos/AL
               </p>
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
               <p style={{ textAlign: "center", margin: "5px 0" }}>
@@ -688,52 +687,57 @@ function RealizarVendaTest() {
                       preco * quantidade -
                       desconto
                     ).toFixed(2);
-                    const nomeCurto = limitarNome(item.nomeDoProduto, 15);
+
 
                     return (
-                      <tr key={index}>
-                        <td style={{ textAlign: "left", paddingLeft: "5px" }}>
-                          {nomeCurto}
-                        </td>
-                        <td style={{ textAlign: "center" }}>{quantidade}</td>
-                        <td style={{ textAlign: "center" }}>
-                          {preco.toFixed(2)}
-                        </td>
-                        <td style={{ textAlign: "right" }}>{precoTotalItem}</td>
-                      </tr>
+                      <>
+
+                        <tr key={index}>
+                          <td style={{ textAlign: "left", paddingLeft: "5px" }}>
+                            {item.nomeDoProduto}
+                          </td>
+                          <td style={{ textAlign: "center" }}>{quantidade}</td>
+                          <td style={{ textAlign: "center" }}>
+                            {preco.toFixed(2)}
+                          </td>
+                          <td style={{ textAlign: "right" }}>{precoTotalItem}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan={4}>
+                            <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+                          </td>
+                        </tr>
+                      </>
+
                     );
                   })}
                 </tbody>
               </table>
-              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                QTD. TOTAL DE ITENS:{" "}
-                <span style={{ float: "right" }}>{quantidadeTotal}</span>
+
+                <span>QTD. TOTAL DE ITENS:{" "}{quantidadeTotal}</span>
               </p>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                DESCONTO NA VENDA:{" "}
-                <span style={{ float: "right" }}>{DescontoNaVenda}</span>
+                <span >DESCONTO NA VENDA:{" "}{DescontoNaVenda}</span>
               </p>
               <p
                 style={{
-                  fontSize: "1rem",
+                  fontSize: "0.9rem",
                   fontWeight: "bold",
                   margin: "5px 0",
                 }}
               >
-                VALOR TOTAL R$:{" "}
-                <span style={{ float: "right" }}>{precoTotal}</span>
+                <span>VALOR TOTAL R$:{" "}{precoTotal}</span>
               </p>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                PAGAMENTO:{" "}
-                <span style={{ float: "right" }}>{formaDePagamento}</span>
+                <span >PAGAMENTO: {formaDePagamento}</span>
               </p>
               <div
                 className="qrCode"
                 style={{ textAlign: "center", margin: "10px 0" }}
               >
                 <QRCodeInsta />
-                <p style={{ fontSize: "0.7rem", marginTop: "5px" }}>
+                <p style={{ fontSize: "0.7rem", margin:"0 0 0 0",padding:"5px" }}>
                   Obrigado e volte sempre!
                 </p>
               </div>

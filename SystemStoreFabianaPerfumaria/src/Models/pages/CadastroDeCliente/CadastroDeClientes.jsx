@@ -26,7 +26,7 @@ function CadastroDeClientes() {
   const buscarClientes = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.139:5080/api/CadastroDeCliente/BuscarCliente",
+        "http://192.168.1.247/api/CadastroDeCliente/BuscarCliente",
         {
           Cpf: termoBusca,
           NomeDoCliente: termoBusca,
@@ -91,7 +91,7 @@ function CadastroDeClientes() {
       };
       // eslint-disable-next-line no-unused-vars
       const response = await axios.post(
-        "http://192.168.0.139:5080/api/CadastroDeCliente/CadastroDeCliente",
+        "http://192.168.1.247:5080/api/CadastroDeCliente/CadastroDeCliente",
         novoCliente,
         {
           headers: {
@@ -117,7 +117,7 @@ function CadastroDeClientes() {
     async function ClienteMethodGet() {
       try {
         const response = await axios.get(
-          "http://192.168.0.139:5080/api/CadastroDeCliente/HistoricoDeClientes"
+          "http://192.168.1.247:5080/api/CadastroDeCliente/HistoricoDeClientes"
         );
         setGetClientes(response.data);
       } catch (error) {
@@ -138,7 +138,7 @@ function CadastroDeClientes() {
     if (!confirmar) return;
     try {
       await axios.delete(
-        `http://192.168.0.139:5080/api/CadastroDeCliente/ExcluirCadastro/${id}`,
+        `http://192.168.1.190:5080/api/CadastroDeCliente/ExcluirCadastro/${id}`,
         {
           headers: {
             "Content-Type": "application/json",

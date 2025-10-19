@@ -33,7 +33,6 @@ const QRCodeInsta = () => {
 
   return (
     <div>
-      <h3>Scanner o Nosso QrCode Para Entra no Instagram Da Loja</h3>
       <br />
       <div ref={ref} />
     </div>
