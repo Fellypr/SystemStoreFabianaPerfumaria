@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj": {}
+    "C:\\Users\\Gal\\Documents\\SistemaDalojaOriginal\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj": {
+    "C:\\Users\\Gal\\Documents\\SistemaDalojaOriginal\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\Gal\\Documents\\SistemaDalojaOriginal\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\COMPUTADOR\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\COMPUTADOR\\Documents\\LojaSistema(AQUI)\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
+        "projectPath": "C:\\Users\\Gal\\Documents\\SistemaDalojaOriginal\\SystemStoreFabianaPerfumaria\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\Gal\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Gal\\Documents\\SistemaDalojaOriginal\\SystemStoreFabianaPerfumaria\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\COMPUTADOR\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Gal\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -72,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

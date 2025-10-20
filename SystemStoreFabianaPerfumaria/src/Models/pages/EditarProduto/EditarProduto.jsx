@@ -8,6 +8,8 @@ import { NumericFormat } from "react-number-format";
 import { ImCancelCircle } from "react-icons/im";
 import CardProduct from "../../../components/CardProduct/CardProduct";
 import ButtonSalvar from "../../../components/Button/ButtonSalvar";
+
+const url = "http://192.168.0.139:5080/api";
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
@@ -16,7 +18,7 @@ function EditarProduto() {
   const buscarProdutos = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.1.190:5080/api/AdicionarProduto/BuscarProdutoEstoque",
+        `${url}/AdicionarProduto/BuscarProdutoEstoque`,
         {
           NomeDoProduto: termoBusca,
         },
@@ -26,7 +28,6 @@ function EditarProduto() {
           },
         }
       );
-      console.log(response.data);
       setProdutos(response.data);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
@@ -35,7 +36,6 @@ function EditarProduto() {
 
   useEffect(() => {
     if ((termoBusca || "").trim().length > 0) {
-      console.log(produtos);
       buscarProdutos();
     } else {
       console.log(produtos);
@@ -46,6 +46,7 @@ function EditarProduto() {
   const handleEditarProduto = (produto) => {
     window.scrollTo(0, 0);
     setProdutoSelecionado(produto);
+    console.log(produto);
   };
 
   const handleAtualizarProduto = async (e) => {
@@ -53,7 +54,7 @@ function EditarProduto() {
 
     try {
       await axios.put(
-        `http://192.168.1.190:5080/api/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
+        `${url}/AdicionarProduto/AtualizarProduto/${produtoSelecionado.id_Produto}`,
         produtoSelecionado,
         {
           headers: {
@@ -61,7 +62,6 @@ function EditarProduto() {
           },
         }
       );
-      console.log(produtoSelecionado);
       alert("Produto atualizado com sucesso!");
       setProdutoSelecionado(null);
       buscarProdutos();
@@ -184,7 +184,7 @@ function EditarProduto() {
             </div>
 
             <div className="coolinput">
-              <label for="input">Preço:</label>
+              <label for="input">Preço na Revista:</label>
               <NumericFormat
                 placeholder="R$ 0,00"
                 value={produtoSelecionado.preco}
@@ -212,6 +212,44 @@ function EditarProduto() {
                   setProdutoSelecionado({
                     ...produtoSelecionado,
                     precoAdquirido: value,
+                  });
+                }}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                allowNegative={false}
+              />
+            </div>
+
+            <div className="coolinput">
+              <label for="input">Preço A vista:</label>
+              <NumericFormat
+                placeholder="R$ 0,00"
+                value={produtoSelecionado.precoAvista}
+                onValueChange={(values) => {
+                  const { value } = values;
+                  setProdutoSelecionado({
+                    ...produtoSelecionado,
+                    precoAvista: value,
+                  });
+                }}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                allowNegative={false}
+              />
+            </div>
+
+            <div className="coolinput">
+              <label for="input">Preço Em Ficha:</label>
+              <NumericFormat
+                placeholder="R$ 0,00"
+                value={produtoSelecionado.precoEmFicha}
+                onValueChange={(values) => {
+                  const { value } = values;
+                  setProdutoSelecionado({
+                    ...produtoSelecionado,
+                    precoemficha: value,
                   });
                 }}
                 thousandSeparator="."

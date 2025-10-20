@@ -133,7 +133,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
 
                 var query = @"
                 UPDATE AdicionarProduto
-                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra , Preco_Da_Ficha = @Preco_Da_Ficha , Preco_a_vista = @Preco_a_vista
                 WHERE Id_Produto = @Id";
 
                 var cmd = new SqlCommand(query, connection);
@@ -144,6 +144,8 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id_Produto);
                 cmd.Parameters.AddWithValue("@PrecoAdquirido", produtoAtualizado.PrecoAdquirido);
                 cmd.Parameters.AddWithValue("@CodigoDeBarra", produtoAtualizado.CodigoDeBarra);
+                cmd.Parameters.AddWithValue("@Preco_Da_Ficha", produtoAtualizado.PrecoEmFicha);
+                cmd.Parameters.AddWithValue("@Preco_a_vista", produtoAtualizado.PrecoAvista);
 
                 var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
 
@@ -223,6 +225,8 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),
+                                PrecoEmFicha = Convert.IsDBNull(reader["Preco_Da_Ficha"]) ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
+                                PrecoAvista = Convert.IsDBNull(reader["Preco_a_vista"]) ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
                             });
                         }
 

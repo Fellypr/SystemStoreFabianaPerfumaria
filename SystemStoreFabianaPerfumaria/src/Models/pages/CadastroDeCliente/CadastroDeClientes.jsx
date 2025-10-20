@@ -26,7 +26,7 @@ function CadastroDeClientes() {
   const buscarClientes = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.1.247/api/CadastroDeCliente/BuscarCliente",
+        "http://192.168.1.247:5080/api/CadastroDeCliente/BuscarCliente",
         {
           Cpf: termoBusca,
           NomeDoCliente: termoBusca,
