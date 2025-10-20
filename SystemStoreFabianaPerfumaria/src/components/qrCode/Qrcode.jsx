@@ -19,7 +19,7 @@ const qrCode = new QRCodeStyling({
     imageSize: 0.7,
   },
   image:
-    "/src/img/LogoWithCorBlack.png",
+    "img/LogoWithCorBlack.png",
 });
 
 const QRCodeInsta = () => {
