@@ -392,6 +392,13 @@
   }
 }
 
+.mensagems{
+  position: absolute;
+  top: 20%;
+  left: 85%;
+  transform: translate(-50%, -50%)
+}
+
 /* Animation */
 @keyframes blurInRight {
   from {

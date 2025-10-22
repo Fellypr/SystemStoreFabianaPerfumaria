@@ -9,6 +9,7 @@ using StoreSystemFabianaPerfumaria.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
 using Backend.Services;
+using System.Data;
 
 namespace StoreSystemFabianaPerfumaria.Controllers
 
@@ -49,7 +50,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     if (count2 > 0)
                     {
                         return Conflict("O Codigo de Barra Já Existe");
-                    }   
+                    }
 
                     var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido,Preco_Da_Ficha,Preco_a_vista) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido,@Preco_Da_Ficha,@Preco_a_vista)";
                     var command = new SqlCommand(query, connection);
@@ -133,7 +134,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
 
                 var query = @"
                 UPDATE AdicionarProduto
-                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra , Preco_Da_Ficha = @Preco_Da_Ficha , Preco_a_vista = @Preco_a_vista
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra , Preco_Da_Ficha = @Preco_Da_Ficha , Preco_a_vista = @Preco_a_vista , UrlImagem = @UrlImagem
                 WHERE Id_Produto = @Id";
 
                 var cmd = new SqlCommand(query, connection);
@@ -146,13 +147,19 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 cmd.Parameters.AddWithValue("@CodigoDeBarra", produtoAtualizado.CodigoDeBarra);
                 cmd.Parameters.AddWithValue("@Preco_Da_Ficha", produtoAtualizado.PrecoEmFicha);
                 cmd.Parameters.AddWithValue("@Preco_a_vista", produtoAtualizado.PrecoAvista);
+                cmd.Parameters.AddWithValue("@UrlImagem", produtoAtualizado.UrlImagem);
+
+                if (produtoAtualizado.UrlImagem.Length >= 255)
+                {
+                    return BadRequest("A URL da imagem deve ter menos de 255 caracteres.");
+                }
 
                 var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
 
                 if (linhasAfetadas == 0)
                     return NotFound("Produto não encontrado.");
 
-                return Ok("Produto atualizado com sucesso!");   
+                return Ok("Produto atualizado com sucesso!");
             }
         }
         [HttpDelete("ExcluirProduto/{Id}")]

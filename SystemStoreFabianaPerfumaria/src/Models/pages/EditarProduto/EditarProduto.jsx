@@ -8,12 +8,14 @@ import { NumericFormat } from "react-number-format";
 import { ImCancelCircle } from "react-icons/im";
 import CardProduct from "../../../components/CardProduct/CardProduct";
 import ButtonSalvar from "../../../components/Button/ButtonSalvar";
+import MensagemErro from "./MensagemErro";
 
 const url = "http://192.168.0.139:5080/api";
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [termoBusca, setTermoBusca] = useState("");
+  const [error, setError] = useState(null);
 
   const buscarProdutos = async () => {
     try {
@@ -28,6 +30,7 @@ function EditarProduto() {
           },
         }
       );
+      console.log(response.data);
       setProdutos(response.data);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
@@ -66,10 +69,15 @@ function EditarProduto() {
       setProdutoSelecionado(null);
       buscarProdutos();
     } catch (error) {
-      console.error(
-        `Erro ao atualizar produto:`,
-        error
-      );
+      console.error(`Erro ao atualizar produto:`, error);
+      let mensagemErro = "Ocorreu um erro ao buscar os produtos.";
+      if (error.response && error.response.data) {
+        mensagemErro = error.response.data;
+      } else if (error.message) {
+        mensagemErro = error.message;
+      }
+
+      setError(mensagemErro);
     }
   };
 
@@ -79,6 +87,16 @@ function EditarProduto() {
       produto.nomeDoProduto.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
+  useEffect(() => {
+    buscarProdutos();
+  }, []);
+  useEffect(() => {
+    if(error){
+      setTimeout(() => {
+        setError(null);
+      }, 10000);
+    }
+  },[error]);
 
   return (
     <>
@@ -97,18 +115,18 @@ function EditarProduto() {
         </div>
 
         <div className="TabelaDePesquisa">
-
           <div className="TabelaDeProdutos">
-
             <input
               type="text"
               placeholder="Buscar produto pelo nome..."
               value={termoBusca}
               onChange={(e) => setTermoBusca(e.target.value)}
-              
             />
             <div className="CardContainer">
-              <CardProduct produtos={produtosFiltrados} onEditar={handleEditarProduto}/>
+              <CardProduct
+                produtos={produtosFiltrados}
+                onEditar={handleEditarProduto}
+              />
             </div>
           </div>
         </div>
@@ -128,11 +146,30 @@ function EditarProduto() {
           <form onSubmit={handleAtualizarProduto}>
             <div className="coolinput">
               <label for="input" classname="text">
-                Name Do Produto:
+                Url Da Imagem Do Produto:
               </label>
               <input
                 type="text"
-                placeholder="Write here..."
+                placeholder="Url da Imagem"
+                name="input"
+                classname="input"
+                value={produtoSelecionado.urlImagem}
+                onChange={(e) =>
+                  setProdutoSelecionado({
+                    ...produtoSelecionado,
+                    urlImagem: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="coolinput">
+              <label for="input" classname="text">
+                Nome Do Produto:
+              </label>
+              <input
+                type="text"
+                placeholder="Nome Do Produto"
                 name="input"
                 classname="input"
                 value={produtoSelecionado.nomeDoProduto}
@@ -151,7 +188,7 @@ function EditarProduto() {
               </label>
               <input
                 type="text"
-                placeholder="Write here..."
+                placeholder="Marca Do Produto"
                 name="input"
                 classname="input"
                 value={produtoSelecionado.marca}
@@ -170,7 +207,7 @@ function EditarProduto() {
               </label>
               <input
                 type="text"
-                placeholder="Write here..."
+                placeholder="Quantidade"
                 name="input"
                 classname="input"
                 value={produtoSelecionado.quantidade}
@@ -263,7 +300,7 @@ function EditarProduto() {
               <label htmlFor="input">Codigo De Barra:</label>
               <input
                 type="text"
-                placeholder="Write here..."
+                placeholder="Codigo De Barra"
                 name="input"
                 classname="input"
                 value={produtoSelecionado.codigoDeBarra}
@@ -276,9 +313,14 @@ function EditarProduto() {
               />
             </div>
             <div className="buttonSalvar">
-                <ButtonSalvar  handleAtualizarProduto = {handleAtualizarProduto}/>
+              <ButtonSalvar handleAtualizarProduto={handleAtualizarProduto} />
             </div>
           </form>
+        </div>
+      )}
+      {error && (
+        <div className="mensagems">
+          <MensagemErro error={error} setError={setError} />
         </div>
       )}
     </>

@@ -647,7 +647,7 @@ function RealizarVendaTest() {
               <p
                 style={{ textAlign: "center", fontSize: "0.7rem", margin: "0" }}
               >
-                Rua DR.Romulo De Almeida,65 <br /> São Miguel Dos Campos/AL
+                Rua DR.Rômulo De Almeida,65 <br /> São Miguel Dos Campos/AL
               </p>
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
               <p style={{ textAlign: "center", margin: "5px 0" }}>
@@ -659,7 +659,7 @@ function RealizarVendaTest() {
                 {new Date().toLocaleTimeString("pt-BR")}
               </p>
               {pesquisarCliente && (
-                <p style={{ margin: "5px 0" }}>Cliente: {pesquisarCliente}</p>
+                <p style={{ margin: "5px 0", fontSize:"16px" }}>Cliente: {pesquisarCliente}</p>
               )}
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
               <table
@@ -718,7 +718,7 @@ function RealizarVendaTest() {
                 <span>QTD. TOTAL DE ITENS:{" "}{quantidadeTotal}</span>
               </p>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                <span >DESCONTO NA VENDA:{" "}{DescontoNaVenda}</span>
+                <span >DESCONTO TOTAL:{" "}{DescontoNaVenda}</span>
               </p>
               <p
                 style={{
