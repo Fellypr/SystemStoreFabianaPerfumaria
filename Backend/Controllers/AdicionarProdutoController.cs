@@ -206,13 +206,13 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 WHERE 
                     (@Nome IS NULL OR NomeDoProduto LIKE @Nome) AND
                     (@Marca IS NULL OR Marca LIKE @Marca) AND
-                    (@Codigo IS NULL OR CodigoDeBarra LIKE @Codigo)";
+                    (@Codigo IS NULL OR CodigoDeBarra = @Codigo)";
 
                     var command = new SqlCommand(query, connection);
 
                     command.Parameters.AddWithValue("@Nome", string.IsNullOrEmpty(search.NomeDoProduto) ? (object)DBNull.Value : "%" + search.NomeDoProduto + "%");
                     command.Parameters.AddWithValue("@Marca", string.IsNullOrEmpty(search.Marca) ? (object)DBNull.Value : "%" + search.Marca + "%");
-                    command.Parameters.AddWithValue("@Codigo", string.IsNullOrEmpty(search.CodigoDeBarra) ? (object)DBNull.Value : "%" + search.CodigoDeBarra + "%");
+                    command.Parameters.AddWithValue("@Codigo", string.IsNullOrEmpty(search.CodigoDeBarra) ? (object)DBNull.Value : search.CodigoDeBarra);
 
                     await connection.OpenAsync();
 

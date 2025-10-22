@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./RealizarUmaVenda.css";
-import "./RealizarVendaMobile.css";
+
 import QRCodeInsta from "../../../components/qrCode/Qrcode";
+import CardConfirmaçãoDeVenda from "./ConfirmcaoDeVenda";
 
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
+import MensagemDeSucesso from "./MensagemDeSucesso";
+import ButtonVenda from "../../../components/Button/ButtonVenda";
 
-const API_URL = "http://192.168.0.139:5080/api";
+const API_URL = "http://192.168.1.190:5080/api";
 
 function RealizarVendaTest() {
   const [pesquisaProduto, setPesquisaProduto] = useState("");
@@ -30,6 +33,9 @@ function RealizarVendaTest() {
   const [abrirNota, setAbrirNota] = useState(null);
   const [alertaQuantidade, setAlertaQuantidade] = useState(null);
 
+  const [showRealizarVenda, setShowRealizarVenda] = useState(null);
+  const [mensagemDeSucesso , setMensagemDeSucesso] = useState(null)
+
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
     const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
@@ -42,6 +48,9 @@ function RealizarVendaTest() {
     setValor(valorFormatado);
   }
 
+  function MesagemDeVenda(item) {
+    setShowRealizarVenda(item);
+  }
   function AbrirNota() {
     setAbrirNota(true);
     setTimeout(() => {
@@ -205,12 +214,11 @@ function RealizarVendaTest() {
     );
   };
 
+
   const FinalizarVenda = async () => {
-    window.scrollTo(0, 0);
-    const confirmar = window.confirm("Deseja finalizar a venda?");
-    if (!confirmar) return;
     if (produtosVendidos.length === 0) {
       alert("Não há produtos na venda!");
+      window.location.reload();
       return;
     }
     try {
@@ -245,10 +253,8 @@ function RealizarVendaTest() {
           },
         }
       );
-
-      alert("Venda realizada com sucesso!");
-      window.location.reload();
-
+      setMensagemDeSucesso(response.data);
+      setShowRealizarVenda(null);
       setProdutosVendidos([]);
       setQuantidadeTotal(0);
       setPrecoTotal("R$ 0,00");
@@ -256,6 +262,7 @@ function RealizarVendaTest() {
       setFormaDePagamento("");
       setFicha("R$ 0,00");
       setcliente("");
+      setPesquisarCliente("");
       setDescontoNaVenda("R$ 0,00");
     } catch (error) {
       if (error.response) {
@@ -265,6 +272,14 @@ function RealizarVendaTest() {
       }
     }
   };
+
+  useEffect(() => {
+    if (mensagemDeSucesso) {
+      setTimeout(() => {
+        setMensagemDeSucesso(null);
+      }, 5000);
+    }
+  }, [mensagemDeSucesso]);
 
   const CancelarVenda = () => {
     if (window.confirm("Tem certeza que deseja cancelar a venda?")) {
@@ -296,7 +311,7 @@ function RealizarVendaTest() {
         }
       );
       setValorDaFichaEmAberto(response.data);
-    } catch (error) { }
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -312,6 +327,12 @@ function RealizarVendaTest() {
     const palavras = nome.split(" ");
     if (palavras.length <= limite) return nome;
     return palavras.slice(0, limite).join(" ") + " ...";
+  }
+
+  function HandleKeyPress(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
   }
 
   return (
@@ -335,6 +356,7 @@ function RealizarVendaTest() {
               <input
                 type="text"
                 placeholder="Digite o Codigo de Barras ou Nome do Produto"
+                onKeyDown={HandleKeyPress}
                 value={pesquisaProduto}
                 onChange={(e) => setPesquisaProduto(e.target.value)}
               />
@@ -449,11 +471,11 @@ function RealizarVendaTest() {
                           <p>
                             {precoUnitarioSelecionado > 0
                               ? parseFloat(
-                                precoUnitarioSelecionado
-                              ).toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })
+                                  precoUnitarioSelecionado
+                                ).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -472,11 +494,11 @@ function RealizarVendaTest() {
                           <p>
                             {produtos?.precoAdquirido !== undefined
                               ? parseFloat(
-                                produtos.precoAdquirido
-                              ).toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })
+                                  produtos.precoAdquirido
+                                ).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })
                               : "R$ 0,00"}
                           </p>
                         </div>
@@ -574,29 +596,16 @@ function RealizarVendaTest() {
                 onChange={(e) => setFormaDePagamento(e.target.value)}
               >
                 <option value="">Selecione</option>
-                <option value="Espécie">Dinheiro</option>
-                <option value="CartaoDeCredito">Cartão de Credito</option>
-                <option value="CartaoDeDebito">Cartão de Debito</option>
-                <option value="PagoNoPix">Pix</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Credito">Cartão de Credito</option>
+                <option value="Debito">Cartão de Debito</option>
+                <option value="Pix">Pix</option>
                 <option value="Crediario">Ficha</option>
               </select>
             </div>
 
             <div className="Botoes">
-              <button
-                id="btn"
-                onClick={AbrirNota}
-                style={{ backgroundColor: "rgb(0, 68, 255)" }}
-              >
-                Imprimir Nota
-              </button>
-              <button
-                id="btn"
-                style={{ backgroundColor: "rgb(0, 255, 76)" }}
-                onClick={FinalizarVenda}
-              >
-                Finalizar Venda
-              </button>
+              <ButtonVenda  MesagemDeVenda={MesagemDeVenda}/>
               <button
                 id="btn"
                 style={{ backgroundColor: "rgb(255, 0, 0)" }}
@@ -659,7 +668,9 @@ function RealizarVendaTest() {
                 {new Date().toLocaleTimeString("pt-BR")}
               </p>
               {pesquisarCliente && (
-                <p style={{ margin: "5px 0", fontSize:"16px" }}>Cliente: {pesquisarCliente}</p>
+                <p style={{ margin: "5px 0", fontSize: "16px" }}>
+                  Cliente: {pesquisarCliente}
+                </p>
               )}
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
               <table
@@ -688,10 +699,8 @@ function RealizarVendaTest() {
                       desconto
                     ).toFixed(2);
 
-
                     return (
                       <>
-
                         <tr key={index}>
                           <td style={{ textAlign: "left", paddingLeft: "5px" }}>
                             {item.nomeDoProduto}
@@ -700,25 +709,30 @@ function RealizarVendaTest() {
                           <td style={{ textAlign: "center" }}>
                             {preco.toFixed(2)}
                           </td>
-                          <td style={{ textAlign: "right" }}>{precoTotalItem}</td>
+                          <td style={{ textAlign: "right" }}>
+                            {precoTotalItem}
+                          </td>
                         </tr>
                         <tr>
                           <td colSpan={4}>
-                            <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
+                            <hr
+                              style={{
+                                borderTop: "1px dashed #000",
+                                margin: "5px 0",
+                              }}
+                            />
                           </td>
                         </tr>
                       </>
-
                     );
                   })}
                 </tbody>
               </table>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-
-                <span>QTD. TOTAL DE ITENS:{" "}{quantidadeTotal}</span>
+                <span>QTD. TOTAL DE ITENS: {quantidadeTotal}</span>
               </p>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                <span >DESCONTO TOTAL:{" "}{DescontoNaVenda}</span>
+                <span>DESCONTO TOTAL: {DescontoNaVenda}</span>
               </p>
               <p
                 style={{
@@ -727,17 +741,23 @@ function RealizarVendaTest() {
                   margin: "5px 0",
                 }}
               >
-                <span>VALOR TOTAL R$:{" "}{precoTotal}</span>
+                <span>VALOR TOTAL R$: {precoTotal}</span>
               </p>
               <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
-                <span >PAGAMENTO: {formaDePagamento}</span>
+                <span>PAGAMENTO: {formaDePagamento}</span>
               </p>
               <div
                 className="qrCode"
                 style={{ textAlign: "center", margin: "10px 0" }}
               >
                 <QRCodeInsta />
-                <p style={{ fontSize: "0.7rem", margin:"0 0 0 0",padding:"5px" }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    margin: "0 0 0 0",
+                    padding: "5px",
+                  }}
+                >
                   Obrigado e volte sempre!
                 </p>
               </div>
@@ -750,6 +770,17 @@ function RealizarVendaTest() {
           <p>⚠️Lembrete⚠️</p>
           <p>Esse Produto Tem Apenas 1 Unidade</p>
           <div className="line"></div>
+        </div>
+      )}
+
+      {showRealizarVenda && (
+        <div className="MensagemDeSucesso">
+          <CardConfirmaçãoDeVenda FinalizarVenda = {FinalizarVenda} AbrirNota = {AbrirNota} setShowRealizarVenda = {setShowRealizarVenda} />
+        </div>
+      )}
+      {mensagemDeSucesso && (
+        <div className="mensagems">
+          <MensagemDeSucesso mensagemDeSucesso={mensagemDeSucesso} />
         </div>
       )}
     </>

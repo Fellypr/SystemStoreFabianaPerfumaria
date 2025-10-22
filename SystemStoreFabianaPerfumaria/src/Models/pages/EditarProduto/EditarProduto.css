@@ -392,11 +392,12 @@
   }
 }
 
-.mensagems{
+.mensagems {
   position: absolute;
-  top: 20%;
+  top: 12rem;
   left: 85%;
-  transform: translate(-50%, -50%)
+  transform: translate(-50%, -50%);
+  animation: entrance-message 1s ease-in normal forwards;
 }
 
 /* Animation */
@@ -405,5 +406,17 @@
     transform: translateX(-100%);
     filter: blur(20px);
     opacity: 0;
+  }
+}
+
+@keyframes entrance-message {
+  0% {
+    opacity: 0;
+    transform: translateX(0px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-150px);
   }
 }
