@@ -7,10 +7,13 @@ import { format } from "date-fns";
 function HistoricoEEstatistica() {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
 
+
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
   async function FechandoCaixa() {
     try {
       const response = await axios.get(
-        "http://192.168.1.190:5080/api/RealizarVenda/VendasRealizadas"
+        `${url}/RealizarVenda/VendasRealizadas`
       );
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {

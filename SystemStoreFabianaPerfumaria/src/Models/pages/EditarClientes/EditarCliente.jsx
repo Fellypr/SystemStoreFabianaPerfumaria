@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./EditarCliente.css";
 import { Link } from "react-router-dom";
-import { FaUserCog } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import axios from "axios";
 export default function EditarCliente() {
@@ -11,10 +11,45 @@ export default function EditarCliente() {
 
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
 
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
+  function formatarCPF(valor) {
+    return valor
+      .replace(/\D/g, "")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  function handleCpfChange(e) {
+    let valorDigitado = e.target.value;
+    valorDigitado = formatarCPF(valorDigitado);
+
+    setClienteSelecionado({
+      ...clienteSelecionado,
+      cpf: valorDigitado,
+    });
+  }
+
+  function telefoneFormatado(telefone) {
+    return telefone
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{4,5})(\d)/, "$1-$2");
+  }
+  function handleChangeTelefone(e) {
+    let valorDigitado = e.target.value;
+    valorDigitado = telefoneFormatado(valorDigitado);
+    setClienteSelecionado({
+      ...clienteSelecionado,
+      telefone: valorDigitado,
+    })
+  }
+
   const buscarCliente = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.1.190:5080/api/CadastroDeCliente/BuscarCliente",
+        `${url}/CadastroDeCliente/BuscarCliente`,
         {
           NomeDoCliente: pesquisa,
           Cpf: pesquisa,
@@ -50,7 +85,7 @@ export default function EditarCliente() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://192.168.1.190:5080/api/CadastroDeCliente/AtualizarCliente/${clienteSelecionado.id_Cliente}`,
+        `${url}/CadastroDeCliente/AtualizarCliente/${clienteSelecionado.id_Cliente}`,
         clienteSelecionado,
         {
           headers: {
@@ -80,9 +115,10 @@ export default function EditarCliente() {
             />
           </Link>
 
-          <h1>Editar Clientes</h1>
+          <h1>Fabiana Perfumaria</h1>
         </div>
         <section>
+          <h1 className="TituloEditarClientes">Editar Clientes</h1>
           <form action="submit" className="formBuscar">
             <input
               type="text"
@@ -100,12 +136,12 @@ export default function EditarCliente() {
                 <th>Telefone</th>
                 <th width={120}>Cpf</th>
                 <th width={200}>Endereço</th>
-                <th width={50}>Numero Da Residencia</th>
+                <th width={50}>Nº</th>
                 <th>Bairro</th>
                 <th colSpan={2}>Ponto De Referencia</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="tbody-editar">
               {cliente &&
                 cliente.map((item) => (
                   <tr key={item.Id_Cliente}>
@@ -128,107 +164,123 @@ export default function EditarCliente() {
         </section>
       </div>
       {clienteSelecionado && (
-        <div className="ScreenEdit">
-          <div className="Edit">
-            <FaUserCog size={100} className="IconUser" />
-            <form
-              onSubmit={handleAtualizarCliente}
-              key={clienteSelecionado.Id_Cliente}
-            >
-              <input
-                type="text"
-                placeholder="Nome Do Cliente"
-                value={clienteSelecionado.nomeDoCliente}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    nomeDoCliente: e.target.value,
-                  })
-                }
-              />
+        <div className="ScreenEditMain">
+          <div className="ScreenEdit">
+            <div className="Edit">
+              <FaUserEdit className="IconUser" />
+              <form
+                onSubmit={handleAtualizarCliente}
+                key={clienteSelecionado.Id_Cliente}
+              >
+                <div className="inputLabelNomeDoCliente">
+                  <label htmlFor="nomeDoCliente">Nome Do Cliente:</label>
+                  <input
+                    type="text"
+                    placeholder="Nome Do Cliente"
+                    value={clienteSelecionado.nomeDoCliente}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        nomeDoCliente: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="inputLabelTelefone">
+                  <label htmlFor="telefone">Telefone:</label>
+                  <input
+                    type="text"
+                    placeholder="Telefone"
+                    value={clienteSelecionado.telefone || ""}
+                    onChange={handleChangeTelefone}
+                    maxLength={15}
+                  />
+                </div>
+                <div className="inputLabelCpf">
+                  <label htmlFor="cpf">Cpf:</label>
+                  <input
+                    type="text"
+                    placeholder="Cpf"
+                    value={clienteSelecionado.cpf || ""}
+                    onChange={handleCpfChange}
+                    maxLength={14}
+                  />
+                </div>
+                <div className="inputLabelEndereco">
+                  <label htmlFor="endereco">Endereço:</label>
+                  <input
+                    type="text"
+                    placeholder="Endereço"
+                    value={clienteSelecionado.endereco}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        endereco: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="inputLabelNurmeroResidencia">
+                  <label htmlFor="numero">Numero Da Residencia:</label>
+                  <input
+                    type="text"
+                    placeholder="Numero Da Residencia"
+                    value={clienteSelecionado.numero}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        numero: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="inputLabelBairro">
+                  <label htmlFor="bairro">Bairro:</label>
+                  <input
+                    type="text"
+                    placeholder="Bairro"
+                    value={clienteSelecionado.bairro}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        bairro: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="inputLabelPontoDeReferencia">
+                  <label htmlFor="pontoDeReferencia">
+                    Ponto De Referencia:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ponto De Referencia"
+                    value={clienteSelecionado.pontoDeReferencia}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        pontoDeReferencia: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </form>
+            </div>
 
-              <input
-                type="text"
-                placeholder="Telefone"
-                value={clienteSelecionado.telefone}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    telefone: e.target.value,
-                  })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Cpf"
-                value={clienteSelecionado.cpf}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    cpf: e.target.value,
-                  })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Endereço"
-                value={clienteSelecionado.endereco}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    endereco: e.target.value,
-                  })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Numero Da Residencia"
-                value={clienteSelecionado.numero}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    numero: e.target.value,
-                  })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Bairro"
-                value={clienteSelecionado.bairro}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    bairro: e.target.value,
-                  })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Ponto De Referencia"
-                value={clienteSelecionado.pontoDeReferencia}
-                onChange={(e) =>
-                  setClienteSelecionado({
-                    ...clienteSelecionado,
-                    pontoDeReferencia: e.target.value,
-                  })
-                }
-              />
-            </form>
-          </div>
-
-          <div className="Botoes">
-            <button
-              style={{ backgroundColor: "green" }}
-              onClick={handleAtualizarCliente}
-            >
-              Editar
-            </button>
-            <button
-              style={{ backgroundColor: "red" }}
-              onClick={() => setClienteSelecionado(null)}
-            >
-              Cancelar
-            </button>
+            <div className="Botoes">
+              <button
+                style={{ backgroundColor: "#4CAF50" }}
+                onClick={handleAtualizarCliente}
+              >
+                Editar
+              </button>
+              <button
+                style={{ backgroundColor: "#f44336" }}
+                onClick={() => setClienteSelecionado(null)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}

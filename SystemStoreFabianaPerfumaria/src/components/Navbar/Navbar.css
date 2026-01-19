@@ -1,15 +1,16 @@
 
 .navBar {
   display: flex;
-  background-color: #3c4b64;
+  background-color: #233350;
   height: 3rem;
-  padding: 1rem;
+  padding: 1.5rem;
   color: white;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  padding-left: 5rem;
+  padding-left: 2rem;
   padding-right: 5rem;
   transition: all 0.3s ease-in-out;
+  gap: 2rem;
   & .logo {
     width: 6rem;
     height: 6rem;
@@ -19,6 +20,7 @@
   & h1 {
     flex-wrap: wrap;
     text-align: center;
+    font-size: 1.8rem;
   }
 }
 @media screen and (max-width: 600px) {

@@ -2,16 +2,15 @@ import "./ScreenMain.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
-//react icons
 import { MdDeleteForever } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
 import { LiaEdit } from "react-icons/lia";
-import { MdOutlineAddShoppingCart, MdOutlineAdd } from "react-icons/md";
+import { MdOutlineAdd } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
-import { BiAlignLeft } from "react-icons/bi";
 import { TiThMenu } from "react-icons/ti";
 import { TbChartHistogram } from "react-icons/tb";
 import { LuHouse } from "react-icons/lu";
+import { PiFoldersThin } from "react-icons/pi";
 import Example from "../../components/Grafico/Grafico";
 import Navbar from "../../components/Navbar/Navbar";
 import Loading from "../../components/Loading/Loading";
@@ -21,6 +20,8 @@ const ScreenMain = () => {
   const [Options, setOptions] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
   function ToggleOptions(Options) {
     setOptions(Options);
   }
@@ -28,7 +29,7 @@ const ScreenMain = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://192.168.1.190:5080/api/RealizarVenda/VendasRealizadas"
+        `${url}/RealizarVenda/VendasRealizadas`
       );
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
@@ -108,6 +109,16 @@ const ScreenMain = () => {
             <TbChartHistogram size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Historico De Venda
+            </p>
+          </Link>
+
+          <Link
+            to={"/HistoricoDeFicha"}
+            className={Options ? "LinkDeOptions" : ""}
+          >
+            <PiFoldersThin size={30} />
+            <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
+              Historico De Fichas
             </p>
           </Link>
         </button>

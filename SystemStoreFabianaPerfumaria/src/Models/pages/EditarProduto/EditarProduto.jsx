@@ -10,7 +10,7 @@ import CardProduct from "../../../components/CardProduct/CardProduct";
 import ButtonSalvar from "../../../components/Button/ButtonSalvar";
 import MensagemErro from "./MensagemErro";
 
-const url = "http://192.168.1.190:5080/api";
+const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 function EditarProduto() {
   const [produtos, setProdutos] = useState([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);

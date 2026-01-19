@@ -1,0 +1,210 @@
+.SearchProductScanner {
+  width: 100vw;
+  height: 83vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+.SearchCodigoBarra {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  & input {
+    width: 500px;
+    height: 25px;
+    border-radius: 5px 0px 0px 5px;
+    border: 1px solid black;
+    padding-left: 10px;
+    font-size: 15px;
+    outline: 1px solid rgb(49, 49, 49);
+    border: none;
+    transition: all 0.3s ease-in-out;
+  }
+  & input:focus {
+    outline: 1px solid rgb(0, 67, 250);
+    border: none;
+  }
+}
+.inputButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  & button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 25px;
+    border-radius: 0px 5px 5px 0px;
+    background-color: transparent;
+    outline: 1px solid rgb(49, 49, 49);
+    border: none;
+    transition: all 0.3s ease-in-out;
+  }
+  & button:hover {
+    background-color: rgb(0, 67, 250);
+    color: white;
+  }
+}
+.ResultProductMain{
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.575);
+  backdrop-filter: blur(2px);
+  position: absolute;
+}
+.resultproduct {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:space-around;
+  background-color: rgb(255, 255, 255);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 0px 5px -1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 9px -1px rgba(0, 0, 0, 0.75);
+  border: 1px solid rgb(114, 114, 114);
+  & .closeCard{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    color: #fc0000;
+    border: none;
+    background-color: transparent;
+  }
+  & img {
+    width: 200px;
+    height: 200px;
+  }
+  & .nameProduct {
+    font-size: 19px;
+    font-weight: medium;
+    color: rgb(56, 56, 56);
+    text-align: center;
+  }
+  .Preços {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    height: 100px;
+    & .PriceClient {
+      grid-column: span 4 / span 4;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      gap: 5px;
+      font-size: 20px;
+    }
+    & .priceFicha {
+      grid-column: span 2 / span 2;
+      grid-row-start: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 5px;
+      font-size: 17px;
+    }
+    & .priceRevista {
+      grid-column: span 2 / span 2;
+      grid-column-start: 3;
+      grid-row-start: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 5px;
+      font-size: 17px;
+    }
+    & .priceAdquirido{
+      grid-column: span 4 / span 4;
+      grid-row-start: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      
+    }
+  }
+}
+.qr-reader{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  
+}
+.blurPrice{
+  position: absolute;
+  left: 55%;
+  width: 80px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.137);
+  backdrop-filter: blur(4px);
+  border-radius: 5px;
+}
+.HideenEye{
+  background-color: transparent;
+  border: none;
+  cursor : pointer;
+}
+.ShowenEye{
+  background-color: transparent;
+  border: none;
+  cursor : pointer;
+  position: relative;
+  left: -0.5rem;
+}
+.message{
+  position: absolute;
+  top: 50%;
+}
+
+@media screen and (max-width: 600px) {
+  .SearchCodigoBarra {
+    justify-content: flex-start;
+  }
+  .inputs {
+    & label {
+      font-size: 0.8rem !important;
+    }
+    & input {
+      width: 300px !important;
+    }
+  }
+  .resultproduct{
+    width: 100vw;
+    height: 100%;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+}

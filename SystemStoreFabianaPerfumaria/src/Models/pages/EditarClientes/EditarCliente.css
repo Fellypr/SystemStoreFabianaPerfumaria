@@ -3,123 +3,157 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-      & .formBuscar{
-        width: 100%;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-          & .pesquisaNomeDoCliente{
-            width: 40%;
-            height: 60%;
-            border-radius: 12px;
-            border: none;
-            outline: 1px solid rgb(0, 162, 255);
-            padding: 5px;
-            padding-left: 10px;
-            font-size: 1rem;
-          }
-          & .pesquisaNomeDoCliente:focus{
-            outline: none;
-          }
-          & .pesquisaNomeDoCliente:hover{
-            border: 1px solid rgb(0, 162, 255);  
-          }
+    margin-top: 2rem;
+    margin-left: 1.2rem;
+    background-color: #fff;
+    width: 95%;
+    height: 35rem;
+    padding: 20px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    & .TituloEditarClientes {
+      color: #074079;
+      font-size: 1.9rem;
+      font-weight: 600;
+      width: 98%;
+    }
+    & .formBuscar {
+      width: 100%;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      & .pesquisaNomeDoCliente {
+        width: 40%;
+        height: 60%;
+        border-radius: 12px;
+        border: 1px solid rgb(63, 63, 63);
+        padding: 5px;
+        padding-left: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease-in-out;
       }
+      & .pesquisaNomeDoCliente:focus {
+        border: none;
+        outline: 1px solid rgb(0, 162, 255);
+      }
+    }
 
     table {
-      margin-top: 2rem;
       border-collapse: collapse;
-      width: 90%;
+      margin-top: 2rem;
+      width: 100%;
       text-align: center;
-
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.356);
       & th {
         border: none;
-        background-color: rgb(85, 85, 85);
-        color: white;
+        background-color: rgb(0, 183, 255);
+        color: rgb(39, 39, 39);
+        height: 50px;
       }
       & td {
         flex-wrap: wrap;
-        height: 2rem;
+        height: 1rem;
+        border: none;
+        color: rgb(14, 14, 14);
       }
       & tr:nth-child(even) {
         background-color: #252525;
         color: #fff;
       }
       & tr:nth-child(odd) {
-        background-color: #4e89cc;
+        background-color: #ffffff;
         color: #fff;
       }
-      & button{
+      & button {
         border: none;
-        background-color: rgb(0, 162, 255);
+        background-color: rgb(0, 183, 255);
         cursor: pointer;
         color: rgb(255, 255, 255);
         height: 100%;
+        
       }
-      & button:hover{
+      & button:hover {
         transform: scale(1.1);
-        background-color:  rgb(0, 140, 221);
+        background-color: rgb(0, 140, 221);
         color: rgb(216, 213, 213);
       }
     }
-    
   }
 }
+.tbody-editar {
+  border-collapse: collapse;
+  font-size:1rem;
+  height: 60px;
+  border: none;
+}
 @media screen and (max-width: 740px) {
-  .BodyEditarClientes{
-    & section{
-      & table{
+  .BodyEditarClientes {
+    & section {
+      & table {
         font-size: 0.5rem;
         width: 100%;
-
       }
     }
   }
-  
+}
+.ScreenEditMain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.61);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .ScreenEdit {
-  background: #000000;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 64, 148, 1) 53%,
-    rgba(16, 59, 179, 1) 100%
-  );
+  background-color: #f8f8f8;
   position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 30rem;
-  max-width: 40rem;
+  height: auto;
+  width: 50%;
   border-radius: 12px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #1455a0;
+  height: auto;
+  padding: 10px;
+
   & .Edit {
     height: 80%;
     display: flex;
     justify-content: center;
-    padding: 10px;
-  
-    & .IconUser {
-    }
+    align-items: center;
+    flex-direction: column;
+
     & form {
-      width: 70%;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      padding-top: 50px;
-      padding: 50px 10px 0px 10px;
+      width: 90%;
+      height: 60%;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 8px;
+
       & input {
         flex-basis: 200;
         flex-grow: 1;
-        width: 49%;
+        width: 100%;
         height: 2rem;
         border-radius: 5px;
-        border: none;
+        border: 1px solid rgb(0, 0, 0);
         text-align: center;
         font-size: 1rem;
+        transition: all 0.3s ease-in-out;
       }
       & input:focus {
-        background-color: rgb(219, 218, 218);
+        border: 2px solid rgb(0, 146, 243);
         color: rgb(0, 0, 0);
         border-radius: 5px;
         outline: none;
@@ -132,13 +166,11 @@
   & .Botoes {
     display: flex;
     justify-content: center;
-    position: relative;
-    top: -1rem;
-    left: 4rem;
+    align-items: center;
     padding: 10px;
     gap: 1rem;
     & button {
-      width: 30%;
+      width: 20%;
       height: 2rem;
       border-radius: 5px;
       border: none;
@@ -152,46 +184,96 @@
     }
   }
 }
-@media screen and (max-width:810px) {
-  .ScreenEdit{
+.IconUser {
+  color: rgb(0, 0, 0);
+  position: relative;
+  top: -1rem;
+  padding: 10px;
+  font-size: 7rem;
+}
+@media screen and (max-width: 810px) {
+  .ScreenEdit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    & .Botoes {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      left: 0;
+      top: 0.4rem;
+    }
+    & .Edit {
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      & .Botoes{
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          position: relative;
-          left: 0;
-          top: 0.4rem;
+      position: relative;
+      left: 0;
+      gap: 1rem;
+      & form {
+        width: 90%;
+        display: flex;
+        left: 0;
+        gap: 0.3rem;
       }
-      & .Edit{
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          position: relative;
-          left: 0;
-          gap: 1rem;
-          & form{
-              width: 90%;
-              display: flex;
-              left: 0;
-              gap: 0.3rem;
-          }
-          & .IconUser{
-            width: 100%;
-            font-size: 1.5rem;
-            border-radius: 12px 12px 0px 0px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
+      & .IconUser {
+        width: 100%;
+        font-size: 1.5rem;
+        border-radius: 12px 12px 0px 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
-    
+    }
   }
-  
+}
+
+.inputLabelNomeDoCliente,
+.inputLabelBairro,
+.inputLabelNurmeroResidencia,
+.inputLabelEndereco,
+.inputLabelCpf,
+.inputLabelTelefone,
+.inputLabelNomeDoCliente,
+.inputLabelPontoDeReferencia {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.inputLabelNomeDoCliente {
+  grid-column: span 3 / span 3;
+}
+.inputLabelCpf {
+  grid-column: span 3 / span 3;
+  grid-column-start: 4;
+}
+.inputLabelTelefone {
+  grid-column: span 3 / span 3;
+  grid-row-start: 2;
+}
+.inputLabelEndereco {
+  grid-column: span 3 / span 3;
+  grid-column-start: 1;
+  grid-row-start: 3;
+}
+.inputLabelNurmeroResidencia {
+  grid-column: span 3 / span 3;
+  grid-column-start: 4;
+  grid-row-start: 2;
+}
+.inputLabelBairro {
+   grid-column: span 3 / span 3;
+    grid-column-start: 4;
+    grid-row-start: 3
+}
+.inputLabelPontoDeReferencia {
+ grid-column: span 6 / span 6;
+    grid-row-start: 4;
 }

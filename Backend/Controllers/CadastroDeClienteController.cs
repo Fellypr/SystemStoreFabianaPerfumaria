@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Tree;
 using Backend.Services;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Backend.Controllers
 {
@@ -96,7 +97,7 @@ namespace Backend.Controllers
         {
             try
             {
-                var connectionString= _config.GetConnectionString("DefaultConnection");
+                var connectionString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectionString))
                 {
                     var query = "SELECT * FROM CadastroDeCliente WHERE NomeDoCliente LIKE @NomeDoCliente OR Cpf LIKE @Cpf;";
@@ -105,16 +106,17 @@ namespace Backend.Controllers
                     command.Parameters.Add(new SqlParameter("@NomeDoCliente", "%" + Buscar.NomeDoCliente + "%"));
                     command.Parameters.Add(new SqlParameter("@Cpf", "%" + Buscar.Cpf + "%"));
 
+
                     await connection.OpenAsync();
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         var listaDeClientes = new List<object>();
 
-                        while(await reader.ReadAsync())
+                        while (await reader.ReadAsync())
                         {
                             listaDeClientes.Add(new
-                            {   
+                            {
                                 Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
                                 NomeDoCliente = reader["NomeDoCliente"].ToString(),
                                 Cpf = reader["Cpf"].ToString(),
@@ -126,21 +128,15 @@ namespace Backend.Controllers
 
                             });
                         }
+                        return Ok(listaDeClientes);
 
-                        if(listaDeClientes.Count == 0)
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            return Ok(listaDeClientes);
-                        }
 
                     }
 
                 }
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -149,7 +145,7 @@ namespace Backend.Controllers
         }
         [HttpPut("AtualizarCliente/{id_Cliente}")]
 
-        public async Task <ActionResult> AtualizarCliente( [FromBody] CadastroDeClienteProp ClienteAtualizado)
+        public async Task<ActionResult> AtualizarCliente([FromBody] CadastroDeClienteProp ClienteAtualizado)
         {
             var connectionString = _config.GetConnectionString("DefaultConnection");
 
@@ -182,7 +178,7 @@ namespace Backend.Controllers
         }
         [HttpDelete("ExcluirCadastro/{id}")]
 
-        public async Task <ActionResult> ExcluirCliente(int id)
+        public async Task<ActionResult> ExcluirCliente(int id)
         {
             try
             {
@@ -212,6 +208,6 @@ namespace Backend.Controllers
                 return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
             }
         }
-        
+
     }
 }

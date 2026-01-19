@@ -8,10 +8,13 @@ import CardConfirmaçãoDeVenda from "./ConfirmcaoDeVenda";
 
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { MdOutlineEdit,MdOutlineEditOff } from "react-icons/md";
+
 import MensagemDeSucesso from "./MensagemDeSucesso";
 import ButtonVenda from "../../../components/Button/ButtonVenda";
 
-const API_URL = "http://192.168.1.190:5080/api";
+const API_URL = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 
 function RealizarVendaTest() {
   const [pesquisaProduto, setPesquisaProduto] = useState("");
@@ -32,20 +35,57 @@ function RealizarVendaTest() {
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
   const [abrirNota, setAbrirNota] = useState(null);
   const [alertaQuantidade, setAlertaQuantidade] = useState(null);
-
+  const [showPrecoAdquirido, setShowPrecoAdquirido] = useState(false);
+  const [telaDecodigo, setTelaDecodificado] = useState(false);
+  const [codigoDeAcesso, setCodigoDeAcesso] = useState("");
+  const [verificarCodigo, setVerificarCodigo] = useState(false);
   const [showRealizarVenda, setShowRealizarVenda] = useState(null);
-  const [mensagemDeSucesso , setMensagemDeSucesso] = useState(null)
+  const [mensagemDeSucesso, setMensagemDeSucesso] = useState(null);
+  const [ativarFuncaoEditarDinheiro, setAtivarFuncaoEditarDinheiro] =
+    useState(false);
 
   function formatarMoeda(e, setValor) {
-    const valorNumerico = e.target.value.replace(/\D/g, "");
-    const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
-      "pt-BR",
-      {
-        style: "currency",
-        currency: "BRL",
-      }
-    );
-    setValor(valorFormatado);
+  // Pega apenas os números
+  const valorNumerico = e.target.value.replace(/\D/g, "");
+  
+  // Transforma em centavos e formata
+  const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    }
+  );
+  
+  // IMPORTANTE: Aqui você decide se o estado guarda a STRING "R$ 10,00" 
+  // ou o NÚMERO 10. Para o seu input de edição, vamos guardar o NÚMERO.
+  setValor(Number(valorNumerico) / 100); 
+}
+  function VerificarCodigoDeAcesso(e) {
+    e.preventDefault();
+    if (codigoDeAcesso == "1234") {
+      setVerificarCodigo(true);
+      VizualizarPrecoAdquirido(e);
+      setTelaDecodificado(false);
+    } else {
+      alert("Código de acesso inválido");
+      setCodigoDeAcesso("");
+      return;
+    }
+  }
+  useEffect(() => {
+    if (codigoDeAcesso.length == 4) {
+      VerificarCodigoDeAcesso(event);
+    }
+  }, [codigoDeAcesso]);
+  function VizualizarPrecoAdquirido(e) {
+    e.preventDefault();
+    setShowPrecoAdquirido(!showPrecoAdquirido);
+  }
+
+  function VizualizarTelaDecodigo(e) {
+    e.preventDefault();
+    setTelaDecodificado(!telaDecodigo);
   }
 
   function MesagemDeVenda(item) {
@@ -70,10 +110,10 @@ function RealizarVendaTest() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setcliente(
-        Array.isArray(response.data) ? response.data : [response.data]
+        Array.isArray(response.data) ? response.data : [response.data],
       );
     } catch (error) {
       setcliente([]);
@@ -89,7 +129,7 @@ function RealizarVendaTest() {
   }, [pesquisarCliente]);
 
   const clienteFiltrados = (cliente || []).filter((item) =>
-    item.nomeDoCliente.toLowerCase().includes(pesquisarCliente.toLowerCase())
+    item.nomeDoCliente.toLowerCase().includes(pesquisarCliente.toLowerCase()),
   );
 
   function AdicionandoCliente(nome) {
@@ -109,7 +149,7 @@ function RealizarVendaTest() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setProduto(response.data);
       setProdutosArmazenados(response.data);
@@ -121,7 +161,7 @@ function RealizarVendaTest() {
   const produtosFiltrados = (produto || []).filter(
     (item) =>
       item.codigoDeBarra ||
-      item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase())
+      item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase()),
   );
 
   useEffect(() => {
@@ -146,16 +186,23 @@ function RealizarVendaTest() {
     }
   }, [produtosArmazenados]);
 
-  const adicionarProduto = () => {
+ 
+
+  const adicionarProduto = (e) => {
+    e.preventDefault();
     if (!produtosArmazenados || produtosArmazenados.length === 0) return;
 
-    const precoVendaNumerico = precoUnitarioSelecionado;
+    const precoLimpo = typeof precoUnitarioSelecionado === 'string' 
+    ? Number(precoUnitarioSelecionado.replace(/\D/g, "")) / 100 
+    : precoUnitarioSelecionado;
+
+    
 
     const produtoComQuantidadeEDesconto = {
       ...produtosArmazenados[0],
       quantidade: Number(quantidade),
       desconto,
-      precoVenda: precoVendaNumerico,
+      precoVenda: precoLimpo,
     };
 
     if (produtosArmazenados[0].quantidade === 1) {
@@ -169,7 +216,12 @@ function RealizarVendaTest() {
     setDesconto("R$ 0,00");
     setPrecoUnitarioSelecionado(0);
     setQuantidadeTotal((prevTotal) => prevTotal + Number(quantidade));
+    setShowPrecoAdquirido(false);
+    setAtivarFuncaoEditarDinheiro(false);
   };
+  useEffect(() => {
+    console.log(produtosVendidos);
+  }, [produtosVendidos]);
 
   useEffect(() => {
     if (alertaQuantidade !== null) {
@@ -210,10 +262,9 @@ function RealizarVendaTest() {
     const novaLista = produtosVendidos.filter((_, i) => i !== index);
     setProdutosVendidos(novaLista);
     setQuantidadeTotal(
-      (prevTotal) => prevTotal - Number(produtosVendidos[index].quantidade)
+      (prevTotal) => prevTotal - Number(produtosVendidos[index].quantidade),
     );
   };
-
 
   const FinalizarVenda = async () => {
     if (produtosVendidos.length === 0) {
@@ -229,6 +280,9 @@ function RealizarVendaTest() {
         const dados = {
           nomeDoProduto: produto.nomeDoProduto,
           precoTotal: Number(parseFloat(precoLimpo) / 100),
+          precoUnitario: Number(
+            parseFloat(produto.precoVenda * produto.quantidade).toFixed(2),
+          ),
           quantidade: produto.quantidade,
           dataDaVenda: Data.toISOString(),
           formaDePagamento: formaDePagamento,
@@ -251,7 +305,7 @@ function RealizarVendaTest() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setMensagemDeSucesso(response.data);
       setShowRealizarVenda(null);
@@ -264,6 +318,7 @@ function RealizarVendaTest() {
       setcliente("");
       setPesquisarCliente("");
       setDescontoNaVenda("R$ 0,00");
+      console.log("aqui", response.data);
     } catch (error) {
       if (error.response) {
         alert(`Erro ao realizar venda: ${error.response.data}`);
@@ -308,7 +363,7 @@ function RealizarVendaTest() {
         `${API_URL}/RealizarVenda/ClientesComFichaEmAberto`,
         {
           fichaEmAberto: pesquisarCliente,
-        }
+        },
       );
       setValorDaFichaEmAberto(response.data);
     } catch (error) {}
@@ -450,7 +505,7 @@ function RealizarVendaTest() {
                             value={precoUnitarioSelecionado}
                             onChange={(e) =>
                               setPrecoUnitarioSelecionado(
-                                Number(e.target.value)
+                                Number(e.target.value),
                               )
                             }
                           >
@@ -469,14 +524,48 @@ function RealizarVendaTest() {
                           </select>
 
                           <p>
-                            {precoUnitarioSelecionado > 0
-                              ? parseFloat(
-                                  precoUnitarioSelecionado
-                                ).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                })
-                              : "R$ 0,00"}
+                            {ativarFuncaoEditarDinheiro === false ? (
+                              <div className="selecionar-dinheiro">
+                                {precoUnitarioSelecionado > 0
+                                  ? parseFloat(
+                                      precoUnitarioSelecionado,
+                                    ).toLocaleString("pt-BR", {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    })
+                                  : "R$ 0,00"}
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setAtivarFuncaoEditarDinheiro(true);
+                                  }}
+                                >
+                                  <MdOutlineEdit fontSize={20} />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="editar-dinheiro-box">
+                                <input
+                                  type="text"
+                                  value={precoUnitarioSelecionado.toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                                  onChange={(e) =>
+                                    formatarMoeda(e, setPrecoUnitarioSelecionado)
+
+                                  }
+                                />
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setAtivarFuncaoEditarDinheiro(false);
+                                  }}
+                                >
+                                  <MdOutlineEditOff fontSize={20} />
+                                </button>
+                              </div>
+                            )}
                           </p>
                         </div>
 
@@ -490,11 +579,40 @@ function RealizarVendaTest() {
                           />
                         </div>
                         <div className="InformationProtuct">
-                          <h3>Preço Adquirido:</h3>
-                          <p>
+                          <div className="buttons-name">
+                            <h3>Preço Adquirido:</h3>
+                            <button
+                              onClick={VizualizarTelaDecodigo}
+                              className={
+                                showPrecoAdquirido
+                                  ? "hidden-button"
+                                  : "verifica-codigo"
+                              }
+                            >
+                              <FaEye />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setShowPrecoAdquirido(false);
+                              }}
+                              className={
+                                showPrecoAdquirido
+                                  ? "verifica-codigo"
+                                  : "hidden-button"
+                              }
+                            >
+                              <FaEyeSlash />
+                            </button>
+                          </div>
+                          <p
+                            style={{
+                              display: showPrecoAdquirido ? "block" : "none",
+                            }}
+                          >
                             {produtos?.precoAdquirido !== undefined
                               ? parseFloat(
-                                  produtos.precoAdquirido
+                                  produtos.precoAdquirido,
                                 ).toLocaleString("pt-BR", {
                                   style: "currency",
                                   currency: "BRL",
@@ -503,6 +621,27 @@ function RealizarVendaTest() {
                           </p>
                         </div>
                       </div>
+
+                      {telaDecodigo && (
+                        <div className="TelaDeCodigoContainer">
+                          <div className="TelaDeCodigobox">
+                            <button
+                              onClick={VizualizarTelaDecodigo}
+                              className="BtnFechar"
+                            >
+                              X
+                            </button>
+                            <p>Insira o Codigo De Segurança</p>
+                            <input
+                              type="text"
+                              className="input-codigo"
+                              onChange={(e) =>
+                                setCodigoDeAcesso(e.target.value)
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
 
                       <button
                         className="BtnAdicionar"
@@ -605,7 +744,7 @@ function RealizarVendaTest() {
             </div>
 
             <div className="Botoes">
-              <ButtonVenda  MesagemDeVenda={MesagemDeVenda}/>
+              <ButtonVenda MesagemDeVenda={MesagemDeVenda} />
               <button
                 id="btn"
                 style={{ backgroundColor: "rgb(255, 0, 0)" }}
@@ -775,7 +914,11 @@ function RealizarVendaTest() {
 
       {showRealizarVenda && (
         <div className="MensagemDeSucesso">
-          <CardConfirmaçãoDeVenda FinalizarVenda = {FinalizarVenda} AbrirNota = {AbrirNota} setShowRealizarVenda = {setShowRealizarVenda} />
+          <CardConfirmaçãoDeVenda
+            FinalizarVenda={FinalizarVenda}
+            AbrirNota={AbrirNota}
+            setShowRealizarVenda={setShowRealizarVenda}
+          />
         </div>
       )}
       {mensagemDeSucesso && (

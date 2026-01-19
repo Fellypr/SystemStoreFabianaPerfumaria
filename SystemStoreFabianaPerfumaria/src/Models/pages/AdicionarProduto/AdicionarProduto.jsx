@@ -24,6 +24,8 @@ function AdicionarProduto() {
 
   const [produtos, setProdutos] = useState([]);
 
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
   async function AdicionarProduto(e) {
     e.preventDefault();
     setError(null);
@@ -57,7 +59,7 @@ function AdicionarProduto() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.1.190:5080/api/AdicionarProduto/CadastroDeProdutos",
+        `${url}/AdicionarProduto/CadastroDeProdutos`,
         produto,
         {
           headers: {
@@ -79,6 +81,7 @@ function AdicionarProduto() {
       setPrecoAdquirido("R$ 0,00");
       setPrecoVista("R$ 0,00");
       setPrecoEmFicha("R$ 0,00");
+    
     } catch (error) {
       let mensagemErro = "Erro ao adicionar produto. Tente novamente.";
 
@@ -178,9 +181,8 @@ function AdicionarProduto() {
       const config = {
         fps: 10,
 
-        
         videoConstraints: {
-          facingMode: "environment", 
+          facingMode: "environment",
         },
 
         qrbox: {
@@ -211,7 +213,7 @@ function AdicionarProduto() {
   }, [showScanner]);
 
   return (
-    <>
+    <main>
       <div className="navBar">
         <Link to={"/"}>
           <img
@@ -225,21 +227,36 @@ function AdicionarProduto() {
       </div>
       <div className="containerAdicionarProduto">
         <form className="FormAdicionarProduto" onSubmit={AdicionarProduto}>
-          <picture>
-            {urlImagem ? (
-              <img
-                src={urlImagem}
-                alt="Imagem do Produto"
-                height={100}
-                width={100}
-              />
-            ) : (
-              <div className="ContainerImagem">
-                <AiOutlinePicture size={100} />
-                <p>Selecione uma Imagem</p>
-              </div>
-            )}
-          </picture>
+          <div className="preview-produto">
+            <picture className="imagem-do-produto">
+              {urlImagem ? (
+                <img
+                  src={urlImagem}
+                  alt="Imagem do Produto"
+                  height={100}
+                  width={100}
+                />
+              ) : (
+                <div className="ContainerImagem">
+                  <AiOutlinePicture size={100} />
+                  <p>Selecione uma Imagem</p>
+                </div>
+              )}
+            </picture>
+            <p className="dados-produtos">
+              Nome do Produto : <span className="dados">{nomeDoProduto}</span>
+            </p>
+            <p className="dados-produtos">
+              Marca: <span className="dados">{marca}</span>
+            </p>
+            <p className="dados-produtos">
+              Preco Cliente:{" "}
+              <span className="dados">{precoVista || "R$ 0,00"}</span>
+            </p>
+            <p className="dados-produtos">
+              Quantidade: <span className="dados">{quantidade || 0}</span>
+            </p>
+          </div>
           <div className="ContainerInputs">
             <div className="inputAdd">
               <label htmlFor="urlImagem">Link da Imagem</label>
@@ -358,7 +375,13 @@ function AdicionarProduto() {
                 onChange={PrecoEmFicha}
               />
             </div>
-            <button type="submit">Adicionar</button>
+
+            <button className="learn-more" type="submit">
+              <span className="circle" aria-hidden="true">
+                <span className="icon arrow"></span>
+              </span>
+              <span className="button-text">Adicionar</span>
+            </button>
           </div>
         </form>
         <br />
@@ -458,7 +481,7 @@ function AdicionarProduto() {
           </div>
         </div>
       )}
-    </>
+    </main>
   );
 }
 

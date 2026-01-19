@@ -22,6 +22,9 @@ function HistoricoDeVenda() {
   const [dataFim, setDataFim] = useState("");
   const [vendasComData, setVendasComData] = useState([]);
 
+  
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
   function AbaterFicha() {
     fichaAbatida(true);
   }
@@ -39,7 +42,7 @@ function HistoricoDeVenda() {
   async function BuscaVendasComData() {
     try {
       const response = await axios.post(
-        "http://192.168.1.190:5080/api/RealizarVenda/FiltrarVendasPelaData",
+        `${url}/RealizarVenda/FiltrarVendasPelaData`,
         {
           dataInicio: dataInicio,
           dataFim: dataFim,
@@ -68,7 +71,7 @@ function HistoricoDeVenda() {
   async function BuscandoVendas() {
     try {
       const response = await axios.post(
-        "http://192.168.1.190:5080/api/RealizarVenda/FiltrarVendas",
+        `${url}/RealizarVenda/FiltrarVendas`,
         {
           nomeDoComprado: busca,
           formaDePagamento: formaDePagamento,
@@ -101,7 +104,7 @@ function HistoricoDeVenda() {
     try {
       // eslint-disable-next-line no-unused-vars
       const response = await axios.post(
-        `http://192.168.1.190:5080/api/RealizarVenda/AbaterValor/${vendaSelecionada.id_Venda}`,
+        `${url}/RealizarVenda/AbaterValor/${vendaSelecionada.id_Venda}`,
         {
           IdVenda: vendaSelecionada.id_venda,
           ValorNaFicha: valorLimpo,

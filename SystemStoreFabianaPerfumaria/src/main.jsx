@@ -15,7 +15,8 @@ import CadastroDeClientes from './Models/pages/CadastroDeCliente/CadastroDeClien
 import EditarCliente from './Models/pages/EditarClientes/EditarCliente.jsx'
 import HistoricoDeVenda from './Models/pages/HistoricoDeVenda/HistoricoDeVenda.jsx'
 import ProdutosEmEstoque from './Models/pages/ProdudosEmEstoques/ProdutosEmEstoque.jsx'
-
+import HistoricoDeFicha from './Models/pages/HistoricoDeFicha/HistoricoDeFicha.jsx'
+import BuscarPreço from './Models/pages/BuscarPreço/BuscarPreço.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -32,6 +33,8 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/EditarCliente' element={<EditarCliente/>}/>
                   <Route path='/HistoricoDeVenda' element={<HistoricoDeVenda/>}/>
                   <Route path='/ProdutosEmEstoques' element={<ProdutosEmEstoque/>}/>
+                  <Route path='/HistoricoDeFicha' element={<HistoricoDeFicha/>}/>
+                  <Route path='/BuscarPreço' element={<BuscarPreço/>}/>
               </Route>
           </Routes> 
     </BrowserRouter>

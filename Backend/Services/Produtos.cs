@@ -22,7 +22,6 @@ public class Produtos
 
     [JsonPropertyName("Quantidade")]
     [Required(ErrorMessage = "O campo Quantidade é obrigatório")]
-    [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero")]
     [RegularExpression(@"^\d+$", ErrorMessage = "A quantidade deve ser um valor numérico")]
     public int Quantidade { get; set; }
     [JsonPropertyName("CodigoDeBarra")]
