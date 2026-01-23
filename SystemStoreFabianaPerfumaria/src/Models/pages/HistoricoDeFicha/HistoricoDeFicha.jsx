@@ -165,7 +165,7 @@ function HistoricoDeFicha() {
                             : "-"}
                         </td>
                         <td className="td-ficha">
-                          <button onClick={() => toggleModal(item.idVenda)}>
+                          <button onClick={() => toggleModal(item.idVenda)} className="abrir-ficha">
                             <FcViewDetails size={30} />
                           </button>
                         </td>

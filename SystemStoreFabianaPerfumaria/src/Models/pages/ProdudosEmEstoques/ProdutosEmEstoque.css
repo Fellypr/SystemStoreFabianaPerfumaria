@@ -88,7 +88,7 @@
 
 .HeaderGrid {
   display: grid;
-  grid-template-columns: 100px 1fr 150px 120px 120px 150px;
+  grid-template-columns: 100px 1fr 150px 120px 150px 120px 100px 50px;
   background: #eef2f8;
   padding: 1rem;
   font-weight: bold;
@@ -106,7 +106,7 @@
 
 .RowGrid {
   display: grid;
-  grid-template-columns: 100px 1fr 150px 120px 120px 150px;
+  grid-template-columns: 100px 1fr 150px 120px 150px 120px 100px 50px;
   padding: 1rem;
   background: white;
   border-radius: 12px;
@@ -133,15 +133,34 @@
   color: #007a2f;
   font-weight: bold;
 }
+.Price-revista{
+  color: #d68b00;
+  font-weight: bold;
+}
 
 .Qtd.negativo {
   color: red;
 }
-
+.button-editar{
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  font-size: 1.3rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+}
+.button-editar:hover{
+  color: rgb(6, 51, 255);
+  scale: 1.1;
+}
 @media (max-width: 950px) {
   .HeaderGrid,
   .RowGrid {
-    grid-template-columns: 80px 1fr 100px 100px 110px 110px;
+    grid-template-columns: 80px 1fr 100px 100px 110px 110px 50px;
   }
 }
 
@@ -174,4 +193,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.editar-produto-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1516158a;
+  backdrop-filter: blur(5px);
 }
