@@ -14,9 +14,10 @@ function ExcluirProdutos() {
   const buscarProduto = async () => {
     try {
       const response = await axios.post(
-        `${url}/AdicionarProduto/BuscarProdutoEstoque`,
+        `${url}/AdicionarProduto/BuscarProdutoParaRealizarVenda`,
         {
           NomeDoProduto: pesquisaProduto,
+          CodigoDeBarra:pesquisaProduto
         },
         {
           headers: {
@@ -43,7 +44,7 @@ function ExcluirProdutos() {
   const produtosFiltrados = (produtos || []).filter(
     (items) =>
       items.nomeDoProduto ||
-      items.marca.toLowerCase().includes(pesquisaProduto.toLowerCase())
+      items.codigoDeBarra.toLowerCase().includes(pesquisaProduto.toLowerCase())
   );
 
   const handleExcluirProduto = async (id) => {

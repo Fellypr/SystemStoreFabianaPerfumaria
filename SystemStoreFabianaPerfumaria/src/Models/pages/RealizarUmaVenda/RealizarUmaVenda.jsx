@@ -9,7 +9,7 @@ import CardConfirmaçãoDeVenda from "./ConfirmcaoDeVenda";
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdOutlineEdit,MdOutlineEditOff } from "react-icons/md";
+import { MdOutlineEdit, MdOutlineEditOff } from "react-icons/md";
 
 import MensagemDeSucesso from "./MensagemDeSucesso";
 import ButtonVenda from "../../../components/Button/ButtonVenda";
@@ -45,22 +45,18 @@ function RealizarVendaTest() {
     useState(false);
 
   function formatarMoeda(e, setValor) {
-  // Pega apenas os números
-  const valorNumerico = e.target.value.replace(/\D/g, "");
-  
-  // Transforma em centavos e formata
-  const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL",
-    }
-  );
-  
-  // IMPORTANTE: Aqui você decide se o estado guarda a STRING "R$ 10,00" 
-  // ou o NÚMERO 10. Para o seu input de edição, vamos guardar o NÚMERO.
-  setValor(Number(valorNumerico) / 100); 
-}
+    const valorNumerico = e.target.value.replace(/\D/g, "");
+
+    const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
+      },
+    );
+
+    setValor(Number(valorNumerico) / 100);
+  }
   function VerificarCodigoDeAcesso(e) {
     e.preventDefault();
     if (codigoDeAcesso == "1234") {
@@ -186,17 +182,14 @@ function RealizarVendaTest() {
     }
   }, [produtosArmazenados]);
 
- 
-
   const adicionarProduto = (e) => {
     e.preventDefault();
     if (!produtosArmazenados || produtosArmazenados.length === 0) return;
 
-    const precoLimpo = typeof precoUnitarioSelecionado === 'string' 
-    ? Number(precoUnitarioSelecionado.replace(/\D/g, "")) / 100 
-    : precoUnitarioSelecionado;
-
-    
+    const precoLimpo =
+      typeof precoUnitarioSelecionado === "string"
+        ? Number(precoUnitarioSelecionado.replace(/\D/g, "")) / 100
+        : precoUnitarioSelecionado;
 
     const produtoComQuantidadeEDesconto = {
       ...produtosArmazenados[0],
@@ -235,13 +228,12 @@ function RealizarVendaTest() {
     const totalSemDescontoGeral = produtosVendidos.reduce((acc, item) => {
       const preco = parseFloat(item.precoVenda);
       const qtd = parseInt(item.quantidade);
-      const descontoItem = parseFloat(item.desconto.replace(/\D/g, "")) / 100;
+      const descontoItem = parseFloat(item.desconto.replace(/\D/g, ""));
 
       return acc + (preco * qtd - descontoItem);
     }, 0);
 
-    const descontoVenda =
-      parseFloat(DescontoNaVenda.replace(/\D/g, "")) / 100 || 0;
+    const descontoVenda = parseFloat(DescontoNaVenda) || 0;
 
     const totalComDescontoGeral = totalSemDescontoGeral - descontoVenda;
 
@@ -547,13 +539,18 @@ function RealizarVendaTest() {
                               <div className="editar-dinheiro-box">
                                 <input
                                   type="text"
-                                  value={precoUnitarioSelecionado.toLocaleString("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  })}
+                                  value={precoUnitarioSelecionado.toLocaleString(
+                                    "pt-BR",
+                                    {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    },
+                                  )}
                                   onChange={(e) =>
-                                    formatarMoeda(e, setPrecoUnitarioSelecionado)
-
+                                    formatarMoeda(
+                                      e,
+                                      setPrecoUnitarioSelecionado,
+                                    )
                                   }
                                 />
                                 <button
@@ -722,8 +719,19 @@ function RealizarVendaTest() {
               <input
                 type="text"
                 name="DescontoNaVenda"
-                value={DescontoNaVenda}
-                onChange={(e) => formatarMoeda(e, setDescontoNaVenda)}
+                value={
+                  typeof DescontoNaVenda === "number"
+                    ? DescontoNaVenda.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    : DescontoNaVenda
+                }
+                onChange={(e) => {
+                  const apenasNumeros = e.target.value.replace(/\D/g, "");
+                  const valorNumerico = Number(apenasNumeros) / 100;
+                  setDescontoNaVenda(valorNumerico);
+                }}
               />
             </div>
 

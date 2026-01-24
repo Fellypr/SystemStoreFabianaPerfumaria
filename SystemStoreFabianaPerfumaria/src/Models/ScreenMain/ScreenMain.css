@@ -11,7 +11,7 @@
     justify-content: flex-start;
     align-items: center;
     animation: blurIn 1s ease-in;
-    background-color: #3c4b64;
+    background-color: #233350;
     height: 100%;
     width: 45px;
     gap: 3.3rem;
@@ -30,7 +30,7 @@
     justify-content: flex-start;
     align-items: center;
     animation: blurIn 1s ease-in;
-    background-color: #3c4b64;
+    background-color: #233350;
     height: 100%;
     width: 300px;
     gap: 1.4rem;
@@ -41,7 +41,6 @@
     color: #fffefe;
     z-index: 3;
     transition: all 0.5s ease-in;
-    border: 1px solid black;
     border-radius: 0px 12px 12px 0px;
   }
   & .Cards {

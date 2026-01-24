@@ -27,6 +27,7 @@ const StyledWrapper = styled.div`
     transition-duration: .3s;
     overflow: hidden;
     position: relative;
+    top:-1px;
   }
 
   .svgIcon {
