@@ -52,6 +52,52 @@
   font-size: 2rem;
   color: #2e7d32;
 }
+.select-forma-de-pagamento{
+  width: 100px;
+  position: relative;
+  top: 0.7rem;
+  padding: 5px;
+  background-color: transparent;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  outline: none;
+    & option{
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+}
+
+.resultado-vendas-geral-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+    & .resultado-vendas-geral-card{
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 10px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      color: #4DB8AA;
+      font-weight: bold;
+      width: 350px;
+        & .resultado-vendas-geral-text{
+          font-size: 1.2rem;
+          text-align: center;
+        }
+    }
+}
 
 /* ==================== RESPONSIVIDADE ==================== */
 

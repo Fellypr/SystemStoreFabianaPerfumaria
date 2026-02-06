@@ -6,12 +6,14 @@ import { format } from "date-fns";
 function TabelaDeFechamento() {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
 
+  const API_URL = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
   async function FechandoCaixa() {
     try {
       const response = await axios.get(
-        "http://192.168.1.190:5080/api/RealizarVenda/VendasRealizadas"
+        `${API_URL}/RealizarVenda/VendasRealizadas`
       );
-      console.log("Tabela de vendas", response.data);
+      console.log("Tabela de vendas:", response.data);
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
       console.error("Erro ao fechar caixa:", error);

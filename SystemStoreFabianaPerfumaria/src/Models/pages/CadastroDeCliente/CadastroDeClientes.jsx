@@ -42,6 +42,7 @@ function CadastroDeClientes() {
       setClientesFiltrados(
         Array.isArray(response.data) ? response.data : [response.data]
       );
+      console.log(response.data);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
     }
@@ -133,9 +134,13 @@ function CadastroDeClientes() {
     window.location.reload();
   }
   const ExcluirCadastro = async (id) => {
-    const nome = GetClientes.find((item) => item.id_Cliente === id).nomeDoCliente;
+      // const nome = GetClientes.find((item) => item.id_Cliente === id).nomeDoCliente;
+      // const confirmar = window.confirm(
+      //   `Tem certeza que deseja excluir o cadastro de ${nome}?`
+      // );
+
     const confirmar = window.confirm(
-      `Tem certeza que deseja excluir o cadastro de ${nome}?`
+      "Tem certeza que deseja excluir este cadastro?"
     );
     if (!confirmar) return;
     try {
@@ -151,7 +156,7 @@ function CadastroDeClientes() {
       setClientesFiltrados([]);
     } catch (error) {
       alert("Erro ao excluir cadastro.");
-      console.error(error);
+      console.error("Erro ao excluir cadastro:",error);
     }
   };
 

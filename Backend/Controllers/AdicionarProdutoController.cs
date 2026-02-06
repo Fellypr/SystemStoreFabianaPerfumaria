@@ -259,10 +259,10 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 var connectionString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra LIKE @CodigoDeBarra OR NomeDoProduto LIKE @NomeDoProduto";
+                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra = @CodigoDeBarra OR NomeDoProduto LIKE @NomeDoProduto";
                     var command = new SqlCommand(query, connection);
 
-                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", "%" + searchvenda.CodigoDeBarra + "%"));
+                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", searchvenda.CodigoDeBarra));
                     command.Parameters.Add(new SqlParameter("@NomeDoProduto", "%" + searchvenda.NomeDoProduto + "%"));
 
                     await connection.OpenAsync();

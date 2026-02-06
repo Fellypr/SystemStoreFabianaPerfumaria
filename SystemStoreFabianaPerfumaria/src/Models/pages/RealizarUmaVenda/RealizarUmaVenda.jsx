@@ -156,7 +156,6 @@ function RealizarVendaTest() {
 
   const produtosFiltrados = (produto || []).filter(
     (item) =>
-      item.codigoDeBarra ||
       item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase()),
   );
 
@@ -176,7 +175,7 @@ function RealizarVendaTest() {
 
   useEffect(() => {
     if (produtosArmazenados && produtosArmazenados.length > 0) {
-      setPrecoUnitarioSelecionado(produtosArmazenados[0].preco);
+      setPrecoUnitarioSelecionado(produtosArmazenados[0].precoAvista);
     } else {
       setPrecoUnitarioSelecionado(0);
     }
@@ -501,13 +500,13 @@ function RealizarVendaTest() {
                               )
                             }
                           >
-                            <option value={produtos?.preco}>
-                              Preço Em Revista (R$
-                              {produtos?.preco?.toFixed(2)})
-                            </option>
                             <option value={produtos?.precoAvista}>
                               Preço Para Cliente (R$
                               {produtos?.precoAvista?.toFixed(2)})
+                            </option>
+                            <option value={produtos?.preco}>
+                              Preço Em Revista (R$
+                              {produtos?.preco?.toFixed(2)})
                             </option>
                             <option value={produtos?.precoEmFicha}>
                               Preço Na Ficha (R$

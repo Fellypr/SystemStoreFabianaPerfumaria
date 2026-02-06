@@ -4,7 +4,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
-import { LiaEdit } from "react-icons/lia";
 import { MdOutlineAdd } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
 import { TiThMenu } from "react-icons/ti";
@@ -75,15 +74,7 @@ const ScreenMain = () => {
               Excluir Produtos
             </p>
           </Link>
-          <Link
-            to={"/EditarProduto"}
-            className={Options ? "LinkDeOptions" : ""}
-          >
-            <LiaEdit size={30} />
-            <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
-              Editar Produtos
-            </p>
-          </Link>
+          
           <Link
             to={"/CadastroDeClientes"}
             className={Options ? "LinkDeOptions" : ""}

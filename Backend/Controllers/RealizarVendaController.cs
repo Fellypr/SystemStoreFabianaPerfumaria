@@ -191,17 +191,17 @@ namespace Backend.Controllers
 
 
         [HttpGet("VendasRealizadas")]
-        public async Task<ActionResult> HistoricoDeVendasRealizadas()
+        public async Task<ActionResult> HistoricoDeVendasRealizadas([FromQuery] string? formaDepagamento)
         {
             try
             {
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = @"SELECT * FROM Venda 
-WHERE CAST(DataDaVenda AS DATE) = CAST(GETDATE() AS DATE)
-ORDER BY DataDaVenda DESC;";
+                    var query = @"SELECT * FROM Venda WHERE CAST(DataDaVenda AS DATE) = CAST(GETDATE() AS DATE) AND (@formaDepagamento IS NULL OR FormaDePagamento = @formaDepagamento) ORDER BY DataDaVenda;";
                     var command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@formaDepagamento",string.IsNullOrWhiteSpace(formaDepagamento) ? (object)DBNull.Value : formaDepagamento);
+                    
                     await connection.OpenAsync();
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -260,9 +260,6 @@ WHERE V.FormaDePagamento = 'Crediario'
   AND (@cliente IS NULL OR CD.NomeDoCliente LIKE @cliente)
   AND (@data IS NULL OR CAST(V.DataDaVenda AS DATE) = @data)
 ORDER BY V.DataDaVenda;";
-
-
-
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@cliente", string.IsNullOrWhiteSpace(cliente) ? (object)DBNull.Value : "%" + cliente + "%");
                     command.Parameters.AddWithValue("@data", SqlDbType.Date).Value = data.HasValue ? data.Value.Date : (object)DBNull.Value;
@@ -300,95 +297,81 @@ ORDER BY V.DataDaVenda;";
             }
 
         }
-        [HttpPost("FiltrarVendas")]
-        public async Task<ActionResult> FiltrarVendas([FromBody] FiltrarVendas Filtrar)
+        [HttpGet("FiltrarVendas")]
+public async Task<ActionResult> FiltrarVendas(
+    [FromQuery] string? comprado, 
+    [FromQuery] string? formaDePagamento, 
+    [FromQuery] DateTime? dataFinal, 
+    [FromQuery] DateTime? dataInicial)
+{
+    try
+    {
+        var connectString = _config.GetConnectionString("DefaultConnection");
+        using (var connection = new SqlConnection(connectString))
         {
-            try
+            var query = @"
+                SELECT 
+                    RV.QuantidadeTotal,
+                    RV.NomeDoProduto,
+                    CD.Telefone,
+                    RV.PrecoTotal AS PrecoUnitario, -- Preço do item
+                    V.DataDaVenda,
+                    CD.NomeDoCliente,
+                    V.ValorNaFicha,
+                    V.FormaDePagamento,
+                    V.Produtos_Vendidos,
+                    V.PrecoTotal AS PrecoTotalVenda, -- Preço da nota toda
+                    V.IdVenda
+                FROM Venda V
+                INNER JOIN RealizarVendas RV ON RV.IdVenda = V.IdVenda
+                INNER JOIN CadastroDeCliente CD ON CD.Id_Cliente = V.IdVendaDeCliente
+                WHERE (@comprado IS NULL OR CD.NomeDoCliente LIKE '%' + @comprado + '%') 
+                  AND (@formaDePagamento IS NULL OR V.FormaDePagamento = @formaDePagamento) 
+                  AND (@dataFinal IS NULL OR CAST(V.DataDaVenda AS DATE) <= @dataFinal) 
+                  AND (@dataInicial IS NULL OR CAST(V.DataDaVenda AS DATE) >= @dataInicial)
+                ORDER BY V.DataDaVenda;";
+
+            var command = new SqlCommand(query, connection);
+
+            
+            command.Parameters.AddWithValue("@comprado", (object)comprado ?? DBNull.Value);
+            command.Parameters.AddWithValue("@formaDePagamento", (object)formaDePagamento ?? DBNull.Value);
+            command.Parameters.AddWithValue("@dataFinal", (object)dataFinal?.Date ?? DBNull.Value);
+            command.Parameters.AddWithValue("@dataInicial", (object)dataInicial?.Date ?? DBNull.Value);
+
+            await connection.OpenAsync();
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                var connectString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectString))
+                var vendas = new List<VendaRealizadaProp>();
+                while (await reader.ReadAsync())
                 {
-                    var query = @"
-                                SELECT *
-                                FROM Venda
-                                WHERE (@comprado IS NULL OR NomeDoComprado LIKE '%' + @comprado + '%')
-                                  AND (@formaDePagamento IS NULL OR FormaDePagamento = @formaDePagamento)
-                                ORDER BY NomeDoComprado";
-
-                    var command = new SqlCommand(query, connection);
-
-                    command.Parameters.AddWithValue("@comprado", string.IsNullOrWhiteSpace(Filtrar.NomeDoComprado) ? (object)DBNull.Value : Filtrar.NomeDoComprado);
-                    command.Parameters.AddWithValue("@formaDePagamento", string.IsNullOrWhiteSpace(Filtrar.FormaDePagamento) ? (object)DBNull.Value : Filtrar.FormaDePagamento);
-
-
-
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
+                    vendas.Add(new VendaRealizadaProp
                     {
-                        var vendas = new List<object>();
-                        while (await reader.ReadAsync())
-                        {
-                            vendas.Add(new
-                            {
-                                Id_Venda = Convert.ToInt32(reader["IdVenda"]),
-                                Comprador = reader["NomeDoComprado"].ToString(),
-                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
-                                quantidadeTotal = Convert.ToInt32(reader["quantidadeTotal"]),
-                                NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
-                                DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
-                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
-                            });
-                        }
-                        return Ok(vendas);
-                    }
+                        IdVenda = reader.GetInt32(reader.GetOrdinal("IdVenda")),
+                        NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                        Comprador = reader["NomeDoCliente"].ToString(),
+                        
+                        PrecoUnitario = reader["PrecoUnitario"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoUnitario"]),
+                        QuantidadeTotal = reader["QuantidadeTotal"] == DBNull.Value ? 0 : Convert.ToInt32(reader["QuantidadeTotal"]),
+                        DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                        FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                        ValorNaFicha = reader["ValorNaFicha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["ValorNaFicha"]),
+                        Produtos_Vendidos = reader["Produtos_Vendidos"].ToString(),
+                        NumeroDeTelefone = reader["Telefone"].ToString(),
+                        PrecoTotal = reader["PrecoTotalVenda"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoTotalVenda"])
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return Ok(vendas);
             }
         }
+    }
+    catch (Exception ex)
+    {
+        return BadRequest($"Erro ao filtrar vendas: {ex.Message}");
+    }
+}
 
-        [HttpPost("FiltrarVendasPelaData")]
-        public async Task<ActionResult> FiltrarVendasPelaData([FromBody] FiltrarVendasPelaData FiltrarData)
-        {
-            try
-            {
-                var connectString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectString))
-                {
-                    var query = "SELECT * FROM VENDA WHERE CAST(DataDaVenda AS DATE) BETWEEN @dataInicial AND @dataFinal ORDER BY DataDaVenda DESC";
-                    var command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@dataInicial", FiltrarData.DataInicio);
-                    command.Parameters.AddWithValue("@dataFinal", FiltrarData.DataFim);
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        var vendas = new List<object>();
-                        while (await reader.ReadAsync())
-                        {
-                            vendas.Add(new
-                            {
-                                Id_Venda = Convert.ToInt32(reader["IdVenda"]),
-                                Comprador = reader["NomeDoComprado"].ToString(),
-                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
-                                quantidadeTotal = Convert.ToInt32(reader["quantidadeTotal"]),
-                                NomeDoProduto = reader["Produtos_Vendidos"].ToString(),
-                                DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
-                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
-                            });
-                        }
-                        return Ok(vendas);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+
         [HttpPost("AbaterValor/{idVenda}")]
         public async Task<ActionResult> AbaterValorNaFicha(
     int idVenda,
@@ -543,6 +526,81 @@ ORDER BY V.DataDaVenda;";
                 return BadRequest(ex.Message);
             }
 
+        }
+        [HttpDelete("cancelar-automatico/{idVenda}")]
+        public IActionResult CancelarVendaAuto(int idVenda)
+        {
+            var connectString = _config.GetConnectionString("DefaultConnection");
+
+            using (SqlConnection conn = new SqlConnection(connectString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    
+                    var produtosParaRepor = new List<(string Nome, int Qtd)>();
+
+                    
+                    string sqlBusca = "SELECT NomeDoProduto, QuantidadeTotal FROM RealizarVendas WHERE IdVenda = @id";
+                    using (SqlCommand cmdBusca = new SqlCommand(sqlBusca, conn, transaction))
+                    {
+                        cmdBusca.Parameters.AddWithValue("@id", idVenda);
+                        using (SqlDataReader reader = cmdBusca.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                produtosParaRepor.Add((
+                                    reader["NomeDoProduto"].ToString(),
+                                    Convert.ToInt32(reader["QuantidadeTotal"])
+                                ));
+                            }
+                        } 
+                    }
+
+                    if (produtosParaRepor.Count > 0)
+                    {
+                        
+                        foreach (var item in produtosParaRepor)
+                        {
+                            string sqlEstoque = "UPDATE AdicionarProduto SET Quantidade = Quantidade + @q WHERE NomeDoProduto = @n";
+                            using (SqlCommand cmdEstoque = new SqlCommand(sqlEstoque, conn, transaction))
+                            {
+                                cmdEstoque.Parameters.AddWithValue("@q", item.Qtd);
+                                cmdEstoque.Parameters.AddWithValue("@n", item.Nome);
+                                cmdEstoque.ExecuteNonQuery();
+                            }
+                        }
+
+                        
+                        string sqlDelItens = "DELETE FROM RealizarVendas WHERE IdVenda = @id";
+                        string sqlDelVenda = "DELETE FROM Venda WHERE IdVenda = @id";
+
+                        using (SqlCommand cmdDel = new SqlCommand(sqlDelItens, conn, transaction))
+                        {
+                            cmdDel.Parameters.AddWithValue("@id", idVenda);
+                            cmdDel.ExecuteNonQuery();
+                        }
+
+                        using (SqlCommand cmdDelV = new SqlCommand(sqlDelVenda, conn, transaction))
+                        {
+                            cmdDelV.Parameters.AddWithValue("@id", idVenda);
+                            cmdDelV.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                        return Ok(new { mensagem = "Venda cancelada e estoque reposto!", itens = produtosParaRepor });
+                    }
+
+                    return NotFound("Nenhum produto encontrado para esta venda.");
+                }
+                catch (Exception ex)
+                {
+                    if (transaction.Connection != null) transaction.Rollback();
+                    return BadRequest($"Erro crítico ao cancelar: {ex.Message}");
+                }
+            }
         }
 
 

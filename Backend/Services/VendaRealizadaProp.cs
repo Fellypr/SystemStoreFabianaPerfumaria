@@ -55,14 +55,11 @@ namespace Backend.Services
 
         [JsonPropertyName("formaDePagamento")]
         public string? FormaDePagamento { get; set; }
-    }
-    public class FiltrarVendasPelaData
-    {
         [JsonPropertyName("dataInicio")]
-        public DateTime? DataInicio { get; set; }
+        public DateTime? DataInicial { get; set; }
 
         [JsonPropertyName("dataFim")]
-        public DateTime? DataFim { get; set; }
+        public DateTime? DataFinal { get; set; }
     }
     public class FiltrarVendasPelaFicha
     {

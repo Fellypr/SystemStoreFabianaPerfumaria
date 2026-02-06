@@ -17,7 +17,7 @@ function HistoricoDeFicha() {
   const [searchCliente, setSearchCliente] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [valorNaFicha, setValorNaFicha] = useState("R$ 0,00");
-
+  const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
     const valorFormatado = (Number(valorNumerico) / 100).toLocaleString(
@@ -49,7 +49,7 @@ function HistoricoDeFicha() {
   async function BuscarClienteComFichaEmAberto() {
     try {
       const response = await axios.get(
-        `http://192.168.0.139:5080/api/RealizarVenda/HistoricoCrediario?cliente=${searchCliente}&data=${searchDate}`
+        `${url}/RealizarVenda/HistoricoCrediario?cliente=${searchCliente}&data=${searchDate}`
       );
       setFichas(response.data);
     } catch {}
@@ -69,7 +69,7 @@ function HistoricoDeFicha() {
 
     try {
       await axios.post(
-        `http://192.168.0.139:5080/api/RealizarVenda/AbaterValor/${idVenda}`,
+        `${url}/RealizarVenda/AbaterValor/${idVenda}`,
         { valorNaFicha: valor },
         { headers: { "Content-Type": "application/json" } }
       );

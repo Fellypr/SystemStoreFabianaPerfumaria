@@ -180,32 +180,53 @@ namespace Backend.Controllers
 
         public async Task<ActionResult> ExcluirCliente(int id)
         {
-            try
+            var connectionString = _config.GetConnectionString("DefaultConnection");
+            using (var connection = new SqlConnection(connectionString))
             {
-                var connectionString = _config.GetConnectionString("DefaultConnection");
+                await connection.OpenAsync();
+                var transaction = connection.BeginTransaction();
+                try
+                {   
+                    var queryDeleteItems = @"DELETE RV FROM RealizarVendas RV 
+                   INNER JOIN Venda V ON RV.IdVenda = V.IdVenda 
+                   WHERE V.IdVendaDeCliente = @Id";
 
-                using (var connection = new SqlConnection(connectionString))
-                {
+                    var commandDeleteItems = new SqlCommand(queryDeleteItems, connection, transaction);
+                    commandDeleteItems.Parameters.AddWithValue("@Id", id);
+                    await commandDeleteItems.ExecuteNonQueryAsync();
+
+
+                    var queryDeleteVenda = "DELETE FROM Venda WHERE IdVendaDeCliente = @Id_Cliente";
+                    var comandDelete = new SqlCommand(queryDeleteVenda, connection, transaction);
+                    comandDelete.Parameters.AddWithValue("@Id_Cliente", id);
+                    await comandDelete.ExecuteNonQueryAsync();
+                    
+
                     var query = "DELETE FROM CadastroDeCliente WHERE Id_Cliente = @Id_Cliente";
-                    var command = new SqlCommand(query, connection);
+                    var command = new SqlCommand(query, connection, transaction);
                     command.Parameters.AddWithValue("@Id_Cliente", id);
 
-                    await connection.OpenAsync();
                     int rowsAffected = await command.ExecuteNonQueryAsync();
+
 
                     if (rowsAffected > 0)
                     {
+                        transaction.Commit();
                         return Ok("Cliente excluido com sucesso.");
                     }
                     else
                     {
+                        transaction.Rollback();
                         return NotFound("Cliente nao encontrado.");
                     }
+
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
+                }
+
             }
         }
 

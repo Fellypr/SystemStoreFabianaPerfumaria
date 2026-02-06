@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ButtonTrashVenda from "../../../components/Button/ButtonTrashVendas";
+import ButtonVoltar from "../../../components/Button/ButtonVoltar";
+
 import "./HistoricoDeVenda.css";
 import axios from "axios";
 
-import { FaUser } from "react-icons/fa";
-import { BiSolidUserDetail } from "react-icons/bi";
-import { MdCancel } from "react-icons/md";
+import {
+  FaUser,
+  FaWallet,
+  FaChartLine,
+  FaSearch,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import { FcViewDetails } from "react-icons/fc";
 import { format } from "date-fns";
+import CupomFiscal from "./DetalheDaVenda";
+
 function HistoricoDeVenda() {
   const [HistoricoDeVendasDeHoje, setHistoricoDeVendasDeHoje] = useState([]);
   const [busca, setBusca] = useState("");
@@ -14,201 +24,242 @@ function HistoricoDeVenda() {
   const [detalhes, setDetalhes] = useState(false);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
 
-  const [valorDaFicha, setValorDaFicha] = useState("R$ 0,00");
-  const [valorLimpo, setValorLimpo] = useState(0);
-  const [fichaAbatida, setFichaAbatida] = useState(false);
-
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-  const [vendasComData, setVendasComData] = useState([]);
 
-  
   const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 
-  function AbaterFicha() {
-    fichaAbatida(true);
+  async function cancelarVenda(idVenda) {
+    if (
+      !window.confirm(
+        "Tem certeza que deseja cancelar esta venda? O estoque será reposto automaticamente.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${url}/RealizarVenda/cancelar-automatico/${idVenda}`);
+
+      alert("Venda cancelada com sucesso!");
+
+      setDetalhes(false);
+
+      BuscandoVendas();
+    } catch (error) {
+      console.error("Erro ao cancelar venda:", error);
+      alert("Erro ao cancelar a venda. Verifique o console.");
+    }
   }
 
-  function mostrarDetalhes(venda) {
+  function mostrarDetalhes(idVenda) {
+    const itensVenda = HistoricoDeVendasDeHoje.filter(
+      (item) => item.idVenda === idVenda,
+    );
     window.scrollTo(0, 0);
-    setVendaSelecionada(venda);
+    setVendaSelecionada(itensVenda);
     setDetalhes(true);
   }
-  function fecharDetalhes() {
-    setDetalhes(false);
-    setVendaSelecionada(null);
-  }
-
-  async function BuscaVendasComData() {
-    try {
-      const response = await axios.post(
-        `${url}/RealizarVenda/FiltrarVendasPelaData`,
-        {
-          dataInicio: dataInicio,
-          dataFim: dataFim,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data);
-      setVendasComData(response.data);
-    } catch (error) {
-      console.error(error);
-      setVendasComData([]);
-    }
-  }
-  useEffect(() => {
-    if (dataInicio && dataFim.trim().length > 0) {
-      BuscaVendasComData();
-    } else {
-      setVendasComData([]);
-    }
-  }, [dataInicio, dataFim]);
 
   async function BuscandoVendas() {
     try {
-      const response = await axios.post(
-        `${url}/RealizarVenda/FiltrarVendas`,
-        {
-          nomeDoComprado: busca,
-          formaDePagamento: formaDePagamento,
+      const response = await axios.get(`${url}/RealizarVenda/FiltrarVendas`, {
+        params: {
+          comprado: busca || null,
+          formaDePagamento: formaDePagamento || null,
+          dataInicial: dataInicio || null,
+          dataFinal: dataFim || null,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log(response.data);
+      });
       setHistoricoDeVendasDeHoje(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Erro na requisição:", error);
     }
   }
+
   useEffect(() => {
-    if (busca||formaDePagamento.trim().length > 0) {
-      BuscandoVendas();
-      console.log("Forma De pagamento:", busca);
-    } else {
-      setHistoricoDeVendasDeHoje([]);
-    }
-  }, [busca , formaDePagamento]);
+    BuscandoVendas();
+  }, [dataInicio, dataFim, busca, formaDePagamento]);
 
-  // eslint-disable-next-line no-redeclare
-  async function AbaterFicha() {
-    window.confirm("Tem certeza que deseja abater a ficha?");
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios.post(
-        `${url}/RealizarVenda/AbaterValor/${vendaSelecionada.id_Venda}`,
-        {
-          IdVenda: vendaSelecionada.id_venda,
-          ValorNaFicha: valorLimpo,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      alert("Ficha Abatida com sucesso");
-      window.location.reload();
-      BuscandoVendas();
-    } catch (error) {
-      alert("Erro ao Abater Ficha", error);
-    }
+  function limitarNome(nome, limite = 7) {
+    if (!nome) return "";
+    const palavras = nome.split(" ");
+    if (palavras.length <= limite) return nome;
+    return palavras.slice(0, limite).join(" ") + "...";
   }
-  function formatarMoeda(e, setValor) {
-    const valor = e.target.value.replace(/\D/g, "");
-    const valorNumero = Number(valor) / 100;
 
-    const valorFormatado = valorNumero.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+  const vendasUnicas = Object.values(
+    HistoricoDeVendasDeHoje.reduce((acc, item) => {
+      if (!acc[item.idVenda]) acc[item.idVenda] = item;
+      return acc;
+    }, {}),
+  );
 
-    setValor(valorFormatado);
-    setValorLimpo(valorNumero);
-  }
+  const totalVendido = vendasUnicas.reduce(
+    (acc, v) => acc + (v.precoTotal || 0),
+    0,
+  );
+  const totalFicha = vendasUnicas.reduce(
+    (acc, v) => acc + (v.valorNaFicha || 0),
+    0,
+  );
 
   return (
-    <>
-      <div className="navBar">
-        <Link to={"/"}>
-          <img
-            src="img/SUBLOGO- BRONZE.png"
-            width={100}
-            height={100}
-            alt="Logo"
-          />
-        </Link>
-        <h1>Historico De Vendas</h1>
-      </div>
-      <section className="HistoricoDeVendaContainer">
-        <div className="BuscarHistorico">
-          <div className="InputsPesquisaDeVenda">
-            <form>
+    <div className="dashboard-container">
+      <header>
+        <nav>
+          <div className="navBar">
+            <Link to={"/"}>
+              <img
+                src="img/SUBLOGO- BRONZE.png"
+                width={100}
+                height={100}
+                alt="Logo"
+              />
+            </Link>
+            <h1>Fabiana Perfumaria</h1>
+          </div>
+        </nav>
+      </header>
+
+      <section className="dashboard-content">
+        <div className="metrics-container">
+          <div className="metric-card">
+            <div className="metric-icon green">
+              <FaWallet />
+            </div>
+            <div className="metric-info">
+              <p>Total Vendido</p>
+              <h3>
+                {totalVendido.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </h3>
+            </div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-icon orange">
+              <FaUser />
+            </div>
+            <div className="metric-info">
+              <p>Em Aberto (Ficha)</p>
+              <h3>
+                {totalFicha.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </h3>
+            </div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-icon blue">
+              <FaChartLine />
+            </div>
+            <div className="metric-info">
+              <p>Qtd. Transações</p>
+              <h3>{vendasUnicas.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="filter-card">
+          <div className="filter-row">
+            <div className="search-box">
+              <FaSearch />
               <input
                 type="text"
-                placeholder="Nome do Cliente"
+                placeholder="Pesquisar cliente..."
                 onChange={(e) => setBusca(e.target.value)}
               />
-              <select
-                className="select"
-                onChange={(e) => setFormaDePagamento(e.target.value)}
-              >
-                <option value="">Forma De Pagamento</option>
-                <option value="Espécie">Dinheiro</option>
-                <option value="CartaoDeCredito">Cartão de Credito</option>
-                <option value="CartaoDeDebito">Cartão de Debito</option>
-                <option value="PagoNoPix">Pix</option>
-                <option value="Crediario">Ficha</option>
-              </select>
-            </form>
+            </div>
+            <select
+              className="filter-select"
+              onChange={(e) => setFormaDePagamento(e.target.value)}
+            >
+              <option value="">Todas Formas de Pagamento</option>
+              <option value="Espécie">Dinheiro</option>
+              <option value="CartaoDeCredito">Cartão de Crédito</option>
+              <option value="CartaoDeDebito">Cartão de Débito</option>
+              <option value="PagoNoPix">Pix</option>
+              <option value="Crediario">Ficha</option>
+            </select>
+            <div className="date-group">
+              <div className="date-input">
+                <FaCalendarAlt />
+                <input
+                  type="date"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                />
+              </div>
+              <span>Até</span>
+              <div className="date-input">
+                <FaCalendarAlt />
+                <input
+                  type="date"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
-          <table border={1} className="TabelaHistoricoDeVenda">
+        </div>
+
+        <div className="table-container-pro">
+          <table className="modern-table">
             <thead>
               <tr>
-                <th>Nome do Cliente</th>
-                <th>produtos vendidos</th>
-                <th>Valor Total</th>
-                <th>Forma De Pagamento</th>
-                <th>Ficha</th>
-                <th colSpan={2}>Data Da Venda</th>
+                <th>Cliente</th>
+                <th>Produtos</th>
+                <th>Pagamento</th>
+                <th>Total</th>
+                <th>Saldo Ficha</th>
+                <th>Data</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {HistoricoDeVendasDeHoje.map((venda) => (
-                <tr key={venda.IdVenda}>
-                  <td>{venda.comprador}</td>
-                  <td>{venda.nomeDoProduto}</td>
+              {vendasUnicas.map((item) => (
+                <tr key={item.idVenda}>
+                  <td className="font-bold">{item.comprador}</td>
+                  <td className="text-muted">
+                    {limitarNome(item.nomeDoProduto)}
+                  </td>
                   <td>
-                    {venda?.precoTotal !== undefined
-                      ? parseFloat(venda.precoTotal).toLocaleString("pt-BR", {
+                    <span className={`badge ${item.formaDePagamento}`}>
+                      {item.formaDePagamento}
+                    </span>
+                  </td>
+                  <td className="font-bold">
+                    {(item.precoTotal || 0).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </td>
+                  <td
+                    className={
+                      item.valorNaFicha > 0 ? "text-danger" : "text-success"
+                    }
+                  >
+                    {item.valorNaFicha === 0
+                      ? "Sem ficha"
+                      : item.valorNaFicha.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        })
-                      : "R$ 0,00"}
+                        })}
                   </td>
-                  <td>{venda.formaDePagamento}</td>
                   <td>
-                    {venda?.valorDaFicha === 0
-                      ? "Paga"
-                      : venda?.valorNaFicha !== undefined
-                      ? parseFloat(venda.valorNaFicha).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })
-                      : "R$ 0,00"}
+                    {item.dataDaVenda
+                      ? format(new Date(item.dataDaVenda), "dd/MM/yyyy")
+                      : "--"}
                   </td>
-                  <td>{format(new Date(venda.dataDaVenda), "dd/MM/yyyy")}</td>
-                  <td width={40}>
-                    <button onClick={() => mostrarDetalhes(venda)}>
-                      <BiSolidUserDetail size={25} />
+                  <td>
+                    <button
+                      className="action-btn"
+                      onClick={() => mostrarDetalhes(item.idVenda)}
+                    >
+                      <FcViewDetails size={24} />
                     </button>
                   </td>
                 </tr>
@@ -218,186 +269,31 @@ function HistoricoDeVenda() {
         </div>
       </section>
 
-      {detalhes && (
-        <div
-          className={
-            detalhes ? "ConteudoDoHistorico" : "ConteudoDoHistoricoNone"
-          }
-        >
-          <div className="InformacoesSobreOCliente">
-            <FaUser fontSize={150} />
-            <p>{vendaSelecionada.comprador}</p>
-          </div>
-
-          <div className="HistoricoDaVenda">
-            <button onClick={fecharDetalhes} className="BotaoFechar">
-              <MdCancel size={35} />
-            </button>
-            <h2 style={{ textAlign: "center" }}>Detalhe da Compra</h2>
-            <p>
-              <strong>Produtos Vendidos:</strong>
-              <br />
-              {vendaSelecionada.nomeDoProduto}
-            </p>
-            <p>
-              <strong>Quantidade De Produtos:</strong>
-              <br />
-              {vendaSelecionada.quantidadeTotal}
-            </p>
-            <p>
-              <strong>Valor Total:</strong>
-              <br />
-              {vendaSelecionada?.precoTotal !== undefined
-                ? parseFloat(vendaSelecionada.precoTotal).toLocaleString(
-                    "pt-BR",
-                    { style: "currency", currency: "BRL" }
-                  )
-                : "R$ 0,00"}
-            </p>
-            <p>
-              <strong>Forma De Pagamento:</strong>
-              <br />
-              {vendaSelecionada?.formaDePagamento === "Crediario" ? (
-                <>
-                  Ficha <br />
-                  Valor a Abater:{" "}
-                  {vendaSelecionada?.valorNaFicha !== undefined
-                    ? parseFloat(vendaSelecionada.valorNaFicha).toLocaleString(
-                        "pt-BR",
-                        {
-                          style: "currency",
-                          currency: "BRL",
-                        }
-                      )
-                    : "R$ 0,00"}
-                  <button
-                    className="VerFicha"
-                    onClick={() => setFichaAbatida(true)}
-                    disabled={vendaSelecionada?.valorNaFicha === 0}
-                    style={{
-                      cursor:
-                        vendaSelecionada?.valorNaFicha === 0
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
-                  >
-                    Ver Ficha
-                  </button>
-                </>
-              ) : (
-                vendaSelecionada?.formaDePagamento
-              )}
-            </p>
-
-            <p>
-              <strong>Data e horas Da Venda:</strong>
-              <br />
-              Data:{" "}
-              {format(
-                new Date(vendaSelecionada.dataDaVenda),
-                "dd/MM/yyyy  -  HH:mm:ss"
-              )}
-            </p>
-          </div>
-
-          <div
-            className={fichaAbatida === true ? "abaterFicha" : "HiddenAbater"}
-          >
+      {detalhes && vendaSelecionada && (
+        <div className="ticket-main">
+          <div className="botoes-historico-container">
             <button
-              className="ButtonClosedFicha"
-              onClick={() => setFichaAbatida(false)}
+              className="excluir-venda"
+              onClick={() => cancelarVenda(vendaSelecionada[0].idVenda)}
             >
-              <MdCancel size={35} />
+              <ButtonTrashVenda />
             </button>
-            <h3>
-              Valor a Pagar: R${" "}
-              {vendaSelecionada?.valorNaFicha !== undefined
-                ? parseFloat(vendaSelecionada.valorNaFicha).toLocaleString(
-                    "pt-BR",
-                    { style: "currency", currency: "BRL" }
-                  )
-                : "R$ 0,00"}
-            </h3>
-            <input
-              type="text"
-              placeholder="Digite o valor a abater"
-              value={valorDaFicha}
-              onChange={(e) => formatarMoeda(e, setValorDaFicha)}
-            />
+
+            <button className="imprimir-nota" onClick={() => window.print()}>
+              Baixar PDF
+            </button>
             <button
-              className="abaterButton"
-              onClick={AbaterFicha}
-              disabled={valorLimpo > vendaSelecionada?.valorNaFicha}
-              style={{
-                cursor:
-                  valorLimpo > vendaSelecionada?.valorNaFicha
-                    ? "not-allowed"
-                    : "pointer",
-              }}
+              onClick={() => setDetalhes(false)}
+              className="volta-historico"
             >
-              Abater
+              <ButtonVoltar />
             </button>
           </div>
+
+          <CupomFiscal vendaSelecionada={vendaSelecionada} />
         </div>
       )}
-
-      <div className="PesquisaPelaData">
-        <h2>Historico De Vendas Entre Datas</h2>
-        <div className="Conteudo">
-          <div className="InputsDeData">
-            <input type="date" onChange={(e) => setDataInicio(e.target.value)}/>
-            <input type="date" onChange={(e) => setDataFim(e.target.value)}/>
-          </div>
-
-          <div className="TabelaDeVendasEntreDatas">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome do Cliente</th>
-                  <th>produtos vendidos</th>
-                  <th>Valor Total</th>
-                  <th>Forma De Pagamento</th>
-                  <th>Ficha</th>
-                  <th colSpan={2}>Data Da Venda</th>
-                </tr>
-              </thead>
-              {vendasComData.map((venda) => (
-                <tr key={venda.IdVenda}>
-                  <td>{venda.comprador}</td>
-                  <td>{venda.nomeDoProduto}</td>
-                  <td>
-                    {venda?.precoTotal !== undefined
-                      ? parseFloat(venda.precoTotal).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })
-                      : "R$ 0,00"}
-                  </td>
-                  <td>{venda.formaDePagamento}</td>
-                  <td>
-                    {venda?.valorDaFicha === 0
-                      ? "Paga"
-                      : venda?.valorNaFicha !== undefined
-                      ? parseFloat(venda.valorNaFicha).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })
-                      : "R$ 0,00"}
-                  </td>
-                  <td>{format(new Date(venda.dataDaVenda), "dd/MM/yyyy")}</td>
-                  <td width={40}>
-                    <button onClick={() => mostrarDetalhes(venda)}>
-                      <BiSolidUserDetail size={25} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </>
+    </div>
   );
 }
 
