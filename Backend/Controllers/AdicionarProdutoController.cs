@@ -256,14 +256,30 @@ namespace StoreSystemFabianaPerfumaria.Controllers
         {
             try
             {
+                string termoDeBusca = searchvenda.CodigoDeBarra;
+                if (string.IsNullOrWhiteSpace(termoDeBusca))
+                {
+                    termoDeBusca = searchvenda.NomeDoProduto;
+                }
+                if (string.IsNullOrWhiteSpace(termoDeBusca))
+                {
+                    return BadRequest("Digite o nome ou escaneie o produto.");
+                }
+
+                termoDeBusca = termoDeBusca.Trim();
+
                 var connectionString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var query = "SELECT * FROM AdicionarProduto WHERE CodigoDeBarra = @CodigoDeBarra OR NomeDoProduto LIKE @NomeDoProduto";
+                    var query = @"SELECT * FROM AdicionarProduto 
+                          WHERE CodigoDeBarra = @TermoExato 
+                          OR NomeDoProduto LIKE @TermoParcial";
+
                     var command = new SqlCommand(query, connection);
 
-                    command.Parameters.Add(new SqlParameter("@CodigoDeBarra", searchvenda.CodigoDeBarra));
-                    command.Parameters.Add(new SqlParameter("@NomeDoProduto", "%" + searchvenda.NomeDoProduto + "%"));
+                    command.Parameters.Add(new SqlParameter("@TermoExato", termoDeBusca));
+
+                    command.Parameters.Add(new SqlParameter("@TermoParcial", "%" + termoDeBusca + "%"));
 
                     await connection.OpenAsync();
 
@@ -279,13 +295,24 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
                                 Marca = reader["Marca"].ToString(),
                                 Preco = Convert.ToDecimal(reader["Preco"]),
-                                PrecoAdquirido = Convert.IsDBNull(reader["PrecoAdquirido"]) ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
-                                PrecoEmFicha = Convert.IsDBNull(reader["Preco_Da_Ficha"]) ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
-                                PrecoAvista = Convert.IsDBNull(reader["Preco_a_vista"]) ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
+                                PrecoAdquirido = reader["PrecoAdquirido"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
+                                PrecoEmFicha = reader["Preco_Da_Ficha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
+                                PrecoAvista = reader["Preco_a_vista"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
                                 Quantidade = Convert.ToInt32(reader["Quantidade"]),
                                 CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
                                 UrlImagem = reader["UrlImagem"].ToString(),
                             });
+                        }
+                        
+                        if (listaDeProduto.Count > 1)
+                        {
+                            var produtoExato = listaDeProduto.FirstOrDefault(p =>
+                                ((dynamic)p).CodigoDeBarra == termoDeBusca);
+
+                            if (produtoExato != null)
+                            {
+                                return Ok(new List<object> { produtoExato });
+                            }
                         }
 
                         if (listaDeProduto.Count == 0)

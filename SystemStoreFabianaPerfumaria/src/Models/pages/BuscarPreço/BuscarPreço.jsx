@@ -26,7 +26,7 @@ function BuscarPreço() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setResultProduct(response.data);
     } catch (error) {
@@ -44,7 +44,7 @@ function BuscarPreço() {
   }, [searchProduct]);
 
   const filterProducts = (resultProduct || []).filter((item) =>
-    item.codigoDeBarra.toLowerCase().includes(searchProduct.toLowerCase())
+    item.codigoDeBarra.toLowerCase().includes(searchProduct.toLowerCase()),
   );
   function ClearSearch() {
     setSearchProduct("");
@@ -98,7 +98,7 @@ function BuscarPreço() {
   }, [showScanner]);
 
   return (
-    <main>
+    <main className="price-finder-container">
       <nav>
         <div className="navBar">
           <Link to={"/"}>
@@ -112,94 +112,110 @@ function BuscarPreço() {
           <h1>Buscar Preço</h1>
         </div>
       </nav>
-      <section className="SearchProductScanner">
-        <form className="SearchCodigoBarra">
-          <div className="inputs">
-            <label htmlFor="barra">Scannei o Codigo de Barra do Produto:</label>
-            <div className="inputButton">
+
+      <section className="price-finder-content">
+        <form
+          className="search-bar-container"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="search-input-wrapper">
+            <label htmlFor="barra">Aponte a câmera ou digite o código</label>
+            <div className="search-field">
               <input
                 type="text"
                 name="barra"
                 id="barra"
+                placeholder="0000000000000"
                 onChange={(e) => setSearchProduct(e.target.value)}
                 value={searchProduct}
               />
-              <button onClick={iniciarScanner}>
-                <CiBarcode size={30} />
+              <button
+                className="scan-trigger-btn"
+                onClick={iniciarScanner}
+                title="Abrir Scanner"
+              >
+                <CiBarcode size={32} />
               </button>
             </div>
           </div>
         </form>
 
         {filterProducts.length > 0 ? (
-          filterProducts.map((item) => (
-            <div className="ResultProductMain">
-              <div className="resultproduct">
-                <button onClick={ClearSearch} className="closeCard">
-                  <MdCancel size={30} />
+          filterProducts.map((item, index) => (
+            <div className="product-overlay" key={index}>
+              <div className="product-card-premium">
+                <button onClick={ClearSearch} className="close-card-btn">
+                  <MdCancel size={32} />
                 </button>
 
-                <img src={item.urlImagem} width={300} />
-                <p className="nameProduct">{item.nomeDoProduto}</p>
-                <div className="Preços">
-                  <div className="PriceClient">
-                    <p>Preço Cliente:</p>
-                    <p>
+                <div className="product-visual">
+                  <img src={item.urlImagem} alt={item.nomeDoProduto} />
+                </div>
+
+                <div className="product-info-header">
+                  <span className="product-category">Produto Encontrado</span>
+                  <h2 className="product-title">{item.nomeDoProduto}</h2>
+                </div>
+
+                <div className="price-dashboard">
+                  <div className="main-price-highlight">
+                    <span className="price-label">
+                      Preço Sugerido (À Vista)
+                    </span>
+                    <strong className="price-value">
                       {item?.precoAvista !== undefined
                         ? parseFloat(item.precoAvista).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                           })
                         : "R$ 0,00"}
-                    </p>
+                    </strong>
                   </div>
-                  <div className="priceFicha">
-                    <p>Preço Ficha:</p>
-                    <p>
-                      {item?.precoEmFicha !== undefined
-                        ? parseFloat(item.precoEmFicha).toLocaleString(
-                            "pt-BR",
-                            { style: "currency", currency: "BRL" }
-                          )
-                        : "R$ 0,00"}
-                    </p>
+
+                  <div className="secondary-prices-grid">
+                    <div className="price-item">
+                      <span>Ficha</span>
+                      <strong>
+                        {item?.precoEmFicha !== undefined
+                          ? parseFloat(item.precoEmFicha).toLocaleString(
+                              "pt-BR",
+                              { style: "currency", currency: "BRL" },
+                            )
+                          : "R$ 0,00"}
+                      </strong>
+                    </div>
+                    <div className="price-item">
+                      <span>Revista</span>
+                      <strong>
+                        {item?.preco !== undefined
+                          ? parseFloat(item.preco).toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          : "R$ 0,00"}
+                      </strong>
+                    </div>
                   </div>
-                  <div className="priceRevista">
-                    <p>Preço Revista:</p>
-                    <p>
-                      {item?.preco !== undefined
-                        ? parseFloat(item.preco).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })
-                        : "R$ 0,00"}
-                    </p>
-                  </div>
-                  <div className="priceAdquirido">
-                    <p>Preço Adquirido:</p>
-                    <div
-                      className="blurPrice"
-                      style={{ display: showPrice ? "none" : "flex" }}
-                    ></div>
-                    <p>
-                      {item?.precoAdquirido !== undefined
-                        ? parseFloat(item.precoAdquirido).toLocaleString(
-                            "pt-BR",
-                            { style: "currency", currency: "BRL" }
-                          )
-                        : "R$ 0,00"}
-                    </p>
-                    <button className="HideenEye" onClick={ShowPrice}>
-                      <IoEye
-                        size={25}
-                        style={{ display: showPrice ? "none" : "block" }}
-                      />
-                    </button>
-                    <button className="ShowenEye" onClick={ShowPrice}>
-                      <IoEyeOff
-                        size={25}
-                        style={{ display: showPrice ? "block" : "none" }}
-                      />
+
+                  <div className="acquisition-price-row">
+                    <div className="acq-info">
+                      <span>Custo de Aquisição</span>
+                      <div className="acq-value-container">
+                        <div
+                          className={`blur-overlay ${showPrice ? "is-visible" : ""}`}
+                        ></div>
+                        <strong>
+                          {item?.precoAdquirido !== undefined
+                            ? parseFloat(item.precoAdquirido).toLocaleString(
+                                "pt-BR",
+                                { style: "currency", currency: "BRL" },
+                              )
+                            : "R$ 0,00"}
+                        </strong>
+                      </div>
+                    </div>
+                    <button className="toggle-eye-btn" onClick={ShowPrice}>
+                      {showPrice ? <IoEyeOff size={24} /> : <IoEye size={24} />}
                     </button>
                   </div>
                 </div>
@@ -207,11 +223,25 @@ function BuscarPreço() {
             </div>
           ))
         ) : (
-          <div className="message">Scanner o Codigo de Barra do Produto</div>
+          <div className="empty-search-state">
+            <div className="pulse-icon">
+              <CiBarcode size={80} />
+            </div>
+            <p>Aguardando leitura de código...</p>
+          </div>
         )}
+
         {showScanner && (
-          <div className="qr-reader">
-            <div id="qr-reader"></div>
+          <div className="scanner-modal">
+            <div className="scanner-frame">
+              <div id="qr-reader"></div>
+              <button
+                className="cancel-scanner"
+                onClick={() => setShowScanner(false)}
+              >
+                Fechar Câmera
+              </button>
+            </div>
           </div>
         )}
       </section>

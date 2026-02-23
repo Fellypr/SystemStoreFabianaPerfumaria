@@ -22,5 +22,9 @@ a {
 }
 .Mensagem{
   position: absolute;
-  
+}
+button{
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
 }

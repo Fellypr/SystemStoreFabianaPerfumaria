@@ -13,6 +13,7 @@ import { MdOutlineEdit, MdOutlineEditOff } from "react-icons/md";
 
 import MensagemDeSucesso from "./MensagemDeSucesso";
 import ButtonVenda from "../../../components/Button/ButtonVenda";
+import LoadingSucessoVenda from "../../../components/Loading/LoadingSucessoVenda";
 
 const API_URL = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 
@@ -43,6 +44,7 @@ function RealizarVendaTest() {
   const [mensagemDeSucesso, setMensagemDeSucesso] = useState(null);
   const [ativarFuncaoEditarDinheiro, setAtivarFuncaoEditarDinheiro] =
     useState(false);
+  const [loadingSucesso, setLoadingSucesso] = useState(false);
 
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
@@ -154,9 +156,8 @@ function RealizarVendaTest() {
     }
   };
 
-  const produtosFiltrados = (produto || []).filter(
-    (item) =>
-      item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase()),
+  const produtosFiltrados = (produto || []).filter((item) =>
+    item.nomeDoProduto.toLowerCase().includes(pesquisaProduto.toLowerCase()),
   );
 
   useEffect(() => {
@@ -264,6 +265,7 @@ function RealizarVendaTest() {
       return;
     }
     try {
+      setLoadingSucesso(true);
       const precoLimpo = precoTotal.replace(/\D/g, "").replace(",", ".");
       const Data = new Date();
 
@@ -309,13 +311,14 @@ function RealizarVendaTest() {
       setcliente("");
       setPesquisarCliente("");
       setDescontoNaVenda("R$ 0,00");
-      console.log("aqui", response.data);
     } catch (error) {
       if (error.response) {
         alert(`Erro ao realizar venda: ${error.response.data}`);
       } else {
         alert(`Erro inesperado ao realizar venda: ${error.message}`);
       }
+    } finally {
+      setLoadingSucesso(false);
     }
   };
 
@@ -931,6 +934,11 @@ function RealizarVendaTest() {
       {mensagemDeSucesso && (
         <div className="mensagems">
           <MensagemDeSucesso mensagemDeSucesso={mensagemDeSucesso} />
+        </div>
+      )}
+      {loadingSucesso && (
+        <div className="loading">
+          <LoadingSucessoVenda />
         </div>
       )}
     </>

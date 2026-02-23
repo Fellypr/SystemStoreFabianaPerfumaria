@@ -112,7 +112,6 @@ const StyledWrapper = styled.div`
   }
 
   .message {
-    margin-top: -1.5rem;
     color: #595b5f;
     font-size: 0.875rem;
     line-height: 1.25rem;

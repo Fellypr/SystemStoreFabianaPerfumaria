@@ -350,8 +350,7 @@ public async Task<ActionResult> FiltrarVendas(
                         IdVenda = reader.GetInt32(reader.GetOrdinal("IdVenda")),
                         NomeDoProduto = reader["NomeDoProduto"].ToString(),
                         Comprador = reader["NomeDoCliente"].ToString(),
-                        
-                        PrecoUnitario = reader["PrecoUnitario"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoUnitario"]),
+                        PrecoUnitario = Convert.ToDecimal(reader["PrecoUnitario"].ToString(), CultureInfo.InvariantCulture),
                         QuantidadeTotal = reader["QuantidadeTotal"] == DBNull.Value ? 0 : Convert.ToInt32(reader["QuantidadeTotal"]),
                         DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
                         FormaDePagamento = reader["FormaDePagamento"].ToString(),

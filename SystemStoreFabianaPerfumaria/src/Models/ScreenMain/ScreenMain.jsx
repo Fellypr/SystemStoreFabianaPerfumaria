@@ -2,12 +2,11 @@ import "./ScreenMain.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever,MdOutlineAdd } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
-import { MdOutlineAdd } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
 import { TiThMenu } from "react-icons/ti";
-import { TbChartHistogram } from "react-icons/tb";
+import { TbChartHistogram,TbShoppingCartSearch } from "react-icons/tb";
 import { LuHouse } from "react-icons/lu";
 import { PiFoldersThin } from "react-icons/pi";
 import Example from "../../components/Grafico/Grafico";
@@ -110,6 +109,16 @@ const ScreenMain = () => {
             <PiFoldersThin size={30} />
             <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
               Historico De Fichas
+            </p>
+          </Link>
+
+          <Link
+            to={"/BuscarPreço"}
+            className={Options ? "LinkDeOptions" : ""}
+          >
+            <TbShoppingCartSearch size={30} />
+            <p className={Options ? "LinkName" : "LinkDeOptionsClose"}>
+              Buscar Preços
             </p>
           </Link>
         </button>

@@ -43,7 +43,7 @@ export default function EditarCliente() {
     setClienteSelecionado({
       ...clienteSelecionado,
       telefone: valorDigitado,
-    })
+    });
   }
 
   const buscarCliente = async () => {
@@ -58,11 +58,11 @@ export default function EditarCliente() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       console.log([response.data]);
       setcliente(
-        Array.isArray(response.data) ? response.data : [response.data]
+        Array.isArray(response.data) ? response.data : [response.data],
       );
     } catch (error) {
       console.error(error);
@@ -91,7 +91,7 @@ export default function EditarCliente() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       alert("Cliente atualizado com sucesso!");
       setClienteSelecionado(null);
@@ -101,82 +101,108 @@ export default function EditarCliente() {
       alert("Erro ao atualizar o cliente.");
     }
   };
+  const clienteFiltrados = (cliente || []).filter(
+    (item) => item.id_Cliente !== clienteSelecionado?.id_Cliente,
+  );
 
   return (
-    <>
-      <div className="BodyEditarClientes">
-        <div className="navBar">
-          <Link to={"/"}>
-            <img
-              src="img/SUBLOGO- BRONZE.png"
-              width={100}
-              height={100}
-              alt="Logo"
-            />
-          </Link>
+    <div className="edit-client-container">
+      <div className="navBar">
+        <Link to={"/"}>
+          <img
+            src="img/SUBLOGO- BRONZE.png"
+            width={100}
+            height={100}
+            alt="Logo"
+          />
+        </Link>
 
-          <h1>Fabiana Perfumaria</h1>
-        </div>
-        <section>
-          <h1 className="TituloEditarClientes">Editar Clientes</h1>
-          <form action="submit" className="formBuscar">
+        <h1>Editar Clientes</h1>
+      </div>
+
+      <section className="edit-client-content">
+        <div className="search-card">
+          <div className="search-header">
+            <FaUserEdit className="icon-main" />
+            <div className="search-texts">
+              <h2>Pesquisar Cliente</h2>
+              <span>Busque por nome ou CPF</span>
+            </div>
+          </div>
+
+          <div className="search-input-group">
             <input
               type="text"
-              className="pesquisaNomeDoCliente"
-              placeholder="Digite o Nome Do Cliente"
-              onChange={(e) => setPesquisa(e.target.value)}
+              placeholder="Ex: João Silva ou 000.000.000-00"
+              className="search-input"
               value={pesquisa}
+              onChange={(e) => setPesquisa(e.target.value)}
             />
-          </form>
+          </div>
+        </div>
 
-          <table border={1}>
+        <div className="client-list-card">
+          <table className="client-table">
             <thead>
               <tr>
-                <th width={300}>Nome</th>
+                <th>Nome Completo</th>
+                <th>CPF</th>
                 <th>Telefone</th>
-                <th width={120}>Cpf</th>
-                <th width={200}>Endereço</th>
-                <th width={50}>Nº</th>
-                <th>Bairro</th>
-                <th colSpan={2}>Ponto De Referencia</th>
+                <th>Cidade/UF</th>
+                <th className="text-center">Ações</th>
               </tr>
             </thead>
-            <tbody className="tbody-editar">
-              {cliente &&
-                cliente.map((item) => (
-                  <tr key={item.Id_Cliente}>
-                    <td>{item.nomeDoCliente}</td>
-                    <td>{item.telefone}</td>
-                    <td>{item.cpf}</td>
-                    <td>{item.endereco}</td>
-                    <td>{item.numero}</td>
-                    <td>{item.bairro}</td>
-                    <td>{item.pontoDeReferencia}</td>
-                    <td width={30}>
-                      <button onClick={() => ClienteSelecionado(item)}>
-                        <MdEdit size={30} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+            <tbody>
+              {clienteFiltrados.map((item) => (
+                <tr key={item.Id_Cliente}>
+                  <td className="font-bold">{item.nomeDoCliente}</td>
+                  <td>{item.cpf}</td>
+                  <td>{item.telefone}</td>
+                  <td>
+                    {item.cidade} - {item.estado}
+                  </td>
+                  <td className="text-center">
+                    <button
+                      className="btn-edit-action"
+                      onClick={() => setClienteSelecionado(item)}
+                      title="Editar Cliente"
+                    >
+                      <MdEdit />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      
       {clienteSelecionado && (
-        <div className="ScreenEditMain">
-          <div className="ScreenEdit">
-            <div className="Edit">
-              <FaUserEdit className="IconUser" />
-              <form
-                onSubmit={handleAtualizarCliente}
-                key={clienteSelecionado.Id_Cliente}
+        <div className="modal-overlay">
+          <div className="modal-content-card">
+            <header className="modal-header">
+              <div className="header-info">
+                <FaUserEdit />
+                <h3>Editar Informações</h3>
+              </div>
+              <button
+                className="close-x"
+                onClick={() => setClienteSelecionado(null)}
               >
-                <div className="inputLabelNomeDoCliente">
-                  <label htmlFor="nomeDoCliente">Nome Do Cliente:</label>
+                &times;
+              </button>
+            </header>
+
+            <div className="modal-body">
+              <form
+                className="edit-grid-form"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <div className="input-box full-width">
+                  <label>Nome Completo</label>
                   <input
                     type="text"
-                    placeholder="Nome Do Cliente"
                     value={clienteSelecionado.nomeDoCliente}
                     onChange={(e) =>
                       setClienteSelecionado({
@@ -186,31 +212,62 @@ export default function EditarCliente() {
                     }
                   />
                 </div>
-                <div className="inputLabelTelefone">
-                  <label htmlFor="telefone">Telefone:</label>
+
+                <div className="input-box">
+                  <label>CPF</label>
                   <input
                     type="text"
-                    placeholder="Telefone"
-                    value={clienteSelecionado.telefone || ""}
-                    onChange={handleChangeTelefone}
-                    maxLength={15}
-                  />
-                </div>
-                <div className="inputLabelCpf">
-                  <label htmlFor="cpf">Cpf:</label>
-                  <input
-                    type="text"
-                    placeholder="Cpf"
-                    value={clienteSelecionado.cpf || ""}
+                    value={clienteSelecionado.cpf}
                     onChange={handleCpfChange}
-                    maxLength={14}
                   />
                 </div>
-                <div className="inputLabelEndereco">
-                  <label htmlFor="endereco">Endereço:</label>
+
+                <div className="input-box">
+                  <label>Telefone</label>
                   <input
                     type="text"
-                    placeholder="Endereço"
+                    value={clienteSelecionado.telefone}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        telefone: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="input-box">
+                  <label>Cidade</label>
+                  <input
+                    type="text"
+                    value={clienteSelecionado.cidade}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        cidade: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="input-box">
+                  <label>Estado</label>
+                  <input
+                    type="text"
+                    value={clienteSelecionado.estado}
+                    onChange={(e) =>
+                      setClienteSelecionado({
+                        ...clienteSelecionado,
+                        estado: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="input-box full-width">
+                  <label>Endereço</label>
+                  <input
+                    type="text"
                     value={clienteSelecionado.endereco}
                     onChange={(e) =>
                       setClienteSelecionado({
@@ -220,70 +277,28 @@ export default function EditarCliente() {
                     }
                   />
                 </div>
-                <div className="inputLabelNurmeroResidencia">
-                  <label htmlFor="numero">Numero Da Residencia:</label>
-                  <input
-                    type="text"
-                    placeholder="Numero Da Residencia"
-                    value={clienteSelecionado.numero}
-                    onChange={(e) =>
-                      setClienteSelecionado({
-                        ...clienteSelecionado,
-                        numero: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="inputLabelBairro">
-                  <label htmlFor="bairro">Bairro:</label>
-                  <input
-                    type="text"
-                    placeholder="Bairro"
-                    value={clienteSelecionado.bairro}
-                    onChange={(e) =>
-                      setClienteSelecionado({
-                        ...clienteSelecionado,
-                        bairro: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="inputLabelPontoDeReferencia">
-                  <label htmlFor="pontoDeReferencia">
-                    Ponto De Referencia:
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ponto De Referencia"
-                    value={clienteSelecionado.pontoDeReferencia}
-                    onChange={(e) =>
-                      setClienteSelecionado({
-                        ...clienteSelecionado,
-                        pontoDeReferencia: e.target.value,
-                      })
-                    }
-                  />
-                </div>
+
+                
               </form>
             </div>
 
-            <div className="Botoes">
+            <footer className="modal-footer">
               <button
-                style={{ backgroundColor: "#4CAF50" }}
-                onClick={handleAtualizarCliente}
-              >
-                Editar
-              </button>
-              <button
-                style={{ backgroundColor: "#f44336" }}
+                className="btn-cancel-modal"
                 onClick={() => setClienteSelecionado(null)}
               >
-                Cancelar
+                Descartar
               </button>
-            </div>
+              <button
+                className="btn-save-modal"
+                onClick={handleAtualizarCliente}
+              >
+                Salvar Alterações
+              </button>
+            </footer>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

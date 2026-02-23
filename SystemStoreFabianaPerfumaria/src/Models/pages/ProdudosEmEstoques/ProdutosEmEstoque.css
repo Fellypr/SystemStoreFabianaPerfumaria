@@ -152,6 +152,9 @@
   align-items: flex-start;
   justify-content: center;
   transition: all 0.3s ease-in-out;
+  background-color: transparent;
+  position: relative ;
+  top: 10px;
 }
 .button-editar:hover{
   color: rgb(6, 51, 255);
