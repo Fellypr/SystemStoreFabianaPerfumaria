@@ -4,6 +4,7 @@ import axios from "axios";
 import { IoPersonAdd, IoSearchOutline } from "react-icons/io5";
 import { MdCancel, MdSave, MdPerson } from "react-icons/md";
 import "./CadastroDeClientes.css";
+import { CiTrash } from "react-icons/ci";
 
 function CadastroDeClientes() {
   const [clientes, setClientes] = useState([]);
@@ -95,6 +96,20 @@ const handleTelefone = (e) => {
   value = value.replace(/(\d{5})(\d)/, "$1-$2");
   setTelefone(value);
 };
+const ExcluirCadastro = async (id) => {
+    const confirmar = window.confirm("Tem certeza que deseja excluir o cadastro?");
+    if (!confirmar) return;
+    try {
+      await axios.delete(`${url}/CadastroDeCliente/ExcluirCadastro/${id}`);
+      alert("Cadastro excluído com sucesso!");
+      buscarClientes();
+      setClientesFiltrados([]);
+    } catch (error) {
+      alert("Erro ao excluir cadastro.");
+      console.error(error);
+      console.error("Erro ao excluir cadastro:",error);
+    }
+  };
 
   return (
     <div className="client-page-container">
@@ -174,15 +189,18 @@ const handleTelefone = (e) => {
                 <tr>
                   <th>Cliente</th>
                   <th>CPF</th>
-                  <th>Telefone</th>
+                  <th colSpan={2}>Telefone</th>
                 </tr>
               </thead>
               <tbody>
-                {clientesFiltrados.map((c, i) => (
-                  <tr key={i}>
+                {clientesFiltrados.map((c) => (
+                  <tr key={c.id_Cliente}>
                     <td>{c.nomeDoCliente}</td>
                     <td>{c.cpf}</td>
                     <td>{c.telefone}</td>
+                    <td>
+                      <button className="btn-delete" onClick={() => ExcluirCadastro(c.id_Cliente)}><CiTrash size={20} color="red" /></button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

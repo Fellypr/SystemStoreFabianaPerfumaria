@@ -207,6 +207,14 @@
   color: var(--dark);
   font-size: 0.9rem;
 }
+.btn-delete{
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.btn-delete:hover{
+  scale: 1.1;
+  color: #b40000;
+}
 
 @keyframes pop {
   from { transform: scale(0.8); opacity: 0; }
