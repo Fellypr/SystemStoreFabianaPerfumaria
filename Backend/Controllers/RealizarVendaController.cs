@@ -9,6 +9,7 @@ using Backend.Services;
 using System.Text.Json;
 using System.Data;
 using System.Globalization;
+using Backend.Model;
 
 namespace Backend.Controllers
 {
@@ -135,7 +136,12 @@ namespace Backend.Controllers
                             string.Join(" - ", vendas.Select(v => v.NomeDoProduto));
 
                         cmdVenda.Parameters.Add("@Data", SqlDbType.DateTime).Value = primeiraVenda.DataDaVenda;
-                        cmdVenda.Parameters.Add("@FormaPagamento", SqlDbType.NVarChar).Value = primeiraVenda.FormaDePagamento;
+                        var formaPagamentoTexto = (primeiraVenda.FormaDePagamento != null && primeiraVenda.FormaDePagamento.Any())
+                            ? (primeiraVenda.FormaDePagamento.Count == 1
+                                ? primeiraVenda.FormaDePagamento.First().FormaPagamento
+                                : "Pagamento dividido")
+                            : "Não informado";
+                        cmdVenda.Parameters.Add("@FormaPagamento", SqlDbType.NVarChar).Value = formaPagamentoTexto;
                         cmdVenda.Parameters.Add("@Total", SqlDbType.Decimal).Value = primeiraVenda.PrecoTotal;
                         cmdVenda.Parameters.Add("@QuantidadeTotal", SqlDbType.Int).Value = primeiraVenda.quantidadeTotal;
                         cmdVenda.Parameters.Add("@ValorNaFicha", SqlDbType.Decimal).Value = primeiraVenda.ValorNaFicha;
@@ -144,6 +150,22 @@ namespace Backend.Controllers
 
                         var idVendaCriada = (int)await cmdVenda.ExecuteScalarAsync();
 
+                        if (primeiraVenda.FormaDePagamento != null && primeiraVenda.FormaDePagamento.Any())
+                        {
+                            var insertPagamento = @"
+INSERT INTO PagamentoVenda (IdVenda, FormaPagamento, Valor)
+VALUES (@IdVenda, @FormaPagamento, @Valor);";
+                            foreach (var pg in primeiraVenda.FormaDePagamento)
+                            {
+                                using (var cmdPg = new SqlCommand(insertPagamento, connection, transaction))
+                                {
+                                    cmdPg.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVendaCriada;
+                                    cmdPg.Parameters.Add("@FormaPagamento", SqlDbType.NVarChar).Value = pg.FormaPagamento ?? "Não informado";
+                                    cmdPg.Parameters.Add("@Valor", SqlDbType.Decimal).Value = pg.Valor;
+                                    await cmdPg.ExecuteNonQueryAsync();
+                                }
+                            }
+                        }
 
                         foreach (var venda in vendas)
                         {
@@ -158,7 +180,7 @@ namespace Backend.Controllers
                             cmdItem.Parameters.Add("@Preco", SqlDbType.Decimal).Value = venda.PrecoUnitario;
                             cmdItem.Parameters.Add("@Quantidade", SqlDbType.Int).Value = venda.QuantidadeTotal;
                             cmdItem.Parameters.Add("@Data", SqlDbType.DateTime).Value = venda.DataDaVenda;
-                            cmdItem.Parameters.Add("@FormaPagamento", SqlDbType.NVarChar).Value = venda.FormaDePagamento;
+                            cmdItem.Parameters.Add("@FormaPagamento", SqlDbType.NVarChar).Value = formaPagamentoTexto;
                             cmdItem.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVendaCriada;
 
                             await cmdItem.ExecuteNonQueryAsync();
@@ -198,14 +220,39 @@ namespace Backend.Controllers
                 var connectString = _config.GetConnectionString("DefaultConnection");
                 using (var connection = new SqlConnection(connectString))
                 {
-                    var query = @"SELECT * FROM Venda WHERE CAST(DataDaVenda AS DATE) = CAST(GETDATE() AS DATE) AND (@formaDepagamento IS NULL OR FormaDePagamento = @formaDepagamento) ORDER BY DataDaVenda;";
+                    var query = @"
+SELECT 
+    V.IdVenda,
+    V.Produtos_Vendidos,
+    V.NomeDoComprado,
+    V.PrecoTotal,
+    V.QuantidadeTotal,
+    V.DataDaVenda,
+    V.FormaDePagamento,
+    V.ValorNaFicha,
+    SUM(ISNULL(PV.Valor,0)) AS Valor
+FROM Venda V
+LEFT JOIN PagamentoVenda PV ON PV.IdVenda = V.IdVenda
+WHERE CAST(V.DataDaVenda AS DATE) = CAST(GETDATE() AS DATE)
+  AND (@formaDepagamento IS NULL OR V.FormaDePagamento = @formaDepagamento)
+GROUP BY
+    V.IdVenda,
+    V.Produtos_Vendidos,
+    V.NomeDoComprado,
+    V.PrecoTotal,
+    V.QuantidadeTotal,
+    V.DataDaVenda,
+    V.FormaDePagamento,
+    V.ValorNaFicha
+ORDER BY V.DataDaVenda;";
                     var command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@formaDepagamento",string.IsNullOrWhiteSpace(formaDepagamento) ? (object)DBNull.Value : formaDepagamento);
                     
                     await connection.OpenAsync();
+                    List<VendaRealizadaProp> vendas;
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        var vendas = new List<VendaRealizadaProp>();
+                        vendas = new List<VendaRealizadaProp>();
                         while (await reader.ReadAsync())
                         {
                             var venda = new VendaRealizadaProp
@@ -215,14 +262,36 @@ namespace Backend.Controllers
                                 PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
                                 quantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
-                                ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
+                                ValorNaFicha = reader["ValorNaFicha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["ValorNaFicha"]),
                                 IdVenda = Convert.ToInt32(reader["IdVenda"]),
                             };
                             vendas.Add(venda);
                         }
-                        return Ok(vendas);
                     }
+
+                    foreach (var v in vendas)
+                    {
+                        var pagamentos = new List<PagamentoProp>();
+                        using (var cmdPag = new SqlCommand("SELECT FormaPagamento, Valor FROM PagamentoVenda WHERE IdVenda = @Id", connection))
+                        {
+                            cmdPag.Parameters.Add("@Id", SqlDbType.Int).Value = v.IdVenda;
+                            using (var r2 = await cmdPag.ExecuteReaderAsync())
+                            {
+                                while (await r2.ReadAsync())
+                                {
+                                    pagamentos.Add(new PagamentoProp
+                                    {
+                                        FormaPagamento = r2["FormaPagamento"].ToString(),
+                                        Valor = r2["Valor"] == DBNull.Value ? 0 : Convert.ToDecimal(r2["Valor"])
+                                    });
+                                }
+                            }
+                        }
+                        v.Pagamentos = pagamentos;
+                        v.FormaDePagamento = pagamentos;
+                    }
+
+                    return Ok(vendas);
                 }
             }
             catch (Exception ex)
@@ -279,7 +348,12 @@ ORDER BY V.DataDaVenda;";
                                 PrecoUnitario = Convert.ToDecimal(reader["PrecoTotal"].ToString(), CultureInfo.InvariantCulture),
                                 QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                                FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                                FormaDePagamento = new List<PagamentoProp> {
+                                    new PagamentoProp {
+                                        FormaPagamento = reader["FormaDePagamento"].ToString() ?? "Não informado",
+                                        Valor = 0
+                                    }
+                                },
                                 ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
                                 Produtos_Vendidos = reader["Produtos_Vendidos"].ToString(),
                                 NumeroDeTelefone = reader["Telefone"].ToString(),
@@ -314,13 +388,13 @@ public async Task<ActionResult> FiltrarVendas(
                     RV.QuantidadeTotal,
                     RV.NomeDoProduto,
                     CD.Telefone,
-                    RV.PrecoTotal AS PrecoUnitario, -- Preço do item
+                    RV.PrecoTotal AS PrecoUnitario,
                     V.DataDaVenda,
                     CD.NomeDoCliente,
                     V.ValorNaFicha,
                     V.FormaDePagamento,
                     V.Produtos_Vendidos,
-                    V.PrecoTotal AS PrecoTotalVenda, -- Preço da nota toda
+                    V.PrecoTotal AS PrecoTotalVenda,
                     V.IdVenda
                 FROM Venda V
                 INNER JOIN RealizarVendas RV ON RV.IdVenda = V.IdVenda
@@ -353,7 +427,12 @@ public async Task<ActionResult> FiltrarVendas(
                         PrecoUnitario = Convert.ToDecimal(reader["PrecoUnitario"].ToString(), CultureInfo.InvariantCulture),
                         QuantidadeTotal = reader["QuantidadeTotal"] == DBNull.Value ? 0 : Convert.ToInt32(reader["QuantidadeTotal"]),
                         DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                        FormaDePagamento = reader["FormaDePagamento"].ToString(),
+                        FormaDePagamento = new List<PagamentoProp> {
+                            new PagamentoProp {
+                                FormaPagamento = reader["FormaDePagamento"].ToString() ?? "Não informado",
+                                Valor = 0
+                            }
+                        },
                         ValorNaFicha = reader["ValorNaFicha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["ValorNaFicha"]),
                         Produtos_Vendidos = reader["Produtos_Vendidos"].ToString(),
                         NumeroDeTelefone = reader["Telefone"].ToString(),
@@ -418,6 +497,20 @@ public async Task<ActionResult> FiltrarVendas(
                             {
                                 cmdItens.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
                                 await cmdItens.ExecuteNonQueryAsync();
+                            }
+
+                            var deletePagamentos = @"
+                        DELETE FROM PagamentoVenda
+                        WHERE IdVenda = @IdVenda
+                        AND EXISTS (
+                            SELECT 1 FROM Venda 
+                            WHERE IdVenda = @IdVenda AND ValorNaFicha <= 0
+                        )";
+
+                            using (var cmdPg = new SqlCommand(deletePagamentos, connection, transaction))
+                            {
+                                cmdPg.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
+                                await cmdPg.ExecuteNonQueryAsync();
                             }
 
                             var deleteVenda = @"
@@ -573,9 +666,15 @@ public async Task<ActionResult> FiltrarVendas(
                         }
 
                         
+                        string sqlDelPagamentos = "DELETE FROM PagamentoVenda WHERE IdVenda = @id";
                         string sqlDelItens = "DELETE FROM RealizarVendas WHERE IdVenda = @id";
                         string sqlDelVenda = "DELETE FROM Venda WHERE IdVenda = @id";
 
+                        using (SqlCommand cmdDelPg = new SqlCommand(sqlDelPagamentos, conn, transaction))
+                        {
+                            cmdDelPg.Parameters.AddWithValue("@id", idVenda);
+                            cmdDelPg.ExecuteNonQuery();
+                        }
                         using (SqlCommand cmdDel = new SqlCommand(sqlDelItens, conn, transaction))
                         {
                             cmdDel.Parameters.AddWithValue("@id", idVenda);

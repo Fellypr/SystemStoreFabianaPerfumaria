@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { FcViewDetails } from "react-icons/fc";
 import { format } from "date-fns";
+import Details from "../../../components/Details/details";
 import CupomFiscal from "./DetalheDaVenda";
 
 function HistoricoDeVenda() {
@@ -22,12 +23,23 @@ function HistoricoDeVenda() {
   const [busca, setBusca] = useState("");
   const [formaDePagamento, setFormaDePagamento] = useState("");
   const [detalhes, setDetalhes] = useState(false);
+  const [isClosingDetails, setIsClosingDetails] = useState(false);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
+  const [imprimir, setImprimir] = useState(false);
 
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
   const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
+
+  useEffect(() => {
+    if (imprimir) {
+      setTimeout(() => {
+        window.print();
+        setImprimir(false);
+      }, 300);
+    }
+  }, [imprimir]);
 
   async function cancelarVenda(idVenda) {
     if (
@@ -57,8 +69,20 @@ function HistoricoDeVenda() {
       (item) => item.idVenda === idVenda,
     );
     window.scrollTo(0, 0);
+    setIsClosingDetails(false);
     setVendaSelecionada(itensVenda);
     setDetalhes(true);
+    console.log(itensVenda);
+  }
+
+  function fecharDetalhes() {
+    setIsClosingDetails(true);
+    setTimeout(() => {
+      setDetalhes(false);
+      setImprimir(false);
+      setVendaSelecionada(null);
+      setIsClosingDetails(false);
+    }, 300);
   }
 
   async function BuscandoVendas() {
@@ -87,6 +111,72 @@ function HistoricoDeVenda() {
     if (palavras.length <= limite) return nome;
     return palavras.slice(0, limite).join(" ") + "...";
   }
+  function textoFormaPagamento(item) {
+    if (Array.isArray(item?.pagamentos) && item.pagamentos.length > 0) {
+      return item.pagamentos
+        .map((p) => {
+          const n = p.formaPagamento || "";
+          const v = Number(p.valor || 0);
+          const vt =
+            v > 0
+              ? ` (${v.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })})`
+              : "";
+          return `${n}${vt}`;
+        })
+        .join(" + ");
+    }
+    if (
+      Array.isArray(item?.formaDePagamento) &&
+      item.formaDePagamento.length > 0
+    ) {
+      return item.formaDePagamento
+        .map((p) => {
+          const n = p.formaPagamento || "";
+          const v = Number(p.valor || 0);
+          const vt =
+            v > 0
+              ? ` (${v.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })})`
+              : "";
+          return `${n}${vt}`;
+        })
+        .join(" + ");
+    }
+    if (item?.formaDePagamento && typeof item.formaDePagamento === "object") {
+      const n = item.formaDePagamento.formaPagamento || "";
+      const v = Number(item.formaDePagamento.valor || 0);
+      const vt =
+        v > 0
+          ? ` (${v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })})`
+          : "";
+      return `${n}${vt}`;
+    }
+    return item?.formaDePagamento || "Não informado";
+  }
+  function classeFormaPagamento(item) {
+    if (Array.isArray(item?.pagamentos) && item.pagamentos.length > 1)
+      return "PagamentoDividido";
+    if (
+      Array.isArray(item?.formaDePagamento) &&
+      item.formaDePagamento.length > 1
+    )
+      return "PagamentoDividido";
+    if (
+      Array.isArray(item?.formaDePagamento) &&
+      item.formaDePagamento.length === 1
+    )
+      return item.formaDePagamento[0]?.formaPagamento || "NaoInformado";
+    if (Array.isArray(item?.pagamentos) && item.pagamentos.length === 1)
+      return item.pagamentos[0]?.formaPagamento || "NaoInformado";
+    if (item?.formaDePagamento && typeof item.formaDePagamento === "object")
+      return item.formaDePagamento.formaPagamento || "NaoInformado";
+    return item?.formaDePagamento || "NaoInformado";
+  }
 
   const vendasUnicas = Object.values(
     HistoricoDeVendasDeHoje.reduce((acc, item) => {
@@ -105,195 +195,179 @@ function HistoricoDeVenda() {
   );
 
   return (
-    <div className="dashboard-container">
-      <header>
-        <nav>
-          <div className="navBar">
-            <Link to={"/"}>
-              <img
-                src="img/SUBLOGO- BRONZE.png"
-                width={100}
-                height={100}
-                alt="Logo"
-              />
-            </Link>
-            <h1>Fabiana Perfumaria</h1>
-          </div>
-        </nav>
-      </header>
-
-      <section className="dashboard-content">
-        <div className="metrics-container">
-          <div className="metric-card">
-            <div className="metric-icon green">
-              <FaWallet />
-            </div>
-            <div className="metric-info">
-              <p>Total Vendido</p>
-              <h3>
-                {totalVendido.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </h3>
-            </div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-icon orange">
-              <FaUser />
-            </div>
-            <div className="metric-info">
-              <p>Em Aberto (Ficha)</p>
-              <h3>
-                {totalFicha.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </h3>
-            </div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-icon blue">
-              <FaChartLine />
-            </div>
-            <div className="metric-info">
-              <p>Qtd. Transações</p>
-              <h3>{vendasUnicas.length}</h3>
-            </div>
-          </div>
+    <>
+      <nav>
+        <div className="navBar">
+          <Link to={"/"}>
+            <img src="img/SUBLOGO- BRONZE.png" width={100} height={100} />
+          </Link>
+          <h1>Fabiana Perfumaria</h1>
         </div>
-
-        <div className="filter-card">
-          <div className="filter-row">
-            <div className="search-box">
-              <FaSearch />
-              <input
-                type="text"
-                placeholder="Pesquisar cliente..."
-                onChange={(e) => setBusca(e.target.value)}
-              />
-            </div>
-            <select
-              className="filter-select"
-              onChange={(e) => setFormaDePagamento(e.target.value)}
-            >
-              <option value="">Todas Formas de Pagamento</option>
-              <option value="Espécie">Dinheiro</option>
-              <option value="CartaoDeCredito">Cartão de Crédito</option>
-              <option value="CartaoDeDebito">Cartão de Débito</option>
-              <option value="PagoNoPix">Pix</option>
-              <option value="Crediario">Ficha</option>
-            </select>
-            <div className="date-group">
-              <div className="date-input">
-                <FaCalendarAlt />
-                <input
-                  type="date"
-                  value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
-                />
-              </div>
-              <span>Até</span>
-              <div className="date-input">
-                <FaCalendarAlt />
-                <input
-                  type="date"
-                  value={dataFim}
-                  onChange={(e) => setDataFim(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="table-container-pro">
-          <table className="modern-table">
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Produtos</th>
-                <th>Pagamento</th>
-                <th>Total</th>
-                <th>Saldo Ficha</th>
-                <th>Data</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vendasUnicas.map((item) => (
-                <tr key={item.idVenda}>
-                  <td className="font-bold">{item.comprador}</td>
-                  <td className="text-muted">
-                    {limitarNome(item.nomeDoProduto)}
-                  </td>
-                  <td>
-                    <span className={`badge ${item.formaDePagamento}`}>
-                      {item.formaDePagamento}
-                    </span>
-                  </td>
-                  <td className="font-bold">
-                    {(item.precoTotal || 0).toLocaleString("pt-BR", {
+      </nav>
+      <div className="dashboard-main">
+        <div className="dashboard-container">
+          <section className="dashboard-content">
+            <div className="metrics-container">
+              <div className="metric-card">
+                <div className="metric-icon green">
+                  <FaWallet />
+                </div>
+                <div className="metric-info">
+                  <p>Total Vendido</p>
+                  <h3>
+                    {totalVendido.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
-                  </td>
-                  <td
-                    className={
-                      item.valorNaFicha > 0 ? "text-danger" : "text-success"
-                    }
-                  >
-                    {item.valorNaFicha === 0
-                      ? "Sem ficha"
-                      : item.valorNaFicha.toLocaleString("pt-BR", {
+                  </h3>
+                </div>
+              </div>
+              <div className="metric-card">
+                <div className="metric-icon orange">
+                  <FaUser />
+                </div>
+                <div className="metric-info">
+                  <p>Em Aberto (Ficha)</p>
+                  <h3>
+                    {totalFicha.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </h3>
+                </div>
+              </div>
+              <div className="metric-card">
+                <div className="metric-icon blue">
+                  <FaChartLine />
+                </div>
+                <div className="metric-info">
+                  <p>Qtd. Transações</p>
+                  <h3>{vendasUnicas.length}</h3>
+                </div>
+              </div>
+            </div>
+
+            <div className="filter-card">
+              <div className="filter-row">
+                <div className="search-box">
+                  <FaSearch />
+                  <input
+                    type="text"
+                    placeholder="Pesquisar cliente..."
+                    onChange={(e) => setBusca(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="filter-select"
+                  onChange={(e) => setFormaDePagamento(e.target.value)}
+                >
+                  <option value="">Todas Formas de Pagamento</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                  <option value="Credito">Cartão de Crédito</option>
+                  <option value="Debito">Cartão de Débito</option>
+                  <option value="Pix">Pix</option>
+                  <option value="Crediario">Ficha</option>
+                  <option value="Pagamento dividido">Pagamento Dividido</option>
+                </select>
+                <div className="date-group">
+                  <div className="date-input">
+                    <FaCalendarAlt />
+                    <input
+                      type="date"
+                      value={dataInicio}
+                      onChange={(e) => setDataInicio(e.target.value)}
+                    />
+                  </div>
+                  <span>Até</span>
+                  <div className="date-input">
+                    <FaCalendarAlt />
+                    <input
+                      type="date"
+                      value={dataFim}
+                      onChange={(e) => setDataFim(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="table-container-pro">
+              <table className="modern-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Produtos</th>
+                    <th>Pagamento</th>
+                    <th>Total</th>
+                    <th>Saldo Ficha</th>
+                    <th>Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vendasUnicas.map((item) => (
+                    <tr
+                      key={item.idVenda}
+                      onClick={() => mostrarDetalhes(item.idVenda)}
+                      className="modern-table-row"
+                    >
+                      <td className="font-bold">{item.comprador}</td>
+                      <td className="text-muted">
+                        {limitarNome(item.nomeDoProduto)}
+                      </td>
+                      <td>
+                        <span className={`badge ${classeFormaPagamento(item)}`}>
+                          {textoFormaPagamento(item)}
+                        </span>
+                      </td>
+                      <td className="font-bold">
+                        {(item.precoTotal || 0).toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}
-                  </td>
-                  <td>
-                    {item.dataDaVenda
-                      ? format(new Date(item.dataDaVenda), "dd/MM/yyyy")
-                      : "--"}
-                  </td>
-                  <td>
-                    <button
-                      className="action-btn"
-                      onClick={() => mostrarDetalhes(item.idVenda)}
-                    >
-                      <FcViewDetails size={24} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      </td>
+                      <td
+                        className={
+                          item.valorNaFicha > 0 ? "text-danger" : "text-success"
+                        }
+                      >
+                        {item.valorNaFicha === 0
+                          ? "Sem ficha"
+                          : item.valorNaFicha.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })}
+                      </td>
+                      <td>
+                        {item.dataDaVenda
+                          ? format(new Date(item.dataDaVenda), "dd/MM/yyyy")
+                          : "--"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          
         </div>
-      </section>
-
-      {detalhes && vendaSelecionada && (
-        <div className="ticket-main">
-          <div className="botoes-historico-container">
-            <button
-              className="excluir-venda"
-              onClick={() => cancelarVenda(vendaSelecionada[0].idVenda)}
-            >
-              <ButtonTrashVenda />
-            </button>
-
-            <button className="imprimir-nota" onClick={() => window.print()}>
-              Baixar PDF
-            </button>
-            <button
-              onClick={() => setDetalhes(false)}
-              className="volta-historico"
-            >
-              <ButtonVoltar />
-            </button>
+        {detalhes && (
+          <Details 
+            vendaSelecionada={vendaSelecionada} 
+            onCancel={cancelarVenda}
+            onPrint={() => setImprimir(true)}
+            onBack={fecharDetalhes}
+            isClosing={isClosingDetails}
+          />
+        )}
+        
+        {imprimir && (
+          <div className="print-only-container">
+            <CupomFiscal vendaSelecionada={vendaSelecionada} />
           </div>
-
-          <CupomFiscal vendaSelecionada={vendaSelecionada} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 

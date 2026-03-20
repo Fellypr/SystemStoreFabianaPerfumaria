@@ -50,8 +50,8 @@ function TabelaDeFechamento() {
                 </tr>
               </thead>
               <tbody>
-                  {HistoricoDeVendasDeHoje.map((venda) => (
-                  <tr key={venda.id}>
+                  {HistoricoDeVendasDeHoje.map((venda, idx) => (
+                  <tr key={venda.idVenda ?? venda.IdVenda ?? idx}>
                     <td data-label="Cliente">{venda.comprador}</td>
                     <td data-label="Produto">{limitarNome(venda.nomeDoProduto,3)}</td>
                     <td data-label="Valor Total">
@@ -60,9 +60,20 @@ function TabelaDeFechamento() {
                         currency: "BRL",
                       })}
                     </td>
-                    <td data-label="Pagamento">{venda.formaDePagamento}</td>
+                    <td data-label="Pagamento" >
+                      {Array.isArray(venda.formaDePagamento)
+                        ? venda.formaDePagamento
+                            .map((p) => {
+                              const nome = p.formaPagamento || "";
+                              const valorNum = Number(p.valor || 0);
+                              const valorTxt = valorNum > 0 ? ` (${valorNum.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})})` : "";
+                              return `${nome}${valorTxt}`;
+                            })
+                            .join(" + ")
+                        : venda.formaDePagamento}
+                    </td>
                     <td data-label="Ficha">
-                      {venda?.valorDaFicha === 0
+                      {venda?.valorNaFicha === 0
                         ? "Paga"
                         : venda?.valorNaFicha !== undefined
                         ? parseFloat(venda.valorNaFicha).toLocaleString(

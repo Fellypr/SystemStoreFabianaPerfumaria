@@ -8,26 +8,20 @@
   --success: #2ecc71;
 }
 
+.dashboard-main{
+  display: flex;
+}
+.dashboard-container{
+  flex: 1;
+}
+
 .dashboard-wrapper {
   background-color: var(--bg);
   min-height: 100vh;
   padding-bottom: 40px;
 }
 
-.navBar-pro {
-  background: var(--dark);
-  padding: 15px 50px;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  color: white;
-}
 
-.navBar-pro img {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-}
 
 .title-section h1 {
   margin: 0;
@@ -171,6 +165,15 @@
   padding: 15px;
   border-bottom: 1px solid #eee;
   font-size: 14px;
+}
+
+.modern-table-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modern-table-row:hover {
+  background-color: #f1f5f9 !important;
 }
 
 .font-bold { font-weight: 600; color: var(--dark); }
@@ -337,8 +340,49 @@
       scale: 1.1;
     }
 }
+.print-only-container {
+  display: none;
+}
+
 @media print {
-  body * { visibility: hidden; }
-  .ticket-container, .ticket-container * { visibility: visible; }
-  .ticket-container { position: absolute; left: 0; top: 0; border: none; box-shadow: none; }
+  body * { 
+    visibility: hidden; 
+  }
+  
+  /* Esconde completamente elementos que causam páginas extras */
+  .dashboard-container, 
+  .dashboard-content, 
+  .navBar-pro, 
+  nav, 
+  .details-wrapper,
+  .botoes-historico-container {
+    display: none !important;
+  }
+
+  .print-only-container {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .notaCard, .notaCard * { 
+    visibility: visible; 
+  }
+  
+  .notaCard { 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    border: none !important; 
+    box-shadow: none !important; 
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important; 
+    page-break-after: avoid;
+  }
+  @page {
+    margin: 0;
+  }
 }

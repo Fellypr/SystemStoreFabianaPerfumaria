@@ -22,6 +22,26 @@ a {
 }
 .Mensagem{
   position: absolute;
+  top: 7rem;
+  left: 88%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #fff;
+  z-index: 1000;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: msg-in 0.4s ease-out forwards , msg-out 0.4s ease-in forwards;
+  animation-delay: 0s, 4s;
+}
+@keyframes msg-in{
+  from{ opacity: 0; transform: translateX(70px); }
+  to{ opacity: 1; transform: translateX(30); }
+}
+@keyframes msg-out{
+  from{ opacity: 1; transform: translateX(20); }
+  to{ opacity: 0; transform: translateX(70px); }
 }
 button{
   cursor: pointer;

@@ -5,13 +5,16 @@ import "./RealizarUmaVenda.css";
 
 import QRCodeInsta from "../../../components/qrCode/Qrcode";
 import CardConfirmaçãoDeVenda from "./ConfirmcaoDeVenda";
+import PaymentSplit from "../../../components/PaymentSplit/PaymentSplit";
 
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineEdit, MdOutlineEditOff } from "react-icons/md";
 
+import MessageError from "../../../components/FeedBack/MessageError";
 import MensagemDeSucesso from "./MensagemDeSucesso";
+import parseApiError from "../../../utils/parseApiError";
 import ButtonVenda from "../../../components/Button/ButtonVenda";
 import LoadingSucessoVenda from "../../../components/Loading/LoadingSucessoVenda";
 
@@ -27,6 +30,11 @@ function RealizarVendaTest() {
   const [desconto, setDesconto] = useState("R$ 0,00");
   const [precoTotal, setPrecoTotal] = useState("R$ 0,00");
   const [formaDePagamento, setFormaDePagamento] = useState("");
+  const [showSplit, setShowSplit] = useState(false);
+  const [pagamentosDivididos, setPagamentosDivididos] = useState([
+    { method: "", amount: "" },
+    { method: "", amount: "" },
+  ]);
   const [dinheiroRecebido, setDinheiroRecebido] = useState("R$ 0,00");
   const [precoUnitarioSelecionado, setPrecoUnitarioSelecionado] = useState(0);
   const [ficha, setFicha] = useState("R$ 0,00");
@@ -41,6 +49,7 @@ function RealizarVendaTest() {
   const [codigoDeAcesso, setCodigoDeAcesso] = useState("");
   const [verificarCodigo, setVerificarCodigo] = useState(false);
   const [showRealizarVenda, setShowRealizarVenda] = useState(null);
+  const [mensagemDeErro, setMensagemDeErro] = useState(null);
   const [mensagemDeSucesso, setMensagemDeSucesso] = useState(null);
   const [ativarFuncaoEditarDinheiro, setAtivarFuncaoEditarDinheiro] =
     useState(false);
@@ -266,10 +275,41 @@ function RealizarVendaTest() {
     }
     try {
       setLoadingSucesso(true);
-      const precoLimpo = precoTotal.replace(/\D/g, "").replace(",", ".");
+      const precoLimpoStr = precoTotal.replace(/\D/g, "").replace(",", ".");
+      const totalNumerico = Number(precoLimpoStr) / 100;
+      if (formaDePagamento === "Pagamento dividido") {
+        const soma = pagamentosDivididos.reduce(
+          (acc, p) => acc + (Number(p.amount) || 0),
+          0
+        );
+        if (Math.abs(soma - totalNumerico) > 0.005) {
+          alert("A soma dos pagamentos não bate com o total da venda.");
+          setLoadingSucesso(false);
+          return;
+        }
+        const vazios = pagamentosDivididos.some((p) => !p.method || !p.amount);
+        if (vazios) {
+          alert("Preencha todas as formas e valores do pagamento dividido.");
+          setLoadingSucesso(false);
+          return;
+        }
+      }
+      const precoLimpo = precoLimpoStr;
       const Data = new Date();
 
       const dadosParaEnvio = produtosVendidos.map((produto) => {
+        const pagamentosPayload =
+          formaDePagamento === "Pagamento dividido"
+            ? pagamentosDivididos.map((p) => ({
+                formaPagamento: p.method,
+                valor: Number(p.amount) || 0,
+              }))
+            : [
+                {
+                  formaPagamento: formaDePagamento || "Não informado",
+                  valor: totalNumerico,
+                },
+              ];
         const dados = {
           nomeDoProduto: produto.nomeDoProduto,
           precoTotal: Number(parseFloat(precoLimpo) / 100),
@@ -278,7 +318,7 @@ function RealizarVendaTest() {
           ),
           quantidade: produto.quantidade,
           dataDaVenda: Data.toISOString(),
-          formaDePagamento: formaDePagamento,
+          formaDePagamento: pagamentosPayload,
           id_produto: produto.id_produto,
           quantidadeTotal: quantidadeTotal,
           comprador: pesquisarCliente,
@@ -313,11 +353,10 @@ function RealizarVendaTest() {
       setDescontoNaVenda("R$ 0,00");
     } catch (error) {
       if (error.response) {
-        alert(`Erro ao realizar venda: ${error.response.data}`);
-      } else {
-        alert(`Erro inesperado ao realizar venda: ${error.message}`);
-      }
-    } finally {
+        const msg = parseApiError(error.response.data);
+        setMensagemDeErro(msg);
+    }}
+    finally{
       setLoadingSucesso(false);
     }
   };
@@ -665,41 +704,60 @@ function RealizarVendaTest() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Nome do Produto</th>
-                      <th>Quantidade</th>
-                      <th>Preço</th>
-                      <th>Desconto</th>
-                      <th>Preço Total</th>
-                      <th>Remover</th>
+                      <th className="col-imagem">Imagem</th>
+                      <th className="col-produto">Produto</th>
+                      <th className="col-quantidade">Qtd</th>
+                      <th className="col-preco">Preço Unit.</th>
+                      
+                      <th className="col-total">Preço Total</th>
+                      <th className="col-acao">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
                     {produtosVendidos.map((item, index) => (
                       <tr key={index}>
-                        <td>{item.nomeDoProduto}</td>
-                        <td>{item.quantidade}</td>
-                        <td>
+                        <td className="col-imagem">
+                          <div className="produto-imagem">
+                            <img 
+                              src={item.urlImagem} 
+                              alt={item.nomeDoProduto}
+                              onError={(e) => {
+                                e.target.src = "https://via.placeholder.com/50?text=Sem+Imagem";
+                              }}
+                            />
+                          </div>
+                        </td>
+                        <td className="col-produto">
+                          <span className="nome-produto">{item.nomeDoProduto}</span>
+                        </td>
+                        <td className="col-quantidade">
+                          <span className="badge-quantidade">{item.quantidade}</span>
+                        </td>
+                        <td className="col-preco">
                           {parseFloat(item.precoVenda).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                           })}
                         </td>
-                        <td>{item.desconto}</td>
-                        <td>
-                          {(
-                            item.precoVenda * item.quantidade -
-                            parseFloat(item.desconto.replace(/\D/g, "")) / 100
-                          ).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
+                        
+                        <td className="col-total">
+                          <strong className="preco-total">
+                            {(
+                              item.precoVenda * item.quantidade -
+                              parseFloat(item.desconto.replace(/\D/g, "")) / 100
+                            ).toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })}
+                          </strong>
                         </td>
-                        <td>
+                        <td className="col-acao">
                           <button
                             onClick={() => removerProduto(index)}
                             className="BtnRemoverDaTabela"
+                            title="Remover produto"
                           >
-                            <FaRegTrashAlt fontSize={20} />
+                            <FaRegTrashAlt />
                           </button>
                         </td>
                       </tr>
@@ -712,7 +770,7 @@ function RealizarVendaTest() {
 
           <div className="SubTotal">
             <p>Total:</p>
-            <p>{precoTotal}</p>
+            <p className="PrecoTotal">{precoTotal}</p>
           </div>
 
           <div className="FinalizandoVenda">
@@ -742,7 +800,12 @@ function RealizarVendaTest() {
               <select
                 required
                 value={formaDePagamento}
-                onChange={(e) => setFormaDePagamento(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setFormaDePagamento(v);
+                  if (v === "Pagamento dividido") setShowSplit(true);
+                  else setShowSplit(false);
+                }}
               >
                 <option value="">Selecione</option>
                 <option value="Dinheiro">Dinheiro</option>
@@ -750,8 +813,35 @@ function RealizarVendaTest() {
                 <option value="Debito">Cartão de Debito</option>
                 <option value="Pix">Pix</option>
                 <option value="Crediario">Ficha</option>
+                <option value="Pagamento dividido">Pagamento dividido</option>
               </select>
             </div>
+            {showSplit && (
+              <PaymentSplit
+                total={precoTotal}
+                methods={["Dinheiro", "Credito", "Debito", "Pix", "Crediario"]}
+                value={pagamentosDivididos}
+                onChange={setPagamentosDivididos}
+                onAddRow={() =>
+                  setPagamentosDivididos((prev) => [
+                    ...prev,
+                    { method: "", amount: "" },
+                  ])
+                }
+                onRemoveRow={(idx) =>
+                  setPagamentosDivididos((prev) =>
+                    prev.filter((_, i) => i !== idx),
+                  )
+                }
+                onCancel={() => {
+                  setShowSplit(false);
+                  setFormaDePagamento("");
+                }}
+                onSave={() => {
+                  setShowSplit(false);
+                }}
+              />
+            )}
 
             <div className="Botoes">
               <ButtonVenda MesagemDeVenda={MesagemDeVenda} />
@@ -932,10 +1022,17 @@ function RealizarVendaTest() {
         </div>
       )}
       {mensagemDeSucesso && (
-        <div className="mensagems">
+        <div className="Mensagem">
           <MensagemDeSucesso mensagemDeSucesso={mensagemDeSucesso} />
+      </div>
+      )}
+      
+      {mensagemDeErro && (
+        <div className="Mensagem">
+          <MessageError mensagemDeErro={mensagemDeErro} />
         </div>
       )}
+      
       {loadingSucesso && (
         <div className="loading">
           <LoadingSucessoVenda />

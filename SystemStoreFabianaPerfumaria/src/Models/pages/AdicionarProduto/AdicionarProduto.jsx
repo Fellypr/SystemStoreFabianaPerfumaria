@@ -6,6 +6,8 @@ import { FaBarcode } from "react-icons/fa6";
 import { AiOutlinePicture } from "react-icons/ai";
 import Loading from "../../../components/Loading/Loading";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import MessageError from "../../../components/FeedBack/MessageError";
+import parseApiError from "../../../utils/parseApiError";
 
 function AdicionarProduto() {
   const [nomeDoProduto, setNomeDoProduto] = useState("");
@@ -22,6 +24,7 @@ function AdicionarProduto() {
   const [sucesso, setSucesso] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [produtos, setProdutos] = useState([]);
+  const [mensagemDeErro, setMensagemDeErro] = useState(null);
 
   const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 
@@ -55,7 +58,8 @@ function AdicionarProduto() {
       setProdutos([...produtos, produto]);
       limparCampos();
     } catch (error) {
-      setError(error.response?.data || error.message || "Erro ao adicionar");
+      const msg = parseApiError(error.response.data);
+      setMensagemDeErro(msg);
     } finally {
       setLoading(false);
     }
@@ -153,7 +157,11 @@ function AdicionarProduto() {
         </div>
       </div>
 
-      {error && <div className="notification error-msg">{error}</div>}
+      {mensagemDeErro && (
+        <div className="Mensagem">
+          <MessageError mensagemDeErro={mensagemDeErro} />
+        </div>
+      )}
       {sucesso && <div className="notification success-msg">Produto Adicionado com sucesso</div>}
       {loading && <Loading />}
     </main>

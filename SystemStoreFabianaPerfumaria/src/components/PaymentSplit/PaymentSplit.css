@@ -1,0 +1,86 @@
+.payment-split-overlay{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+.payment-split{
+  width: 340px;
+  background: #fff;
+  border: 1px solid #e5edf7;
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+}
+.payment-split-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.payment-split-header h4{
+  font-size: 1rem;
+}
+.payment-split-header .warn{
+  color: #b00020;
+  font-weight: 600;
+}
+.payment-split-header .ok{
+  color: #059669;
+  font-weight: 600;
+}
+.payment-split-rows{
+  display: grid;
+  gap: 8px;
+}
+.payment-split-row{
+  display: grid;
+  grid-template-columns: 1fr 120px 32px;
+  gap: 8px;
+  align-items: center;
+}
+.payment-split-row select,
+.payment-split-row input{
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #dbe3ee;
+  padding: 0 10px;
+}
+.payment-split-row .remove{
+  height: 40px;
+  border-radius: 10px;
+  background: #ffe6e6;
+  color: #b00020;
+}
+.payment-split-actions{
+  display: flex;
+  justify-content: flex-end;
+}
+.payment-split-actions .add{
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f3f4f6;
+}
+.payment-split-footer{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.payment-split-footer .btn-secondary{
+  height: 40px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #111827;
+}
+.payment-split-footer .btn-primary{
+  height: 40px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}

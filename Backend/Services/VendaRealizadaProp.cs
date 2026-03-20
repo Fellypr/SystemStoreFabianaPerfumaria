@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace Backend.Services
 {
     using System.Text.Json.Serialization;
+    using Backend.Model;
 
     public class VendaRealizadaProp
     {
@@ -30,7 +31,10 @@ namespace Backend.Services
         public DateTime DataDaVenda { get; set; }
 
         [JsonPropertyName("formaDePagamento")]
-        public string FormaDePagamento { get; set; }
+        public List<PagamentoProp> FormaDePagamento { get; set; }
+
+        [JsonPropertyName("pagamentos")]
+        public List<PagamentoProp> Pagamentos { get; set; }
 
         [JsonPropertyName("quantidadeTotal")]
         public int quantidadeTotal { get; set; }

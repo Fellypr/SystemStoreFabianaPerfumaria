@@ -1,0 +1,54 @@
+.brand-combo {
+  position: relative;
+}
+.brand-input-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+.brand-input-wrap input {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #dbe3ee;
+  padding: 0 10px;
+  outline: none;
+}
+.brand-input-wrap .toggle {
+  height: 40px;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid #dbe3ee;
+  background: #f8fafc;
+  color: #111827;
+}
+.brand-options {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #e5edf7;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  padding: 6px;
+}
+.brand-options .option {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.brand-options .option:hover {
+  background: #f3f7fc;
+}
+.brand-options .empty {
+  color: #6b7280;
+  padding: 10px;
+  text-align: center;
+}

@@ -11,7 +11,7 @@ function ProdutosEmEstoque() {
   const [termoNomeProduto, setTermoNomeProduto] = useState("");
   const [termoMarca, setTermoMarca] = useState("");
   const [termoCodigo, setTermoCodigo] = useState("");
-  const [loading, setLoading] = useState(false);
+  
   const [showEditarProduto, setShowEditarProduto] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
@@ -24,7 +24,6 @@ function ProdutosEmEstoque() {
   }
   async function Buscar() {
     try {
-      setLoading(true);
       const response = await axios.post(
         `${url}/AdicionarProduto/BuscarProdutoEstoque`,
         {
@@ -42,16 +41,10 @@ function ProdutosEmEstoque() {
       console.log(response.data);
     } catch (error) {
       console.log("error de dados", error);
-    } finally {
-      setLoading(false);
     }
   }
   useEffect(() => {
-    if (termoNomeProduto || termoMarca || termoCodigo.trim().length > 0) {
       Buscar();
-    } else {
-      setProdutos([]);
-    }
   }, [termoNomeProduto, termoMarca, termoCodigo]);
 
   const produtosFiltrados = (produtos || []).filter(
@@ -130,7 +123,7 @@ function ProdutosEmEstoque() {
 
             <div className="BodyList">
               {produtosFiltrados.map((produto, index) => (
-                <div className="RowGrid" key={index}>
+                <button className="RowGrid" key={index} onClick={() => AparecerTelaEditar(produto)}>
                   <img src={produto.urlImagem} className="ProductImg" />
 
                   <p className="ProdName">
@@ -153,21 +146,13 @@ function ProdutosEmEstoque() {
                   </p>
 
                   <p className="Code">{produto.codigoDeBarra}</p>
-                  <button className="button-editar" onClick={() => AparecerTelaEditar(produto)}>
-                    <CiEdit size={30} />
-                  </button>
-                </div>
+                  
+                </button>
               ))}
             </div>
           </div>
         </div>
       </div>
-
-      {loading && (
-        <div className="LoadingOverlay">
-          <Loading />
-        </div>
-      )}
       {showEditarProduto && (
         <div className="editar-produto-container">
           <EditarProduto  setShowEditarProduto={setShowEditarProduto} produtoSelecionado={produtoSelecionado} setProdutoSelecionado={setProdutoSelecionado} Buscar={Buscar}/>
