@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import ButtonTrashVenda from "../../../components/Button/ButtonTrashVendas";
-import ButtonVoltar from "../../../components/Button/ButtonVoltar";
 
 import "./HistoricoDeVenda.css";
 import axios from "axios";
@@ -13,7 +11,6 @@ import {
   FaSearch,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { FcViewDetails } from "react-icons/fc";
 import { format } from "date-fns";
 import Details from "../../../components/Details/details";
 import CupomFiscal from "./DetalheDaVenda";
@@ -178,21 +175,20 @@ function HistoricoDeVenda() {
     return item?.formaDePagamento || "NaoInformado";
   }
 
-  const vendasUnicas = Object.values(
-    HistoricoDeVendasDeHoje.reduce((acc, item) => {
-      if (!acc[item.idVenda]) acc[item.idVenda] = item;
-      return acc;
-    }, {}),
-  );
+  const { vendasUnicas, totalVendido, totalFicha } = useMemo(() => {
+    const unicas = Object.values(
+      HistoricoDeVendasDeHoje.reduce((acc, item) => {
+        if (!acc[item.idVenda]) acc[item.idVenda] = item;
+        return acc;
+      }, {}),
+    );
 
-  const totalVendido = vendasUnicas.reduce(
-    (acc, v) => acc + (v.precoTotal || 0),
-    0,
-  );
-  const totalFicha = vendasUnicas.reduce(
-    (acc, v) => acc + (v.valorNaFicha || 0),
-    0,
-  );
+    const vendido = unicas.reduce((acc, v) => acc + (v.precoTotal || 0), 0);
+    const ficha = unicas.reduce((acc, v) => acc + (v.valorNaFicha || 0), 0);
+
+    return { vendasUnicas: unicas, totalVendido: vendido, totalFicha: ficha };
+  }, [HistoricoDeVendasDeHoje]);
+
 
   return (
     <>

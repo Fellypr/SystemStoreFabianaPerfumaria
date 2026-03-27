@@ -58,8 +58,9 @@ function AdicionarProduto() {
       setProdutos([...produtos, produto]);
       limparCampos();
     } catch (error) {
-      const msg = parseApiError(error.response.data);
+      const msg = parseApiError(error);
       setMensagemDeErro(msg);
+      console.log(msg);
     } finally {
       setLoading(false);
     }
@@ -93,11 +94,14 @@ function AdicionarProduto() {
   }, [showScanner]);
 
   useEffect(() => {
-    if (sucesso || error) {
-      const timer = setTimeout(() => { setSucesso(false); setError(null); }, 5000);
+    if (sucesso || mensagemDeErro) {
+      const timer = setTimeout(() => { 
+        setSucesso(false); 
+        setMensagemDeErro(null); 
+      }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [sucesso, error]);
+  }, [sucesso, mensagemDeErro]);
 
   return (
     <main>
@@ -159,7 +163,7 @@ function AdicionarProduto() {
 
       {mensagemDeErro && (
         <div className="Mensagem">
-          <MessageError mensagemDeErro={mensagemDeErro} />
+          <MessageError title={mensagemDeErro} onClose={() => setMensagemDeErro(null)} />
         </div>
       )}
       {sucesso && <div className="notification success-msg">Produto Adicionado com sucesso</div>}

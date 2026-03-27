@@ -352,11 +352,10 @@ function RealizarVendaTest() {
       setPesquisarCliente("");
       setDescontoNaVenda("R$ 0,00");
     } catch (error) {
-      if (error.response) {
-        const msg = parseApiError(error.response.data);
-        setMensagemDeErro(msg);
-    }}
-    finally{
+      const msg = parseApiError(error);
+      setMensagemDeErro(msg);
+      console.log(msg);
+    } finally {
       setLoadingSucesso(false);
     }
   };
@@ -422,6 +421,16 @@ function RealizarVendaTest() {
       event.preventDefault();
     }
   }
+
+  useEffect(() => {
+    if (mensagemDeErro || mensagemDeSucesso) {
+      const timer = setTimeout(() => {
+        setMensagemDeErro(null);
+        setMensagemDeSucesso(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mensagemDeErro, mensagemDeSucesso]);
 
   return (
     <>
@@ -1029,7 +1038,7 @@ function RealizarVendaTest() {
       
       {mensagemDeErro && (
         <div className="Mensagem">
-          <MessageError mensagemDeErro={mensagemDeErro} />
+          <MessageError title={mensagemDeErro} onClose={() => setMensagemDeErro(null)} />
         </div>
       )}
       

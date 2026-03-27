@@ -339,6 +339,7 @@ C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backen
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\staticwebassets.build.endpoints.json
+C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\swae.build.ex.cache
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.csproj.Up2Date
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\Backend.dll
 C:\Users\Gal\Documents\SistemaDalojaOriginal\SystemStoreFabianaPerfumaria\Backend\obj\Debug\net9.0\refint\Backend.dll

@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using StoreSystemFabianaPerfumaria.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using StoreSystemFabianaPerfumaria.Services;
 using Backend.Services;
-using System.Data;
 
 namespace StoreSystemFabianaPerfumaria.Controllers
-
 {
     [Route("api/[Controller]")]
     [ApiController]
     public class AdicionarProduto : Controller
     {
         private readonly IConfiguration _config;
+
         public AdicionarProduto(IConfiguration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
@@ -33,6 +31,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
+
                     var checkProdutoQuery = "SELECT COUNT(*) FROM AdicionarProduto WHERE NomeDoProduto = @NomeDoProduto";
                     var checkCommand = new SqlCommand(checkProdutoQuery, connection);
                     checkCommand.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
@@ -52,7 +51,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                         return Conflict("O Codigo de Barra Já Existe");
                     }
 
-                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto,Marca,Preco,Quantidade,CodigoDeBarra,UrlImagem,PrecoAdquirido,Preco_Da_Ficha,Preco_a_vista) VALUES (@NomeDoProduto,@Marca,@Preco,@Quantidade,@CodigoDeBarra,@UrlImagem,@PrecoAdquirido,@Preco_Da_Ficha,@Preco_a_vista)";
+                    var query = "INSERT INTO AdicionarProduto (NomeDoProduto, Marca, Preco, Quantidade, CodigoDeBarra, UrlImagem, PrecoAdquirido, Preco_Da_Ficha, Preco_a_vista) VALUES (@NomeDoProduto, @Marca, @Preco, @Quantidade, @CodigoDeBarra, @UrlImagem, @PrecoAdquirido, @Preco_Da_Ficha, @Preco_a_vista)";
                     var command = new SqlCommand(query, connection);
 
                     command.Parameters.Add(new SqlParameter("@NomeDoProduto", AdicionarProdutos.NomeDoProduto));
@@ -75,19 +74,15 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     {
                         return BadRequest("Erro ao adicionar produto");
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro ao adicionar produto: {ex.Message}");
-
             }
         }
 
         [HttpGet("HistoricoDeProdutos")]
-
         public async Task<ActionResult> HistoricoDeProdutos()
         {
             try
@@ -98,6 +93,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                     var query = "SELECT * FROM AdicionarProduto";
                     var command = new SqlCommand(query, connection);
                     await connection.OpenAsync();
+
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         var produtos = new List<Produtos>();
@@ -123,6 +119,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return StatusCode(500, $"Erro ao obter histórico de produtos: {ex.Message}");
             }
         }
+
         [HttpPut("AtualizarProduto/{id_Produto}")]
         public async Task<IActionResult> AtualizarProduto(int id, [FromBody] Produtos produtoAtualizado)
         {
@@ -132,9 +129,14 @@ namespace StoreSystemFabianaPerfumaria.Controllers
             {
                 await connection.OpenAsync();
 
+                if (produtoAtualizado.UrlImagem != null && produtoAtualizado.UrlImagem.Length >= 255)
+                {
+                    return BadRequest("A URL da imagem deve ter menos de 255 caracteres.");
+                }
+
                 var query = @"
                 UPDATE AdicionarProduto
-                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco,PrecoAdquirido = @PrecoAdquirido,CodigoDeBarra = @CodigoDeBarra , Preco_Da_Ficha = @Preco_Da_Ficha , Preco_a_vista = @Preco_a_vista , UrlImagem = @UrlImagem
+                SET NomeDoProduto = @Nome, Marca = @Marca, Quantidade = @Quantidade, Preco = @Preco, PrecoAdquirido = @PrecoAdquirido, CodigoDeBarra = @CodigoDeBarra, Preco_Da_Ficha = @Preco_Da_Ficha, Preco_a_vista = @Preco_a_vista, UrlImagem = @UrlImagem
                 WHERE Id_Produto = @Id";
 
                 var cmd = new SqlCommand(query, connection);
@@ -147,12 +149,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 cmd.Parameters.AddWithValue("@CodigoDeBarra", produtoAtualizado.CodigoDeBarra);
                 cmd.Parameters.AddWithValue("@Preco_Da_Ficha", produtoAtualizado.PrecoEmFicha);
                 cmd.Parameters.AddWithValue("@Preco_a_vista", produtoAtualizado.PrecoAvista);
-                cmd.Parameters.AddWithValue("@UrlImagem", produtoAtualizado.UrlImagem);
-
-                if (produtoAtualizado.UrlImagem.Length >= 255)
-                {
-                    return BadRequest("A URL da imagem deve ter menos de 255 caracteres.");
-                }
+                cmd.Parameters.AddWithValue("@UrlImagem", produtoAtualizado.UrlImagem ?? (object)DBNull.Value);
 
                 var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
 
@@ -162,6 +159,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return Ok("Produto atualizado com sucesso!");
             }
         }
+
         [HttpDelete("ExcluirProduto/{Id}")]
         public async Task<IActionResult> ExcluirProduto(int id)
         {
@@ -193,6 +191,7 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return BadRequest($"Erro ao excluir o produto: {ex.Message}");
             }
         }
+
         [HttpPost("BuscarProdutoEstoque")]
         public async Task<IActionResult> Buscar([FromBody] BuscarPorEstoque search)
         {
@@ -251,88 +250,75 @@ namespace StoreSystemFabianaPerfumaria.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost("BuscarProdutoParaRealizarVenda")]
         public async Task<IActionResult> BuscarParaRealizarVenda([FromBody] BuscarPorEstoque searchvenda)
         {
-            try
+            string termo = searchvenda.CodigoDeBarra;
+
+            if (string.IsNullOrWhiteSpace(termo))
+                termo = searchvenda.NomeDoProduto;
+
+            if (string.IsNullOrWhiteSpace(termo))
+                return BadRequest("Digite o nome ou escaneie o produto.");
+
+            termo = termo.Trim();
+
+            bool ehCodigoDeBarra = termo.All(char.IsDigit);
+
+            var connectionString = _config.GetConnectionString("DefaultConnection");
+
+            using var connection = new SqlConnection(connectionString);
+
+            string query;
+
+            if (ehCodigoDeBarra)
             {
-                string termoDeBusca = searchvenda.CodigoDeBarra;
-                if (string.IsNullOrWhiteSpace(termoDeBusca))
-                {
-                    termoDeBusca = searchvenda.NomeDoProduto;
-                }
-                if (string.IsNullOrWhiteSpace(termoDeBusca))
-                {
-                    return BadRequest("Digite o nome ou escaneie o produto.");
-                }
-
-                termoDeBusca = termoDeBusca.Trim();
-
-                var connectionString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    var query = @"SELECT * FROM AdicionarProduto 
-                          WHERE CodigoDeBarra = @TermoExato 
-                          OR NomeDoProduto LIKE @TermoParcial";
-
-                    var command = new SqlCommand(query, connection);
-
-                    command.Parameters.Add(new SqlParameter("@TermoExato", termoDeBusca));
-
-                    command.Parameters.Add(new SqlParameter("@TermoParcial", "%" + termoDeBusca + "%"));
-
-                    await connection.OpenAsync();
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        var listaDeProduto = new List<object>();
-
-                        while (await reader.ReadAsync())
-                        {
-                            listaDeProduto.Add(new
-                            {
-                                Id_Produto = Convert.ToInt32(reader["Id_Produto"]),
-                                NomeDoProduto = reader["NomeDoProduto"].ToString(),
-                                Marca = reader["Marca"].ToString(),
-                                Preco = Convert.ToDecimal(reader["Preco"]),
-                                PrecoAdquirido = reader["PrecoAdquirido"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
-                                PrecoEmFicha = reader["Preco_Da_Ficha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
-                                PrecoAvista = reader["Preco_a_vista"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
-                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
-                                CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
-                                UrlImagem = reader["UrlImagem"].ToString(),
-                            });
-                        }
-                        
-                        if (listaDeProduto.Count > 1)
-                        {
-                            var produtoExato = listaDeProduto.FirstOrDefault(p =>
-                                ((dynamic)p).CodigoDeBarra == termoDeBusca);
-
-                            if (produtoExato != null)
-                            {
-                                return Ok(new List<object> { produtoExato });
-                            }
-                        }
-
-                        if (listaDeProduto.Count == 0)
-                        {
-                            return NotFound("Nenhum produto encontrado.");
-                        }
-
-                        return Ok(listaDeProduto);
-                    }
-                }
+                query = @"SELECT TOP 1 *
+                          FROM AdicionarProduto
+                          WHERE CodigoDeBarra = @Termo";
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex.Message);
+                query = @"SELECT *
+                          FROM AdicionarProduto
+                          WHERE NomeDoProduto LIKE @Termo";
             }
+
+            using var command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue(
+                "@Termo",
+                ehCodigoDeBarra ? termo : $"%{termo}%"
+            );
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var lista = new List<object>();
+
+            while (await reader.ReadAsync())
+            {
+                lista.Add(new
+                {
+                    Id_Produto = Convert.ToInt32(reader["Id_Produto"]),
+                    NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                    Marca = reader["Marca"].ToString(),
+                    Preco = Convert.ToDecimal(reader["Preco"]),
+                    PrecoAdquirido = reader["PrecoAdquirido"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoAdquirido"]),
+                    PrecoEmFicha = reader["Preco_Da_Ficha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_Da_Ficha"]),
+                    PrecoAvista = reader["Preco_a_vista"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Preco_a_vista"]),
+                    Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                    CodigoDeBarra = reader["CodigoDeBarra"].ToString(),
+                    UrlImagem = reader["UrlImagem"].ToString()
+                });
+            }
+
+            if (!lista.Any())
+                return NotFound("Nenhum produto encontrado.");
+
+            return Ok(lista);
         }
-
-
-
     }
-
-
 }
