@@ -28,7 +28,6 @@ export const UseBuscaProduto = () =>{
         }catch(error){
             const msg = parseApiError(error)
             setErro(msg)
-            console.error(msg)
         }finally{
             setLoading(false)
         }
