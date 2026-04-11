@@ -62,9 +62,27 @@ function HistoricoDeVenda() {
   }
 
   function mostrarDetalhes(idVenda) {
-    const itensVenda = HistoricoDeVendasDeHoje.filter(
+    const venda = HistoricoDeVendasDeHoje.find(
       (item) => item.idVenda === idVenda,
     );
+    if (!venda) return;
+
+    // Achamos a venda e transformamos os itens internos em um formato que o componente Details espera
+    const itensVenda = (venda.itens || []).map(item => ({
+      ...venda,
+      ...item
+    }));
+
+    if (itensVenda.length === 0) {
+      // Se não houver itens detalhados, criamos um item fake com a string de produtosVendidos para não quebrar o layout
+      itensVenda.push({
+        ...venda,
+        nomeDoProduto: venda.produtosVendidos || "Produto não identificado",
+        quantidade: 1,
+        precoUnitario: venda.precoTotal
+      });
+    }
+
     window.scrollTo(0, 0);
     setIsClosingDetails(false);
     setVendaSelecionada(itensVenda);
@@ -308,7 +326,7 @@ function HistoricoDeVenda() {
                     >
                       <td className="font-bold">{item.comprador}</td>
                       <td className="text-muted">
-                        {limitarNome(item.nomeDoProduto)}
+                        {limitarNome(item.produtosVendidos)}
                       </td>
                       <td>
                         <span className={`badge ${classeFormaPagamento(item)}`}>

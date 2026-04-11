@@ -263,7 +263,7 @@ ORDER BY V.DataDaVenda;";
                                 quantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
                                 ValorNaFicha = reader["ValorNaFicha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["ValorNaFicha"]),
-                                IdVenda = Convert.ToInt32(reader["IdVenda"]),
+                                IdVenda = Convert.ToInt32(reader["IdVenda"])
                             };
                             vendas.Add(venda);
                         }
