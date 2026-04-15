@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc; 
-using Backend.Services;
+using Backend.Dtos.Auth;
+using Backend.Services.Interfaces;
 
 namespace Backend.Controllers
 {
@@ -11,14 +12,15 @@ namespace Backend.Controllers
     [ApiController]
     public class AutenticacaoDeUsuarioController : ControllerBase
     {
-        private readonly IConfiguration _config;
-        public AutenticacaoDeUsuarioController(IConfiguration config)
+        private readonly IAuthService _authService;
+
+        public AutenticacaoDeUsuarioController(IAuthService authService)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
         }
         [HttpPost("Login")]
-        public ActionResult Login ([FromBody] Login AutenticacaoDeUsuario){
-            if(AutenticacaoDeUsuario.Email == "galemiliano" && AutenticacaoDeUsuario.Senha == "101490"){
+        public ActionResult Login ([FromBody] LoginDto AutenticacaoDeUsuario){
+            if(_authService.LoginValido(AutenticacaoDeUsuario)){
                 return  Ok("Logado com sucesso");
             }
             return Unauthorized();

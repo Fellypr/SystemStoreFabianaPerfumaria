@@ -68,7 +68,7 @@ const CupomFiscal = ({ vendaSelecionada }) => {
         backgroundColor: "rgb(255, 255, 255)",
         color: "black",
       }}
-      className="notaCard"
+      className="notaCardHistoricoDeVenda"
     >
       <h3
         style={{
@@ -115,8 +115,7 @@ const CupomFiscal = ({ vendaSelecionada }) => {
           {vendaSelecionada.map((item, index) => {
             const preco = parseFloat(item.precoUnitario || 0);
             const quantidade = item.quantidade || 0;
-            const precoTotalItem = (preco * quantidade).toFixed(2);
-
+            const precoUnitario = preco / quantidade;
             return (
               <React.Fragment key={index}>
                 <tr>
@@ -124,8 +123,8 @@ const CupomFiscal = ({ vendaSelecionada }) => {
                     {item.nomeDoProduto}
                   </td>
                   <td style={{ textAlign: "center" }}>{quantidade}</td>
-                  <td style={{ textAlign: "center" }}>{preco.toFixed(2)}</td>
-                  <td style={{ textAlign: "right" }}>{precoTotalItem}</td>
+                  <td style={{ textAlign: "center" }}>{precoUnitario.toFixed(2)}</td>
+                  <td style={{ textAlign: "right" }}>{preco.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td colSpan={4}>

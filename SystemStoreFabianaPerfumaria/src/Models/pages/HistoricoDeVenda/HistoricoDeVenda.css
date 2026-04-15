@@ -367,11 +367,11 @@
     width: 100%;
   }
 
-  .notaCard, .notaCard * { 
+  .notaCardHistoricoDeVenda, .notaCardHistoricoDeVenda * { 
     visibility: visible; 
   }
   
-  .notaCard { 
+  .notaCardHistoricoDeVenda { 
     position: absolute; 
     left: 0; 
     top: 0; 
@@ -379,7 +379,7 @@
     box-shadow: none !important; 
     margin: 0 !important;
     padding: 0 !important;
-    width: auto !important; 
+    width: 200px !important; 
     page-break-after: avoid;
   }
   @page {

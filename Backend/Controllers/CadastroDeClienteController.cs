@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Tree;
-using Backend.Services;
-using Microsoft.Data.SqlClient;
-using System.Data;
+using Backend.Dtos.Clientes;
+using Backend.Services.Interfaces;
 
 namespace Backend.Controllers
 {
@@ -14,36 +13,20 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class CadastroDeClienteController : ControllerBase
     {
-        private readonly IConfiguration _config;
-        public CadastroDeClienteController(IConfiguration config)
+        private readonly IClienteService _clienteService;
+
+        public CadastroDeClienteController(IClienteService clienteService)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _clienteService = clienteService ?? throw new ArgumentNullException(nameof(clienteService));
         }
 
         [HttpPost("CadastroDeCliente")]
 
-        public async Task<ActionResult> CadastroDeCliente([FromBody] CadastroDeClienteProp Cadastro)
+        public async Task<ActionResult> CadastroDeCliente([FromBody] CadastroDeClienteDto Cadastro)
         {
             try
             {
-                var connectionString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    var query = "INSERT INTO CadastroDeCliente (NomeDoCliente,Cpf,Telefone,Endereco,Bairro,Numero,PontodeReferencia) VALUES (@NomeDoCliente,@Cpf,@Telefone,@Endereco,@Bairro,@Numero,@PontodeReferencia);";
-                    var command = new SqlCommand(query, connection);
-
-                    command.Parameters.Add(new SqlParameter("@NomeDoCliente", Cadastro.NomeDoCliente));
-                    command.Parameters.Add(new SqlParameter("@Cpf", Cadastro.Cpf));
-                    command.Parameters.Add(new SqlParameter("@Telefone", Cadastro.Telefone));
-                    command.Parameters.Add(new SqlParameter("@Endereco", Cadastro.Endereco));
-                    command.Parameters.Add(new SqlParameter("@Bairro", Cadastro.Bairro));
-                    command.Parameters.Add(new SqlParameter("@Numero", Cadastro.Numero));
-                    command.Parameters.Add(new SqlParameter("@PontodeReferencia", Cadastro.PontoDeReferencia));
-
-                    await connection.OpenAsync();
-
-                    return Ok(await command.ExecuteNonQueryAsync());
-                }
+                return Ok(await _clienteService.CadastrarAsync(Cadastro));
 
             }
             catch (Exception ex)
@@ -57,33 +40,7 @@ namespace Backend.Controllers
         {
             try
             {
-                var connectionString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    var query = "SELECT * FROM CadastroDeCliente ORDER BY Id_Cliente DESC";
-                    var command = new SqlCommand(query, connection);
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        var clientes = new List<CadastroDeClienteProp>();
-                        while (await reader.ReadAsync())
-                        {
-                            var cliente = new CadastroDeClienteProp
-                            {
-                                NomeDoCliente = reader["NomeDoCliente"].ToString(),
-                                Cpf = reader["Cpf"].ToString(),
-                                Telefone = reader["Telefone"].ToString(),
-                                Endereco = reader["Endereco"].ToString(),
-                                Bairro = reader["Bairro"].ToString(),
-                                Numero = Convert.ToInt32(reader["Numero"]),
-                                PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
-                                Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
-                            };
-                            clientes.Add(cliente);
-                        }
-                        return Ok(clientes);
-                    }
-                }
+                return Ok(await _clienteService.HistoricoAsync());
             }
             catch (Exception ex)
             {
@@ -93,47 +50,11 @@ namespace Backend.Controllers
         }
         [HttpPost("BuscarCliente")]
 
-        public async Task<ActionResult> BuscarCliente([FromBody] BuscarCliente Buscar)
+        public async Task<ActionResult> BuscarCliente([FromBody] BuscarClienteDto Buscar)
         {
             try
             {
-                var connectionString = _config.GetConnectionString("DefaultConnection");
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    var query = "SELECT * FROM CadastroDeCliente WHERE NomeDoCliente LIKE @NomeDoCliente OR Cpf LIKE @Cpf;";
-                    var command = new SqlCommand(query, connection);
-
-                    command.Parameters.Add(new SqlParameter("@NomeDoCliente", "%" + Buscar.NomeDoCliente + "%"));
-                    command.Parameters.Add(new SqlParameter("@Cpf", "%" + Buscar.Cpf + "%"));
-
-
-                    await connection.OpenAsync();
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        var listaDeClientes = new List<object>();
-
-                        while (await reader.ReadAsync())
-                        {
-                            listaDeClientes.Add(new
-                            {
-                                Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
-                                NomeDoCliente = reader["NomeDoCliente"].ToString(),
-                                Cpf = reader["Cpf"].ToString(),
-                                Telefone = reader["Telefone"].ToString(),
-                                Endereco = reader["Endereco"].ToString(),
-                                Bairro = reader["Bairro"].ToString(),
-                                Numero = Convert.ToInt32(reader["Numero"]),
-                                PontoDeReferencia = reader["PontoDeReferencia"].ToString(),
-
-                            });
-                        }
-                        return Ok(listaDeClientes);
-
-
-                    }
-
-                }
+                return Ok(await _clienteService.BuscarAsync(Buscar));
 
             }
             catch (Exception ex)
@@ -145,88 +66,38 @@ namespace Backend.Controllers
         }
         [HttpPut("AtualizarCliente/{id_Cliente}")]
 
-        public async Task<ActionResult> AtualizarCliente([FromBody] CadastroDeClienteProp ClienteAtualizado)
+        public async Task<ActionResult> AtualizarCliente([FromBody] CadastroDeClienteDto ClienteAtualizado)
         {
-            var connectionString = _config.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                await connection.OpenAsync();
-
-                var query = @"
-                UPDATE CadastroDeCliente
-                SET NomeDoCliente = @NomeDoCliente, Cpf = @Cpf, Telefone = @Telefone, Endereco = @Endereco, Bairro = @Bairro, Numero = @Numero, PontoDeReferencia = @PontoDeReferencia
-                WHERE Id_Cliente = @Id_Cliente";
-
-                var cmd = new SqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@NomeDoCliente", ClienteAtualizado.NomeDoCliente);
-                cmd.Parameters.AddWithValue("@Cpf", ClienteAtualizado.Cpf);
-                cmd.Parameters.AddWithValue("@Telefone", ClienteAtualizado.Telefone);
-                cmd.Parameters.AddWithValue("@Endereco", ClienteAtualizado.Endereco);
-                cmd.Parameters.AddWithValue("@Bairro", ClienteAtualizado.Bairro);
-                cmd.Parameters.AddWithValue("@Numero", ClienteAtualizado.Numero);
-                cmd.Parameters.AddWithValue("@PontoDeReferencia", ClienteAtualizado.PontoDeReferencia);
-                cmd.Parameters.AddWithValue("@Id_Cliente", ClienteAtualizado.Id_Cliente);
-
-                var linhasAfetadas = await cmd.ExecuteNonQueryAsync();
-
-                if (linhasAfetadas == 0)
-                    return NotFound("Cliente nao encontrado.");
-
-                return Ok("Cliente atualizado com sucesso!");
+                var msg = await _clienteService.AtualizarAsync(ClienteAtualizado);
+                return Ok(msg);
+            }
+            catch (KeyNotFoundException ex) when (ex.Message == "Cliente nao encontrado.")
+            {
+                return NotFound("Cliente nao encontrado.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
         [HttpDelete("ExcluirCadastro/{id}")]
 
         public async Task<ActionResult> ExcluirCliente(int id)
         {
-            var connectionString = _config.GetConnectionString("DefaultConnection");
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                await connection.OpenAsync();
-                var transaction = connection.BeginTransaction();
-                try
-                {   
-                    var queryDeleteItems = @"DELETE RV FROM RealizarVendas RV 
-                   INNER JOIN Venda V ON RV.IdVenda = V.IdVenda 
-                   WHERE V.IdVendaDeCliente = @Id";
-
-                    var commandDeleteItems = new SqlCommand(queryDeleteItems, connection, transaction);
-                    commandDeleteItems.Parameters.AddWithValue("@Id", id);
-                    await commandDeleteItems.ExecuteNonQueryAsync();
-
-
-                    var queryDeleteVenda = "DELETE FROM Venda WHERE IdVendaDeCliente = @Id_Cliente";
-                    var comandDelete = new SqlCommand(queryDeleteVenda, connection, transaction);
-                    comandDelete.Parameters.AddWithValue("@Id_Cliente", id);
-                    await comandDelete.ExecuteNonQueryAsync();
-                    
-
-                    var query = "DELETE FROM CadastroDeCliente WHERE Id_Cliente = @Id_Cliente";
-                    var command = new SqlCommand(query, connection, transaction);
-                    command.Parameters.AddWithValue("@Id_Cliente", id);
-
-                    int rowsAffected = await command.ExecuteNonQueryAsync();
-
-
-                    if (rowsAffected > 0)
-                    {
-                        transaction.Commit();
-                        return Ok("Cliente excluido com sucesso.");
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                        return NotFound("Cliente nao encontrado.");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
-                }
-
+                var msg = await _clienteService.ExcluirAsync(id);
+                return Ok(msg);
+            }
+            catch (KeyNotFoundException ex) when (ex.Message == "Cliente nao encontrado.")
+            {
+                return NotFound("Cliente nao encontrado.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao excluir o cliente: {ex.Message}");
             }
         }
 

@@ -100,10 +100,10 @@ function Details({ vendaSelecionada, onCancel, onPrint, onBack, isClosing }) {
           <tbody>
             {vendaSelecionada.map((item, idx) => (
               <tr key={idx}>
-                <td>{item.nomeDoProduto}</td>
+                <td>{item.nomeDoProduto}</td> 
                 <td>{item.quantidade}</td>
+                <td>{( item.precoUnitario/item.quantidade).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
                 <td>{Number(item.precoUnitario).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
-                <td>{(item.quantidade * item.precoUnitario).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
               </tr>
             ))}
           </tbody>
@@ -127,7 +127,7 @@ function Details({ vendaSelecionada, onCancel, onPrint, onBack, isClosing }) {
         )}
         <div className="summary-row total-row">
           <span>Total Geral:</span>
-          <span className="total-amount">{precoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+          <span className="total-amount">{precoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || "R$ 0,00"}</span>
         </div>
       </div>
     </div>
