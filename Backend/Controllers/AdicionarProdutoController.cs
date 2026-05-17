@@ -131,7 +131,65 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Erro ao buscar produto para venda: {ex.Message}");
             }
         }
+        [HttpPost("iniciar-scraping")]
+        public async Task<IActionResult> IniciarScraping([FromBody] CodigoDeAcessoDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.ChaveAcesso))
+                {
+                    return BadRequest("Preencha a chave de acesso");
+                }
+                else if (dto.ChaveAcesso.Length != 44)
+                {
+                    return BadRequest("Chave de acesso deve ter 44 caracteres");
+                }
 
-        
+                var resultado = await _produtoService.IniciarScrapingAsync(dto);
+                if (resultado.StartsWith("Erro ao iniciar scraping:", StringComparison.OrdinalIgnoreCase))
+                    return StatusCode(500, resultado);
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("verificar-produtos")]
+        public async Task<IActionResult> VerificarProdutos([FromBody] List<AdicionarProdutoViaCodDto> produtos)
+        {
+            try
+            {
+                if (produtos == null || !produtos.Any())
+                {
+                    return BadRequest("Nenhum produto encontrado para verificar");
+                }
+                var resultado = await _produtoService.VerificarStatusDosProdutos(produtos);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("adicionar-produtos")]
+        public async Task<IActionResult> AdicionarProdutos([FromBody] List<AdicionarProdutoViaCodDto> produtos)
+        {
+            try
+            {
+                if (produtos == null || !produtos.Any())
+                {
+                    return BadRequest("Nenhum produto encontrado para adicionar");
+                }
+                var resultado = await _produtoService.AdicionarProdutosAsync(produtos);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao adicionar produtos: {ex.Message}");
+            }
+        }
     }
 }

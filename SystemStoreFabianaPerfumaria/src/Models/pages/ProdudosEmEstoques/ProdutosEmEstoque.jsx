@@ -44,16 +44,14 @@ function ProdutosEmEstoque() {
     }
   }
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
       Buscar();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [termoNomeProduto, termoMarca, termoCodigo]);
 
-  const produtosFiltrados = (produtos || []).filter(
-    (item) =>
-      item.nomeDoProduto ||
-      item.marca
-        .toLowerCase()
-        .includes(termoNomeProduto || termoMarca.toLowerCase()),
-  );
+
   function limitarNome(nome, limite = 4) {
     const palavras = nome.split(" ");
     if (palavras.length <= limite) return nome;
@@ -122,9 +120,9 @@ function ProdutosEmEstoque() {
             </div>
 
             <div className="BodyList">
-              {produtosFiltrados.map((produto, index) => (
+              {(produtos || []).map((produto, index) => (
                 <button className="RowGrid" key={index} onClick={() => AparecerTelaEditar(produto)}>
-                  <img src={produto.urlImagem} className="ProductImg" />
+                  <img src={produto.urlImagem} className="ProductImg" loading="lazy" />
 
                   <p className="ProdName">
                     {limitarNome(produto.nomeDoProduto, 5)}

@@ -14,4 +14,10 @@ public interface IProdutoRepository
     Task<List<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro);
     Task<List<object>> BuscarParaVendaAsync(BuscarPorEstoqueDto filtro);
 }
+public interface IProdutoViaCodRepository
+{
+    Task<int> CreateProductCodAsync(AdicionarProdutoViaCodDto produto);
+    Task<int> UpdateUnidadeProdutoAsync(AdicionarProdutoViaCodDto produto);
+    Task<AdicionarProdutoViaCodDto?> GetByCodigoBarraAsync(string codigoDeBarras);
+}
 

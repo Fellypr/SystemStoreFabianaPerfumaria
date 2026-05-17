@@ -8,7 +8,6 @@
   justify-content: flex-start;
   align-items: center;
   padding-left: 2rem;
-  padding-right: 5rem;
   transition: all 0.3s ease-in-out;
   gap: 2rem;
   & .logo {
@@ -20,7 +19,10 @@
   & h1 {
     flex-wrap: wrap;
     text-align: center;
-    font-size: 1.8rem;
+    font-size: 2rem;
+    font-family: "Lora", serif;
+    font-weight: 500;
+    letter-spacing: 0.2rem;
   }
 }
 @media screen and (max-width: 600px) {

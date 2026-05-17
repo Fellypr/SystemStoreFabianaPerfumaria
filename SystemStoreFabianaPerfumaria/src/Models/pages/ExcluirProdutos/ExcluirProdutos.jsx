@@ -70,11 +70,20 @@ function ExcluirProdutos() {
   return (
     <>
       <main className="pageExcluir">
-        <header className="headerExcluir">
+        <header>
+          <nav>
+        <div className="navBar">
           <Link to={"/"}>
-            <img src="img/SUBLOGO- BRONZE.png" alt="Logo" />
+            <img
+              src="img/SUBLOGO- BRONZE.png"
+              width={100}
+              height={100}
+              alt="Logo"
+            />
           </Link>
-          <h1>Excluir Produtos</h1>
+          <h1>Fabiana Perfumaria</h1>
+        </div>
+      </nav>
         </header>
 
         <section className="containerExcluirProduto">

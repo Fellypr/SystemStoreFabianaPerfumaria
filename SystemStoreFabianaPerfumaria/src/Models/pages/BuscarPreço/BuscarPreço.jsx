@@ -109,7 +109,7 @@ function BuscarPreço() {
               alt="Logo"
             />
           </Link>
-          <h1>Buscar Preço</h1>
+          <h1>Fabiana Perfumaria</h1>
         </div>
       </nav>
 

@@ -1,0 +1,437 @@
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+import {
+  FileSpreadsheet,
+  Loader2,
+  CheckCircle,
+  XCircle,
+  Download,
+  RotateCcw,
+  Info,
+  Pencil,
+  Check,
+  X,
+  Package,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+import { useProdutos } from "@/hooks/use-produtos"
+import { ProdutoScrapingRaw } from "@/types/product"
+
+
+const CODE_LENGTH = 44
+
+function EditableProductRow({ product, onSave }: { product: ProdutoScrapingRaw, onSave: (oldProd: ProdutoScrapingRaw, newProd: ProdutoScrapingRaw) => void }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState<any>({
+    ...product,
+    precoAdquirido: product.precoAdquirido?.toString().replace('.', ','),
+    precoRevista: product.precoRevista?.toString().replace('.', ','),
+    precoVista: product.precoVista?.toString().replace('.', ','),
+  });
+
+  const formatarMoeda = (valor: string | number) => {
+    const num = typeof valor === 'string' ? parseFloat(valor.replace(',', '.')) : valor;
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num || 0);
+  };
+
+  const handleSave = () => {
+    const parseCurrency = (val: any) => typeof val === 'string' ? parseFloat(val.replace(',', '.')) || 0 : val;
+    const parseNumber = (val: any) => typeof val === 'string' ? parseInt(val, 10) || 0 : val;
+
+    const finalData: ProdutoScrapingRaw = {
+      ...editedData,
+      unidade: parseNumber(editedData.unidade),
+      unidadeAdicionada: editedData.unidadeAdicionada ? parseNumber(editedData.unidadeAdicionada) : undefined,
+      precoAdquirido: parseCurrency(editedData.precoAdquirido),
+      precoRevista: parseCurrency(editedData.precoRevista),
+      precoVista: parseCurrency(editedData.precoVista),
+    };
+    onSave(product, finalData);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditedData({
+      ...product,
+      precoAdquirido: product.precoAdquirido?.toString().replace('.', ','),
+      precoRevista: product.precoRevista?.toString().replace('.', ','),
+      precoVista: product.precoVista?.toString().replace('.', ','),
+    });
+    setIsEditing(false);
+  };
+
+  const isExisting = product.status === 'Ja existe';
+
+  if (isEditing) {
+    return (
+      <tr className="border-b border-border bg-muted/30 transition-colors duration-300">
+        <td className="px-3 py-2 w-12">
+          {product.imagemUrl ? (
+            <img
+              src={product.imagemUrl}
+              alt={product.nomeProduto}
+              className="w-10 h-10 rounded-md object-cover ring-1 ring-border"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center">
+              <Package className="w-5 h-5 text-muted-foreground/50" />
+            </div>
+          )}
+        </td>
+        <td className="px-2 py-2">
+          <Input
+            value={editedData.nomeProduto}
+            onChange={(e) => setEditedData({ ...editedData, nomeProduto: e.target.value })}
+            className="h-8 bg-background shadow-sm border-primary/20 focus-visible:ring-1"
+          />
+        </td>
+        <td className="px-2 py-2 text-right">
+          <Input
+            value={isExisting ? (editedData.unidadeAdicionada || editedData.unidade || '') : (editedData.unidade || '')}
+            onChange={(e) => isExisting ? setEditedData({ ...editedData, unidadeAdicionada: e.target.value }) : setEditedData({ ...editedData, unidade: e.target.value })}
+            className="h-8 w-20 text-right ml-auto bg-background shadow-sm border-primary/20 focus-visible:ring-1 tabular-nums"
+          />
+        </td>
+        <td className="px-2 py-2 text-right">
+          <Input
+            value={editedData.codigoBarra}
+            onChange={(e) => setEditedData({ ...editedData, codigoBarra: e.target.value })}
+            className="h-8 w-32 text-right ml-auto bg-background shadow-sm border-primary/20 focus-visible:ring-1 tabular-nums"
+          />
+        </td>
+        <td className="px-2 py-2 text-right">
+          <Input
+            value={editedData.precoAdquirido}
+            onChange={(e) => setEditedData({ ...editedData, precoAdquirido: e.target.value })}
+            className="h-8 w-28 text-right ml-auto bg-background shadow-sm border-primary/20 focus-visible:ring-1 tabular-nums"
+          />
+        </td>
+        <td className="px-2 py-2 text-right">
+          <Input
+            value={editedData.precoRevista}
+            onChange={(e) => setEditedData({ ...editedData, precoRevista: e.target.value })}
+            className="h-8 w-28 text-right ml-auto bg-background shadow-sm border-primary/20 focus-visible:ring-1 tabular-nums"
+          />
+        </td>
+        <td className="px-2 py-2 text-right">
+          <Input
+            value={editedData.precoVista}
+            onChange={(e) => setEditedData({ ...editedData, precoVista: e.target.value })}
+            className="h-8 w-28 text-right ml-auto bg-background shadow-sm border-primary/20 focus-visible:ring-1 tabular-nums"
+          />
+        </td>
+        <td className="px-2 py-2 text-right flex gap-1 justify-end">
+          <Button size="icon" variant="ghost" onClick={handleSave} className="h-8 w-8 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30">
+            <Check className="w-4 h-4" />
+          </Button>
+          <Button size="icon" variant="ghost" onClick={handleCancel} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+            <X className="w-4 h-4" />
+          </Button>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr className="group border-b border-border last:border-0 hover:bg-muted/30 transition-colors duration-200">
+      <td className="px-3 py-2 w-12">
+        {product.imagemUrl ? (
+          <img
+            src={product.imagemUrl}
+            alt={product.nomeProduto}
+            className="w-10 h-10 rounded-md object-cover ring-1 ring-border transition-transform duration-200 group-hover:scale-150 group-hover:shadow-lg group-hover:z-10 group-hover:relative"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center">
+            <Package className="w-5 h-5 text-muted-foreground/50" />
+          </div>
+        )}
+      </td>
+      <td className="px-4 py-3 font-medium">{product.nomeProduto}</td>
+      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
+        {isExisting ? `+${product.unidadeAdicionada || product.unidade}` : product.unidade}
+      </td>
+      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{product.codigoBarra}</td>
+      <td className="px-4 py-3 text-right tabular-nums">{formatarMoeda(product.precoAdquirido)}</td>
+      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatarMoeda(product.precoRevista)}</td>
+      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatarMoeda(product.precoVista)}</td>
+      <td className="px-2 py-3 text-right opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <Button size="icon" variant="ghost" onClick={() => setIsEditing(true)} className="h-8 w-8">
+          <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+        </Button>
+      </td>
+    </tr>
+  );
+}
+
+export function ProductExcelForm() {
+  const { adicionarProdutosExcel, loading, produtos, codigoDeAcesso, setCodigoDeAcesso, mensagemCarregamento, setProdutos, finalizaImportacao, limpaProdutos } = useProdutos();
+  const [exporting, setExporting] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (codigoDeAcesso.length === CODE_LENGTH) {
+      adicionarProdutosExcel();
+    }
+  }, [codigoDeAcesso])
+
+  useEffect(() => {
+
+  }, [produtos])
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH)
+    setCodigoDeAcesso(value)
+  }
+
+
+
+
+  const progress = Math.round((codigoDeAcesso.length / CODE_LENGTH) * 100)
+  const formatarMoeda = (valor: string | number) => {
+
+    const num = typeof valor === 'string'
+      ? parseFloat(valor.replace(',', '.'))
+      : valor;
+
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(num || 0);
+  };
+
+  useEffect(() => {
+    const produtosLocal = localStorage.getItem("produtos-importados");
+    if (produtosLocal) {
+      setProdutos(JSON.parse(produtosLocal));
+    } else {
+
+    }
+  }, [])
+
+  return (
+    <div className="space-y-2">
+
+      <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50 border border-border">
+        <Info className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+        <div className="space-y-0.5">
+          <p className="text-sm font-medium text-foreground">Como funciona</p>
+          <p className="text-sm text-muted-foreground">
+            Digite ou escaneie a chave de acesso da NFe de <span className="font-medium text-foreground">44 dígitos</span>.
+            O processamento será iniciado automaticamente ao completar o código.
+          </p>
+        </div>
+      </div>
+
+
+      <div className="space-y-3">
+        <Label htmlFor="code-input" className="text-sm font-medium flex items-center gap-1.5">
+          <FileSpreadsheet className="w-3.5 h-3.5 text-muted-foreground" />
+          Chave de Acesso de 44 dígitos
+        </Label>
+
+        <div className="relative">
+          <Input
+            ref={inputRef}
+            id="code-input"
+            value={codigoDeAcesso}
+            onChange={handleInputChange}
+            placeholder="Digite ou escaneie o código numérico..."
+            inputMode="numeric"
+            maxLength={CODE_LENGTH}
+            disabled={loading}
+            className="text-lg tracking-widest font-mono pr-24 h-12"
+            autoFocus
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground tabular-nums select-none">
+            {codigoDeAcesso.length}/{CODE_LENGTH}
+          </span>
+        </div>
+
+
+        <div className="space-y-1">
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-200"
+              style={{
+                width: `${progress}%`,
+                backgroundColor:
+                  codigoDeAcesso.length === CODE_LENGTH
+                    ? "var(--color-primary)"
+                    : "oklch(0.6 0.118 184.704)",
+              }}
+            />
+          </div>
+          {codigoDeAcesso.length > 0 && codigoDeAcesso.length < CODE_LENGTH && (
+            <p className="text-xs text-muted-foreground">
+              Faltam {CODE_LENGTH - codigoDeAcesso.length} dígito(s) para processar
+            </p>
+          )}
+          {loading && (
+            <p className="text-xs text-muted-foreground">Código completo. Processando...</p>
+          )}
+        </div>
+      </div>
+
+
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+            <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-foreground">Processando código</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{mensagemCarregamento || "Consultando dados do produto..."}</p>
+          </div>
+        </div>
+      )}
+
+
+
+      {produtos.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900">
+            <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
+            <p>Dados consultados com sucesso!</p>
+          </div>
+
+
+          {(() => {
+            const produtosNovos = produtos.filter((p: ProdutoScrapingRaw) => p.status === 'Novo');
+            const produtosExistentes = produtos.filter((p: ProdutoScrapingRaw) => p.status === 'Ja existe');
+
+            return (
+              <div className="space-y-6">
+
+                {produtosNovos.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-green-600 dark:text-green-400">
+                      Novos Produtos
+                    </p>
+                    <div className="rounded-lg border border-border overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-muted/50 border-b border-border">
+                              <th className="w-12 px-3 py-2.5"></th>
+                              <th className="text-left px-4 py-2.5 text-xs font-medium text-muted-foreground">Nome</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Unidade</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Código de Barras</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço Adquirido</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço Revenda</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço a vista</th>
+                              <th className="w-12 px-4 py-2.5"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {produtosNovos.map((product: ProdutoScrapingRaw, index: number) => (
+                              <EditableProductRow
+                                key={index}
+                                product={product}
+                                onSave={(prodAntigo, prodNovo) => {
+                                  const novosProdutos = [...produtos];
+                                  const indexGlobal = novosProdutos.findIndex(p => p.codigoBarra === prodAntigo.codigoBarra && p.status === 'Novo');
+                                  if (indexGlobal !== -1) {
+                                    novosProdutos[indexGlobal] = prodNovo;
+                                    setProdutos(novosProdutos);
+                                  }
+                                }}
+                              />
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+                {produtosExistentes.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-blue-600 dark:text-blue-400">
+                      Atualizando Estoque
+                    </p>
+                    <div className="rounded-lg border border-border overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-muted/50 border-b border-border">
+                              <th className="w-12 px-3 py-2.5"></th>
+                              <th className="text-left px-4 py-2.5 text-xs font-medium text-muted-foreground">Nome</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Adicionado</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Código de Barras</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço Adquirido</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço Revenda</th>
+                              <th className="text-right px-4 py-2.5 text-xs font-medium text-muted-foreground">Preço a vista</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {produtosExistentes.map((product: ProdutoScrapingRaw, index: number) => (
+                              <tr key={index} className="border-b border-border last:border-0">
+                                <td className="px-3 py-2 w-12">
+                                  {product.imagemUrl ? (
+                                    <img
+                                      src={product.imagemUrl}
+                                      alt={product.nomeProduto}
+                                      className="w-10 h-10 rounded-md object-cover ring-1 ring-border"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center">
+                                      <Package className="w-5 h-5 text-muted-foreground/50" />
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 font-medium">{product.nomeProduto}</td>
+                                <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">+{product.unidadeAdicionada || product.unidade}</td>
+                                <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{product.codigoBarra}</td>
+                                <td className="px-4 py-3 text-right tabular-nums">{formatarMoeda(product.precoAdquirido)}</td>
+                                <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatarMoeda(product.precoRevista)}</td>
+                                <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatarMoeda(product.precoVista)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => { limpaProdutos(); }}
+              className="flex-1"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Extrair Novamente
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={() => finalizaImportacao(produtos)}
+              disabled={exporting}
+            >
+              {exporting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  Salvar Produtos
+                </>
+              )}
+            </Button>
+          </div>
+          {loading && <p className="text-center text-primary">Carregando...</p>}
+        </div>
+      )}
+    </div>
+  )
+}

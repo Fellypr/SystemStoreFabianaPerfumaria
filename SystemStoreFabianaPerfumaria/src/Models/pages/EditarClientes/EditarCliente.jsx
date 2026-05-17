@@ -117,7 +117,7 @@ export default function EditarCliente() {
           />
         </Link>
 
-        <h1>Editar Clientes</h1>
+        <h1>Fabiana Perfumaria</h1>
       </div>
 
       <section className="edit-client-content">

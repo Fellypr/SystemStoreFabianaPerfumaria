@@ -1,10 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<Backend.Infrastructure.Db.IDbConnectionFactory, Backend.Infrastructure.Db.SqlConnectionFactory>();
 
 builder.Services.AddScoped<Backend.Repositories.Interfaces.IProdutoRepository, Backend.Repositories.Sql.SqlProdutoRepository>();
+builder.Services.AddScoped<Backend.Repositories.Interfaces.IProdutoViaCodRepository, Backend.Repositories.Sql.SqlProdutoViaCodRepository>();
 builder.Services.AddScoped<Backend.Repositories.Interfaces.IClienteRepository, Backend.Repositories.Sql.SqlClienteRepository>();
 builder.Services.AddScoped<Backend.Repositories.Interfaces.IVendaRepository, Backend.Repositories.Sql.SqlVendaRepository>();
 
@@ -23,7 +25,8 @@ builder.Services.AddCors(options =>
                 "http://192.168.0.139:5173"
             )
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -36,5 +39,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<Backend.Hubs.ScrapingHub>("/scrapingHub");
 
 app.Run();

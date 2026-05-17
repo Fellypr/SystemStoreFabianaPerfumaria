@@ -123,7 +123,7 @@ const ExcluirCadastro = async (id) => {
                 alt="Logo"
               />
             </Link>
-            <h1>Cadastro De Clientes</h1>
+            <h1>Fabiana Perfumaria</h1>
           </div>
         </nav>
 
