@@ -1,3 +1,4 @@
+using Backend.Dtos;
 using Backend.Dtos.Produtos;
 using Backend.Model;
 
@@ -9,7 +10,7 @@ public interface IProdutoService
     Task<List<Produto>> HistoricoAsync();
     Task<string> AtualizarAsync(int id, Produto produto);
     Task<string> ExcluirAsync(int id);
-    Task<List<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro);
+    Task<ResultadoPaginado<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro);
     Task<List<object>> BuscarParaVendaAsync(BuscarPorEstoqueDto filtro);
     Task<string> IniciarScrapingAsync(CodigoDeAcessoDto dto);
     Task<List<AdicionarProdutoViaCodDto>> VerificarStatusDosProdutos(List<AdicionarProdutoViaCodDto> produtos);

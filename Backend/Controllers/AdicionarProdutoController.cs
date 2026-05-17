@@ -99,7 +99,7 @@ namespace Backend.Controllers
             try
             {
                 var listaDeProduto = await _produtoService.BuscarEstoqueAsync(search);
-                if (listaDeProduto.Count == 0)
+                if (listaDeProduto.Itens.Count == 0)
                     return NotFound("Nenhum produto encontrado.");
 
                 return Ok(listaDeProduto);

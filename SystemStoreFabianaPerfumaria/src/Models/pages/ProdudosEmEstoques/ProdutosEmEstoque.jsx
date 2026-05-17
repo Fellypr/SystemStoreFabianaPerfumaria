@@ -12,6 +12,10 @@ function ProdutosEmEstoque() {
   const [termoMarca, setTermoMarca] = useState("");
   const [termoCodigo, setTermoCodigo] = useState("");
   
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const tamanhoPagina = 20;
+  
   const [showEditarProduto, setShowEditarProduto] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
 
@@ -30,6 +34,8 @@ function ProdutosEmEstoque() {
           NomeDoProduto: termoNomeProduto,
           Marca: termoMarca,
           CodigoDeBarra: termoCodigo,
+          Pagina: paginaAtual,
+          TamanhoPagina: tamanhoPagina
         },
         {
           headers: {
@@ -37,19 +43,27 @@ function ProdutosEmEstoque() {
           },
         },
       );
-      setProdutos(response.data);
+      setProdutos(response.data.itens || []);
+      setTotalPaginas(response.data.totalPaginas || 1);
       console.log(response.data);
     } catch (error) {
       console.log("error de dados", error);
+      setProdutos([]);
+      setTotalPaginas(1);
     }
   }
+
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [termoNomeProduto, termoMarca, termoCodigo]);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       Buscar();
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [termoNomeProduto, termoMarca, termoCodigo]);
+  }, [termoNomeProduto, termoMarca, termoCodigo, paginaAtual]);
 
 
   function limitarNome(nome, limite = 4) {
@@ -60,7 +74,7 @@ function ProdutosEmEstoque() {
 
   return (
     <>
-      <nav className="navBarModern">
+      <nav className="navBar">
         <Link to="/">
           <img
             src="img/SUBLOGO- BRONZE.png"
@@ -69,7 +83,7 @@ function ProdutosEmEstoque() {
             alt="Logo"
           />
         </Link>
-        <h2>Fabiana Perfumaria</h2>
+        <h1>Fabiana Perfumaria</h1>
       </nav>
 
       <div className="PageContainer">
@@ -148,6 +162,24 @@ function ProdutosEmEstoque() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="PaginationControls" style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px', alignItems: 'center' }}>
+            <button 
+              disabled={paginaAtual === 1} 
+              onClick={() => setPaginaAtual(paginaAtual - 1)}
+              style={{ padding: '8px 16px', borderRadius: '4px', cursor: paginaAtual === 1 ? 'not-allowed' : 'pointer', border: '1px solid #ccc', backgroundColor: paginaAtual === 1 ? '#f5f5f5' : '#fff' }}
+            >
+              Anterior
+            </button>
+            <span style={{ fontWeight: '500' }}>Página {paginaAtual} de {totalPaginas}</span>
+            <button 
+              disabled={paginaAtual === totalPaginas} 
+              onClick={() => setPaginaAtual(paginaAtual + 1)}
+              style={{ padding: '8px 16px', borderRadius: '4px', cursor: paginaAtual === totalPaginas ? 'not-allowed' : 'pointer', border: '1px solid #ccc', backgroundColor: paginaAtual === totalPaginas ? '#f5f5f5' : '#fff' }}
+            >
+              Próximo
+            </button>
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+using Backend.Dtos;
 using Backend.Dtos.Produtos;
 using Backend.Model;
 using Backend.Repositories.Interfaces;
@@ -62,7 +63,7 @@ public sealed class ProdutoService : IProdutoService
         throw new KeyNotFoundException("Produto não encontrado.");
     }
 
-    public Task<List<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro) => _repo.BuscarEstoqueAsync(filtro);
+    public Task<ResultadoPaginado<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro) => _repo.BuscarEstoqueAsync(filtro);
 
     public async Task<List<object>> BuscarParaVendaAsync(BuscarPorEstoqueDto filtro)
     {

@@ -1,4 +1,5 @@
 using System.Data;
+using Backend.Dtos;
 using Backend.Dtos.Produtos;
 using Backend.Infrastructure.Db;
 using Backend.Model;
@@ -129,22 +130,42 @@ public sealed class SqlProdutoRepository : IProdutoRepository
         return await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task<List<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro)
+    public async Task<ResultadoPaginado<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro)
     {
         using var connection = _db.CreateConnection();
         await connection.OpenAsync();
 
-        const string sql = @"
-                SELECT * FROM AdicionarProduto 
-                WHERE 
-                    (@Nome IS NULL OR NomeDoProduto LIKE @Nome) AND
-                    (@Marca IS NULL OR Marca LIKE @Marca) AND
-                    (@Codigo IS NULL OR CodigoDeBarra = @Codigo)";
+        string whereClause = @"
+            WHERE 
+                (@Nome IS NULL OR NomeDoProduto LIKE @Nome) AND
+                (@Marca IS NULL OR Marca LIKE @Marca) AND
+                (@Codigo IS NULL OR CodigoDeBarra = @Codigo)";
+
+        string countSql = $@"SELECT COUNT(*) FROM AdicionarProduto {whereClause}";
+
+        using var countCmd = new SqlCommand(countSql, connection);
+        countCmd.Parameters.AddWithValue("@Nome", string.IsNullOrEmpty(filtro.NomeDoProduto) ? (object)DBNull.Value : "%" + filtro.NomeDoProduto + "%");
+        countCmd.Parameters.AddWithValue("@Marca", string.IsNullOrEmpty(filtro.Marca) ? (object)DBNull.Value : "%" + filtro.Marca + "%");
+        countCmd.Parameters.AddWithValue("@Codigo", string.IsNullOrEmpty(filtro.CodigoDeBarra) ? (object)DBNull.Value : filtro.CodigoDeBarra);
+
+        int totalRegistros = (int)await countCmd.ExecuteScalarAsync();
+
+        int pagina = filtro.Pagina > 0 ? filtro.Pagina : 1;
+        int tamanhoPagina = filtro.TamanhoPagina > 0 ? filtro.TamanhoPagina : 20;
+        int skip = (pagina - 1) * tamanhoPagina;
+
+        string sql = $@"
+            SELECT * FROM AdicionarProduto 
+            {whereClause}
+            ORDER BY Id_Produto DESC
+            OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
 
         using var cmd = new SqlCommand(sql, connection);
         cmd.Parameters.AddWithValue("@Nome", string.IsNullOrEmpty(filtro.NomeDoProduto) ? (object)DBNull.Value : "%" + filtro.NomeDoProduto + "%");
         cmd.Parameters.AddWithValue("@Marca", string.IsNullOrEmpty(filtro.Marca) ? (object)DBNull.Value : "%" + filtro.Marca + "%");
         cmd.Parameters.AddWithValue("@Codigo", string.IsNullOrEmpty(filtro.CodigoDeBarra) ? (object)DBNull.Value : filtro.CodigoDeBarra);
+        cmd.Parameters.AddWithValue("@Skip", skip);
+        cmd.Parameters.AddWithValue("@Take", tamanhoPagina);
 
         using var reader = await cmd.ExecuteReaderAsync();
         var lista = new List<object>();
@@ -165,7 +186,15 @@ public sealed class SqlProdutoRepository : IProdutoRepository
             });
         }
 
-        return lista;
+        int totalPaginas = (int)Math.Ceiling((double)totalRegistros / tamanhoPagina);
+
+        return new ResultadoPaginado<object>
+        {
+            Itens = lista,
+            TotalRegistros = totalRegistros,
+            PaginaAtual = pagina,
+            TotalPaginas = totalPaginas == 0 ? 1 : totalPaginas
+        };
     }
 
     public async Task<List<object>> BuscarParaVendaAsync(BuscarPorEstoqueDto filtro)

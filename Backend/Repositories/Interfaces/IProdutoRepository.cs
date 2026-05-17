@@ -1,3 +1,4 @@
+using Backend.Dtos;
 using Backend.Dtos.Produtos;
 using Backend.Model;
 
@@ -11,7 +12,7 @@ public interface IProdutoRepository
     Task<List<Produto>> GetAllAsync();
     Task<int> UpdateAsync(Produto produto);
     Task<int> DeleteAsync(int id);
-    Task<List<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro);
+    Task<ResultadoPaginado<object>> BuscarEstoqueAsync(BuscarPorEstoqueDto filtro);
     Task<List<object>> BuscarParaVendaAsync(BuscarPorEstoqueDto filtro);
 }
 public interface IProdutoViaCodRepository
