@@ -108,6 +108,7 @@ function ModoManual({
                       .filter((m) =>
                         m.toLowerCase().includes(marca.toLowerCase())
                       )
+                      .slice(0, 4)
                       .map((m, index) => (
                         <li
                           key={index}

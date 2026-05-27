@@ -23,11 +23,13 @@
       font-size: 1.3rem;
       border: none;
     }
+
     & input:focus {
       outline: none;
       border: 1px solid black;
     }
   }
+
   & .TabelaDeProdutos {
     display: flex;
 
@@ -43,6 +45,7 @@
       background-color: #ffffff;
       border-radius: 12px;
       margin-left: 1rem;
+
       & .ImageProduct {
         height: 40%;
         width: 40%;
@@ -51,11 +54,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
         & img {
           border-radius: 23px;
           border: 1px solid black;
         }
       }
+
       & .InformationProtuctAll {
         display: flex;
         flex-direction: column;
@@ -78,6 +83,7 @@
           margin: 10px;
           border-radius: 6px;
           align-items: center;
+
           & p,
           input {
             background-color: white;
@@ -89,6 +95,7 @@
             text-align: center;
             border: none;
           }
+
           & h3 {
             background-color: rgb(4, 0, 255);
             width: 100%;
@@ -100,6 +107,7 @@
           }
         }
       }
+
       & .BtnAdicionar {
         height: 3rem;
         position: absolute;
@@ -111,6 +119,7 @@
         background-color: rgb(252, 126, 9);
         font-size: 1.5rem;
       }
+
       & .BtnAdicionar:hover {
         cursor: pointer;
         background-color: rgb(192, 93, 0);
@@ -118,6 +127,7 @@
         transition: all 0.3s ease-in;
       }
     }
+
     & .TabelaDeProdutosAdicionados {
       background-color: rgb(255, 255, 255);
       width: 60%;
@@ -143,7 +153,7 @@
           position: sticky;
           top: 0;
           z-index: 10;
-          
+
 
           & tr {
             & th {
@@ -159,22 +169,28 @@
                 width: 60px;
                 text-align: center;
               }
+
               &.col-produto {
                 width: 30%;
                 text-align: left;
               }
+
               &.col-quantidade {
                 width: 60px;
               }
+
               &.col-preco {
                 width: 90px;
               }
+
               &.col-desconto {
                 width: 90px;
               }
+
               &.col-total {
                 width: 110px;
               }
+
               &.col-acao {
                 width: 50px;
               }
@@ -330,6 +346,7 @@
       }
     }
   }
+
   & .SubTotal {
     display: flex;
     justify-content: space-between;
@@ -354,6 +371,7 @@
     align-items: flex-start;
     padding: 1rem;
     gap: 2rem;
+
     & .DescontoNaVenda {
       & input {
         background-color: white;
@@ -365,6 +383,7 @@
         text-align: center;
         border: none;
       }
+
       & h3 {
         background-color: rgb(4, 0, 255);
         width: 16.5rem;
@@ -386,6 +405,7 @@
         font-size: 1.3rem;
         color: white;
       }
+
       & select {
         background-color: white;
         width: 18.6rem;
@@ -399,6 +419,7 @@
         padding: 5px;
       }
     }
+
     & .IfItIsWithMoneyContainer {
       display: flex;
       position: absolute;
@@ -407,6 +428,7 @@
       gap: 1rem;
       top: 48rem;
       left: 15rem;
+
       & h3 {
         background-color: rgb(4, 0, 255);
         width: 12rem;
@@ -416,6 +438,7 @@
         font-size: 1.3rem;
         color: white;
       }
+
       & p,
       input {
         background-color: white;
@@ -428,6 +451,7 @@
         border: none;
       }
     }
+
     & .Botoes {
       display: flex;
       width: 100%;
@@ -445,6 +469,7 @@
         font-size: 1.5rem;
         border: none;
       }
+
       & #btn:hover {
         transform: scale(1.1);
         transition: all 0.3s ease-in-out;
@@ -471,9 +496,11 @@
   color: white;
   animation: moveFromRight 0.5s ease-in-out;
   z-index: 3;
+
   & p {
     font-size: 1.2rem;
   }
+
   & .Tempo {
     background-color: black;
     width: 100%;
@@ -481,119 +508,295 @@
     animation: encurtar 4.7s linear forwards;
   }
 }
+
 @keyframes encurtar {
   from {
     width: 100%;
   }
+
   to {
     width: 0%;
   }
 }
+
 @keyframes moveFromRight {
   from {
     transform: translateX(800px);
   }
 }
+
 .ClientesEncontrados {
   position: absolute;
   z-index: 221;
   left: 40.4rem;
   width: 37rem;
-  height: 25rem;
+  max-height: 25rem;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   top: 10.6rem;
   align-items: center;
   flex-direction: column;
-  border-radius: 12px;
-  transition: all 0.8s ease-in-out;
-  padding: 15px;
-}
-.ContainerButton {
-  width: 37.5rem;
-  height: 4rem;
-  display: flex;
-  justify-content: space-between;
-  border-radius: 12px;
-  align-items: center;
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 10px;
-  background-color: rgb(255, 255, 255);
-  border: 1px solid rgb(77, 77, 77);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: dropdownFadeIn 0.25s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ContainerButton {
+  width: 100%;
+  min-height: 4.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border: 1px solid rgba(200, 200, 230, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  & svg {
+    flex-shrink: 0;
+    color: #6c63ff;
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    border-radius: 50%;
+    padding: 8px;
+    width: 44px;
+    height: 44px;
+    box-sizing: border-box;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #f0edff 0%, #e8e4ff 100%);
+    border-color: rgba(108, 99, 255, 0.35);
+    box-shadow: 0 4px 16px rgba(108, 99, 255, 0.15);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(108, 99, 255, 0.1);
+  }
 
   & .InformacoesDeClienteFiltrados {
     width: 100%;
     height: 100%;
-
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+
     & .InformacoesDeCliente {
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      gap: 1rem;
-      font-size: 1.1rem;
+      align-items: flex-start;
+      gap: 2px;
+      font-size: 0.88rem;
+      color: #555;
+
       & .NomeDoCliente {
-        font-weight: bold;
-        flex-wrap: wrap;
-        font-size: 0.9rem;
+        font-weight: 700;
+        font-size: 0.97rem;
+        color: #1a1a2e;
+        line-height: 1.2;
       }
     }
   }
 }
+
 .ContainerButtonBuscarDeProdutos {
   position: absolute;
-  width: 37.5rem;
-  height: 29rem;
-  top: 10.4rem;
-  border-radius: 12px;
+  width: 36rem;
+  max-height: 29rem;
+  top: 10.6rem;
+  border-radius: 16px;
   z-index: 22323;
   display: flex;
   align-items: center;
-  padding-top: 10px;
+  padding: 10px;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  gap: 0.8rem;
-  background-color: rgba(255, 255, 255, 0.13);
-  backdrop-filter: blur(5px);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.16),
+    0 2px 10px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: produtoDropdownIn 0.28s cubic-bezier(0.34, 1.36, 0.64, 1);
+  transform-origin: top left;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(108, 99, 255, 0.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(108, 99, 255, 0.35);
+    border-radius: 99px;
+  }
+
   & button {
-    width: 98%;
+    width: 100%;
     border-radius: 12px;
-    height: 4rem;
-    border: 1px solid blue;
+    min-height: 4.5rem;
+    border: 1px solid rgba(200, 200, 230, 0.45);
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    background-color: white;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f8ff 100%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
     & .FiltroDeProdutos {
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: 60px 1fr auto auto auto;
       align-items: center;
-      font-size: 1rem;
-      gap: 2rem;
-      & img {
-        border-radius: 50%;
+      gap: 12px;
+      padding: 8px 14px;
+      text-align: left;
+
+      & .produto-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #f0f0f5;
+        border: 1px solid rgba(200, 200, 230, 0.4);
+        flex-shrink: 0;
       }
-      & p {
-        width: 7rem;
-        height: auto;
-        word-wrap: break-word;
+
+      & .produto-nome {
+        font-weight: 600;
+        font-size: 0.79rem;
+        color: #1a1a2e;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 18rem;
+      }
+
+      & .produto-marca {
+        font-size: 0.78rem;
+        color: #6c63ff;
+        background: rgba(108, 99, 255, 0.1);
+        padding: 2px 8px;
+        border-radius: 99px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      & .produto-qtd {
+        font-size: 0.8rem;
+        color: #27ae60;
+        background: rgba(39, 174, 96, 0.1);
+        padding: 2px 8px;
+        border-radius: 99px;
+        white-space: nowrap;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      & .produto-cod {
+        font-size: 0.72rem;
+        color: #888;
+        font-family: monospace;
+        white-space: nowrap;
       }
     }
-  }
-  & button:hover {
-    background-color: rgb(226, 223, 223);
-    transition: all 0.3s ease-in-out;
-    scale: 1.1 !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #f0edff 0%, #e8e4ff 100%);
+      border-color: rgba(108, 99, 255, 0.4);
+      box-shadow: 0 4px 18px rgba(108, 99, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(108, 99, 255, 0.1);
+    }
   }
 }
+
+.produto-qtd-falta {
+  font-size: 0.8rem;
+  color: #d31e1e;
+  background: rgba(211, 30, 30, 0.205);
+  padding: 2px 20px;
+  border-radius: 99px;
+  white-space: nowrap;
+  font-weight: 600;
+  text-align: center;
+}
+.produto-qtd-falta::before {
+  content:"verifique o estoque";
+  position: relative;
+  right:9px;
+}
+
 .ContainerButtonBuscarDeProdutosOcultar {
-  display: none;
+  position: absolute;
+  width: 37.5rem;
+  top: 10.4rem;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
 }
+
+@keyframes produtoDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .SemProdutos {
   width: 100%;
   height: 100%;
@@ -618,6 +821,7 @@
       position: relative;
       top: -2rem;
     }
+
     & .InformationInGeral {
       display: flex;
       flex-direction: column;
@@ -628,6 +832,7 @@
     }
   }
 }
+
 .NotaFiscal {
   background-color: #fff;
   width: 100%;
@@ -653,6 +858,7 @@
   color: #fff;
   padding: 5px;
 }
+
 .baixarNota {
   position: absolute;
   top: 130%;
@@ -669,6 +875,7 @@
   border: none;
   color: #fff;
 }
+
 .qrCode {
   display: flex;
   justify-content: center;
@@ -679,6 +886,7 @@
 }
 
 @media print {
+
   body,
   * {
     visibility: hidden;
@@ -699,6 +907,7 @@
     padding: 0;
   }
 }
+
 .alertaQuantidade {
   position: absolute;
   width: auto;
@@ -773,6 +982,7 @@
   overflow: hidden;
   z-index: 555555;
   animation: blurIn 0.7s ease-in;
+
   & .TelaDeCodigobox {
     width: 400px;
     height: 300px;
@@ -783,6 +993,7 @@
     align-items: center;
     flex-direction: column;
     gap: 3rem;
+
     & .BtnVerificar {
       width: 100px;
       height: 40px;
@@ -793,6 +1004,7 @@
       background-color: blue;
       color: #fff;
     }
+
     & input {
       width: 200px;
       height: 40px;
@@ -802,6 +1014,7 @@
       font-size: 1.2rem;
       text-align: center;
     }
+
     & p {
       font-size: 1.5rem;
     }
@@ -819,9 +1032,11 @@
   background-color: transparent;
   border: none;
 }
+
 .BtnFechar:hover {
   transform: scale(1.2);
 }
+
 .buttons-name {
   background-color: rgb(4, 0, 255);
   width: 100%;
@@ -836,7 +1051,8 @@
   justify-content: center;
   align-items: center;
 }
-.verifica-codigo{
+
+.verifica-codigo {
   width: 40px;
   height: 30px;
   border-radius: 4px;
@@ -846,9 +1062,11 @@
   background-color: transparent !important;
   color: #fff;
 }
+
 .hidden-button {
   display: none;
 }
+
 .hidden-button {
   display: none;
 }
@@ -857,6 +1075,7 @@
   from {
     width: 100%;
   }
+
   to {
     width: 0%;
   }
@@ -868,12 +1087,15 @@
     opacity: 0;
   }
 }
+
 @keyframes moveFromBottom {
   from {
     transform: translateY(800px);
   }
 }
+
 @keyframes alerta {
+
   0%,
   100% {
     transform: rotate(0deg);
@@ -905,44 +1127,48 @@
   }
 }
 
-.editar-dinheiro-box{
+.editar-dinheiro-box {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
-    & input{
-      outline: none;
-    }
-    & button{
-      position: relative;
-      top: -1px;
-      transition: all 0.3s ease-in;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
+
+  & input {
+    outline: none;
+  }
+
+  & button {
+    position: relative;
+    top: -1px;
+    transition: all 0.3s ease-in;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
 }
 
-.selecionar-dinheiro{
+.selecionar-dinheiro {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
-    & button{
-      position: relative;
-      top: -1px;
-      left: 4rem;
-      transition: all 0.3s ease-in;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
+
+  & button {
+    position: relative;
+    top: -1px;
+    left: 4rem;
+    transition: all 0.3s ease-in;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
 }
-.loading{
+
+.loading {
   position: absolute;
   top: 0;
   left: 0;

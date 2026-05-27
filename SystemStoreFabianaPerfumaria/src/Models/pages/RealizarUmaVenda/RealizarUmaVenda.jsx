@@ -465,7 +465,7 @@ function RealizarVendaTest() {
                 }
               >
                 {produtosFiltrados.length > 0 &&
-                  produtosFiltrados.map((produtos, index) => (
+                  produtosFiltrados.slice(0, 5).map((produtos, index) => (
                     <button
                       onClick={() =>
                         SelecionandoProdutos(produtos.codigoDeBarra)
@@ -474,15 +474,14 @@ function RealizarVendaTest() {
                     >
                       <div className="FiltroDeProdutos">
                         <img
+                          className="produto-thumb"
                           src={produtos.urlImagem}
-                          alt=""
-                          width={60}
-                          height={60}
+                          alt={produtos.nomeDoProduto}
+                          onError={(e) => { e.target.src = "https://via.placeholder.com/48?text=?"; }}
                         />
-                        <p>{limitarNome(produtos.nomeDoProduto, 3)}</p>
-                        <p>{produtos.marca}</p>
-                        <p>{produtos.quantidade}</p>
-                        <p>{produtos.codigoDeBarra}</p>
+                        <span className="produto-nome">{limitarNome(produtos.nomeDoProduto, 6)}</span>
+                        <span className="produto-marca">{produtos.marca}</span>
+                        <span className={produtos.quantidade > 1 ? "produto-qtd" : "produto-qtd-falta"}>Qtd: {produtos.quantidade}</span>
                       </div>
                     </button>
                   ))}
@@ -495,9 +494,10 @@ function RealizarVendaTest() {
                 required
               />
             </div>
+            {clienteFiltrados.length > 1 &&
             <div className="ClientesEncontrados">
               {clienteFiltrados.length > 0 &&
-                clienteFiltrados.map((clientes) => (
+                clienteFiltrados.slice(0, 4).map((clientes) => (
                   <button
                     className="ContainerButton"
                     key={clientes.Id_Cliente}
@@ -518,6 +518,7 @@ function RealizarVendaTest() {
                   </button>
                 ))}
             </div>
+            }
 
             <div className="TabelaDeProdutos">
               <div className="ProdutosEncontrados">
