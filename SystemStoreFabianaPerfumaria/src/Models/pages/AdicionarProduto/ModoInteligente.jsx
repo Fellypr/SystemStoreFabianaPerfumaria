@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { FaFileExcel, FaInfoCircle, FaCheckCircle, FaRedo, FaEdit, FaTimes, FaBox, FaSpinner, FaImage } from "react-icons/fa";
+import { FaFileExcel, FaInfoCircle, FaCheckCircle, FaRedo, FaEdit, FaTimes, FaBox, FaSpinner, FaImage, FaTrash } from "react-icons/fa";
+import toast from "react-hot-toast";
 import "./AdicionarProduto.css";
 import { UseAdicionarProdutoCodigo } from "../../../hooks/UseAdicionarProdutoCodigo.jsx";
 
 const CODE_LENGTH = 44;
 
-function ProductRow({ product, isActive, onEdit, formatarMoeda }) {
+function ProductRow({ product, isActive, onEdit, onDelete, formatarMoeda }) {
   const isExisting = product.status === 'Ja existe';
   return (
     <tr className={`product-row${isActive ? ' product-row--active' : ''}`}>
@@ -41,7 +42,16 @@ function ProductRow({ product, isActive, onEdit, formatarMoeda }) {
         >
           <FaEdit />
         </button>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="btn-icon btn-delete"
+          title="Excluir produto"
+        >
+          <FaTrash />
+        </button>
       </td>
+      
     </tr>
   );
 }
@@ -352,6 +362,24 @@ function ModoInteligente() {
     localStorage.removeItem("produto");
   };
 
+  const handleDeleteProduct = (productToDelete) => {
+    const confirmDelete = window.confirm(`Tem certeza que deseja excluir o produto "${productToDelete.nomeProduto}"?`);
+    if (!confirmDelete) return;
+
+    const novosProdutos = produto.filter(
+      (p) => !(p.status === productToDelete.status && p.codigoBarra === productToDelete.codigoBarra)
+    );
+    
+    setProduto(novosProdutos);
+    
+    if (editingProduct && getProductKey(editingProduct) === getProductKey(productToDelete)) {
+      setIsDrawerOpen(false);
+      setEditingProduct(null);
+      setEditedData(null);
+    }
+    toast.success("Produto removido com sucesso!");
+  };
+
   
 
   const produtosNovos = produto.filter((p) => p.status === 'Novo');
@@ -464,6 +492,7 @@ function ModoInteligente() {
                               getProductKey(product) === getProductKey(editingProduct)
                             }
                             onEdit={() => handleOpenEdit(product)}
+                            onDelete={() => handleDeleteProduct(product)}
                             formatarMoeda={formatarMoeda}
                           />
                         ))}
@@ -504,6 +533,7 @@ function ModoInteligente() {
                               getProductKey(product) === getProductKey(editingProduct)
                             }
                             onEdit={() => handleOpenEdit(product)}
+                            onDelete={() => handleDeleteProduct(product)}
                             formatarMoeda={formatarMoeda}
                           />
                         ))}

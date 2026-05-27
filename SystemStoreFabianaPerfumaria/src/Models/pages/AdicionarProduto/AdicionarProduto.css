@@ -665,7 +665,7 @@
     minmax(4.75rem, 0.85fr)
     minmax(4.75rem, 0.85fr)
     minmax(4.75rem, 0.85fr)
-    4rem;
+    5.5rem;
   width: 100%;
   align-items: center;
   min-height: 2.75rem;
@@ -703,7 +703,7 @@
 }
 
 .th-actions {
-  width: 4rem;
+  width: 5.5rem;
   padding: 0.75rem 0.5rem !important;
 }
 
@@ -781,7 +781,9 @@
 
 .cell-actions {
   padding: 0.75rem 0.5rem;
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -808,7 +810,7 @@
     minmax(4.75rem, 0.85fr)
     minmax(4.75rem, 0.85fr)
     minmax(4.75rem, 0.85fr)
-    4rem;
+    5.5rem;
 }
 
 .input-edit {
@@ -863,6 +865,15 @@
 .btn-edit:hover {
   background-color: #e0e0e0;
   color: #1a1a1a;
+}
+
+.btn-delete {
+  color: #666;
+}
+
+.btn-delete:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
 }
 
 .btn-success {

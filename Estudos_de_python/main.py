@@ -65,7 +65,7 @@ def consultar_nfe(chave_acesso: str):
     try:
         print("Iniciando o navegador com perfil persistente...", file=sys.stderr, flush=True)
         # Chrome iniciado via undetected_chromedriver (Windows/Linux)
-        driver = uc.Chrome(options=options, version_main=None)  # Auto-detect version
+        driver = uc.Chrome(options=options, version_main=148)  # Auto-detect version
         
         # NÃO deletar cookies! Preservar sessão Cloudflare (cf_clearance, __cf_bm).
         # Deletar cookies antes da navegação destruía o trust score acumulado
@@ -283,10 +283,10 @@ def consultar_nfe(chave_acesso: str):
             produtos.append({
                 "NomeProduto": nome,
                 "Unidade": qtd_float,
-                "PrecoVista": round(vu_float * 1.15, 2),
-                "PrecoRevista": round(vu_float * 1.90, 2),
+                "PrecoVista": round(vu_float * 1.30, 2),
+                "PrecoRevista": round(vu_float * 2.20, 2),
                 "PrecoAdquirido": vu_float,
-                "PrecoEmFicha": round(vu_float * 1.50, 2),
+                "PrecoEmFicha": round(vu_float * 1.80, 2),
                 "CodigoBarra": ean if ean else "Não encontrado",
                 "ImagemURL": imagem_url,
                 "MarcaDoProduto": nome.split()[0] if nome else "Não encontrado"

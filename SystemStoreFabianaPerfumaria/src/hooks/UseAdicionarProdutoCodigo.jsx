@@ -17,6 +17,8 @@ export function UseAdicionarProdutoCodigo() {
     useEffect(() => {
         if (produto && produto.length > 0) {
             localStorage.setItem("produto", JSON.stringify(produto));
+        } else if (produto && produto.length === 0) {
+            localStorage.removeItem("produto");
         }
     }, [produto]);
 
