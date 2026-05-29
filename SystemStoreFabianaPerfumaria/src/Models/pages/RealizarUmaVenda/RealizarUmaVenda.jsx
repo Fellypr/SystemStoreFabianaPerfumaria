@@ -884,7 +884,7 @@ function RealizarVendaTest() {
                 border: "none",
                 padding: "0px",
                 margin: "0 auto",
-                fontSize: "0.8rem",
+                fontSize: "0.6rem",
                 width: "200px",
                 lineHeight: "1.2",
                 height: "auto",
@@ -917,7 +917,7 @@ function RealizarVendaTest() {
                 {new Date().toLocaleTimeString("pt-BR")}
               </p>
               {pesquisarCliente && (
-                <p style={{ margin: "5px 0", fontSize: "16px" }}>
+                <p style={{ margin: "5px 0", fontSize: "0.7rem" }}>
                   Cliente: {pesquisarCliente}
                 </p>
               )}
@@ -925,7 +925,7 @@ function RealizarVendaTest() {
               <table
                 style={{
                   width: "100%",
-                  fontSize: "0.75rem",
+                  fontSize: "0.6rem",
                   tableLayout: "fixed",
                 }}
               >
@@ -977,22 +977,22 @@ function RealizarVendaTest() {
                   })}
                 </tbody>
               </table>
-              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
                 <span>QTD. TOTAL DE ITENS: {quantidadeTotal}</span>
               </p>
-              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
                 <span>DESCONTO TOTAL: {DescontoNaVenda}</span>
               </p>
               <p
                 style={{
-                  fontSize: "0.9rem",
+                  fontSize: "0.7rem",
                   fontWeight: "bold",
                   margin: "5px 0",
                 }}
               >
                 <span>VALOR TOTAL R$: {precoTotal}</span>
               </p>
-              <p style={{ fontSize: "0.9rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
                 <span>PAGAMENTO: {formaDePagamento}</span>
               </p>
               <div
