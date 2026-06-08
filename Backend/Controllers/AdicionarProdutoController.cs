@@ -136,14 +136,6 @@ namespace Backend.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(dto.ChaveAcesso))
-                {
-                    return BadRequest("Preencha a chave de acesso");
-                }
-                else if (dto.ChaveAcesso.Length != 44)
-                {
-                    return BadRequest("Chave de acesso deve ter 44 caracteres");
-                }
 
                 var resultado = await _produtoService.IniciarScrapingAsync(dto);
                 if (resultado.StartsWith("Erro ao iniciar scraping:", StringComparison.OrdinalIgnoreCase))

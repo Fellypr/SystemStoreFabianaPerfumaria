@@ -101,8 +101,6 @@ public sealed class ProdutoService : IProdutoService
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(dto.ChaveAcesso))
-                throw new InvalidOperationException("Chave de acesso não informada.");
 
             var estudosDir = FindEstudosDePythonDirectory();
             if (string.IsNullOrWhiteSpace(estudosDir))
@@ -146,7 +144,7 @@ public sealed class ProdutoService : IProdutoService
                 CreateNoWindow = true,
             };
             start.ArgumentList.Add(scriptPath);
-            start.ArgumentList.Add(dto.ChaveAcesso);
+            start.ArgumentList.Add("00000000000000000000000000000000000000000000");
 
             using var process = new Process { StartInfo = start };
             StringBuilder jsonAcumulado = new StringBuilder();

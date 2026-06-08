@@ -13,7 +13,6 @@ export function UseAdicionarProdutoCodigo() {
     const [mensagemCarregamento, setMensagemCarregamento] = useState(null);
     const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
 
-    // Sincroniza automaticamente qualquer alteração dos produtos com o localStorage
     useEffect(() => {
         if (produto && produto.length > 0) {
             localStorage.setItem("produto", JSON.stringify(produto));
@@ -28,7 +27,7 @@ export function UseAdicionarProdutoCodigo() {
         setLoading(true);
         try {
             let connection = new signalR.HubConnectionBuilder()
-                .withUrl("http://192.168.0.139:5080/scrapingHub")
+                .withUrl("http://192.168.1.190:5080/scrapingHub")
                 .withAutomaticReconnect()
                 .build();
 
@@ -38,8 +37,7 @@ export function UseAdicionarProdutoCodigo() {
                 setMensagemCarregamento(mensagem);
             });
             const response = await axios.post(`${url}/AdicionarProduto/iniciar-scraping`,
-            {
-                ChaveAcesso: codigo,    
+            {    
                 ConnectionId: connectionId 
             },
             {
@@ -104,5 +102,5 @@ export function UseAdicionarProdutoCodigo() {
         }
     }
 
-    return { codigo, setCodigo, iniciadoScraping, produto, setProduto, loading, error, mensagemCarregamento, FinalizarProdutos };
+    return { iniciadoScraping, produto, setProduto, loading, error, mensagemCarregamento, FinalizarProdutos };
 }

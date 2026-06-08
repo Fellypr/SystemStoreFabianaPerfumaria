@@ -268,12 +268,8 @@ function ModoInteligente() {
   const { codigo, setCodigo, iniciadoScraping, produto, setProduto, loading, mensagemCarregamento, FinalizarProdutos } =
     UseAdicionarProdutoCodigo();
 
-  const handleInputChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH);
-    setCodigo(value);
-  };
+  
 
-  const progress = Math.round((codigo.length / CODE_LENGTH) * 100);
 
   const formatarMoeda = (valor) => {
     const num = typeof valor === 'string' ? parseFloat(valor.replace(',', '.')) : valor;
@@ -385,11 +381,6 @@ function ModoInteligente() {
   const produtosNovos = produto.filter((p) => p.status === 'Novo');
   const produtosExistentes = produto.filter((p) => p.status === 'Ja existe');
 
-  useEffect(() => {
-    if (codigo.length === CODE_LENGTH) {
-      iniciadoScraping();
-    }
-  }, [codigo]);
 
   return (
     <div className="containerAdicionarProduto modo-inteligente-container">
@@ -400,40 +391,24 @@ function ModoInteligente() {
           <div className="info-text">
             <p className="info-title">Como funciona</p>
             <p className="info-description">
-              Digite ou escaneie a chave de acesso da NFe de{' '}
-              <span className="highlight">44 dígitos</span>.
-              O processamento será iniciado automaticamente ao completar o código.
+              Clique no botão abaixo para ser direcionado para a tela de leitura de códigos de barras.{' '}
+              <span className="highlight">Faça a leitura do código de 44 dígitos que fica acima da nota fiscal</span>. <br />
+              Resolva o HCaptcha e clique em "Continuar".<span style={{ color: 'red' }}>Caso de "captcha invalido", tente novamente de 3 vezes a 4 vezes.</span><br />
+              Quando entra na tela da nota , não faça mais nada e aguarde o processamento finalizar com os dados do produto.
             </p>
           </div>
         </div>
 
         <div className="code-input-section">
-          <label htmlFor="code-input" className="code-label">
+          <label htmlFor="code-input" className="code-label" style={{display: produto.length > 0 ? 'none' : 'block'}}>
             <FaFileExcel className="code-icon" />
-            Chave de Acesso de 44 dígitos
+            Clique e espere o Crhome abrir
           </label>
           <div className="code-input-wrapper">
-            <input
-              id="code-input"
-              type="text"
-              value={codigo}
-              onChange={handleInputChange}
-              placeholder="Digite ou escaneie o código numérico..."
-              inputMode="numeric"
-              maxLength={CODE_LENGTH}
-              disabled={loading || produto.length > 0}
-              className="code-input"
-              autoFocus
-            />
-            <span className="code-counter">{codigo.length}/{CODE_LENGTH}</span>
+            <button onClick={iniciadoScraping} disabled={loading} className={produto.length > 0 ? 'code-button-disabled' : 'process-btn'}>{loading ? 'Processando...' : 'Processar'}</button>
           </div>
           <div className="progress-section">
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
-            </div>
-            {codigo.length > 0 && codigo.length < CODE_LENGTH && (
-              <p className="progress-text">Faltam {CODE_LENGTH - codigo.length} dígito(s) para processar</p>
-            )}
+            
             {loading && mensagemCarregamento && (
               <p className="progress-text">{mensagemCarregamento}</p>
             )}
@@ -561,7 +536,6 @@ function ModoInteligente() {
         )}
       </div>
 
-      {/* Drawer de edição — fora do scroll da página */}
       <EditDrawer
         product={editingProduct}
         editedData={editedData}

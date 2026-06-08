@@ -1,0 +1,37 @@
+name: Deploy Automático do Back-end (C#)
+
+on:
+  push:
+    branches:
+      - main
+    # O pipeline do back-end só vai rodar se você alterar arquivos da pasta Backend
+    paths:
+      - 'Backend/**'
+
+jobs:
+  deploy-backend:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout do código (Download temporário)
+        uses: actions/checkout@v4
+
+      # 1. Para o Back-end atual para destravar os arquivos no Windows
+      # O robô vai fechar o processo do iniciar_api para liberar a pasta
+      - name: Parar o Back-end atual
+        run: |
+          taskkill /F /IM cmd.exe /FI "WINDOWTITLE eq iniciar_api*" || taskkill /F /IM iniciar_api.exe || exit 0
+        shell: cmd
+
+      # 2. Copia os arquivos atualizados do GitHub direto para a sua pasta Backend
+      - name: Atualizar arquivos na pasta Backend
+        run: |
+          xcopy .\Backend\* 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\Backend' /E /Y /H /R
+
+      # 3. Executa o seu script para ligar o Back-end novamente
+      # Entra na pasta correta e roda o 'iniciar_api.bat' que vimos na foto
+      - name: Iniciar o Back-end novamente
+        run: |
+          cd 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\Backend'
+          start iniciar_api.bat
+        shell: cmd

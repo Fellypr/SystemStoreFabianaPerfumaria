@@ -1,0 +1,37 @@
+name: Deploy Automático do Front-end e Atualização do Clone
+
+on:
+  push:
+    branches:
+      - main
+    # Monitora qualquer alteração no repositório para disparar o processo
+    paths:
+      - '**'
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout do código (Download temporário)
+        uses: actions/checkout@v4
+
+      # 1. Atualiza todos os arquivos da sua pasta de clone
+      - name: Atualizar a pasta principal do Git Clone
+        run: |
+          xcopy .\* 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\SystemStoreFabianaPerfumaria' /E /Y /H /R
+
+      # 2. Instala dependências do Front-end
+      - name: Instalar dependências do Front-end
+        working-directory: 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\SystemStoreFabianaPerfumaria'
+        run: npm install
+
+      # 3. Roda o Build do Front-end
+      - name: Rodar o Build do Front-end
+        working-directory: 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\SystemStoreFabianaPerfumaria'
+        run: npm run build
+
+      # 4. Pega o resultado do build (dist) e joga na pasta do IIS
+      - name: Enviar arquivos para o IIS
+        run: |
+          xcopy 'C:\Users\COMPUTADOR\Documents\LojaSistema(AQUI)\SystemStoreFabianaPerfumaria\SystemStoreFabianaPerfumaria\dist\*' 'C:\inetpub\wwwroot\SiteDaLoja' /E /Y /H /R
