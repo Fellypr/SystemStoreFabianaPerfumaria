@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import QRCodeStyling from "qr-code-styling";
 
 const qrCode = new QRCodeStyling({
-  width: 100,
-  height: 100,
+  width: 80,
+  height: 80,
   data: "https://www.instagram.com/fabianaperfumaria_/",
   dotsOptions: {
     color: "#000000",

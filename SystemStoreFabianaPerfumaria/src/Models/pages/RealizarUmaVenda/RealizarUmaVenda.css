@@ -813,9 +813,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 1rem;
     position: relative;
-    top: -10rem;
 
     & img {
       position: relative;
@@ -835,10 +833,10 @@
 
 .NotaFiscal {
   background-color: #fff;
-  width: 100%;
-  height: 100%;
+  width: 200px;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .fecharNota {
@@ -881,15 +879,21 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 1rem;
+  margin-top: 0px;
   text-align: center;
 }
 
 @media print {
+  @page{
+    margin: 0;
+    size:80mm auto;
+  }
 
-  body,
-  * {
+  body,html,* {
     visibility: hidden;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
 
   #nota-fiscal,
@@ -897,15 +901,27 @@
     visibility: visible;
   }
 
+  .body,
+  nav,
+  .MensagemDeSucesso,
+  .Mensagem,
+  .loading,
+  .alertaQuantidade {
+    display: none !important;
+  }
+
   #nota-fiscal {
+    display: block !important;
     position: absolute;
-    left: 10%;
     top: 0;
-    width: auto !important;
+    width: 200px !important;
     height: auto;
     margin: 0;
-    padding: 0;
+    padding: 0 2px;
+    page-break-after: avoid;
+    break-after: avoid;
   }
+
 }
 
 .alertaQuantidade {

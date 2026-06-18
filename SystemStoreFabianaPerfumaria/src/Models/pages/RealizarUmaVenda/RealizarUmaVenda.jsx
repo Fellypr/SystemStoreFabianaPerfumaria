@@ -884,40 +884,41 @@ function RealizarVendaTest() {
                 border: "none",
                 padding: "0px",
                 margin: "0 auto",
-                fontSize: "0.6rem",
-                width: "200px",
+                fontSize: "11px",
+                width: "220px",
                 lineHeight: "1.2",
                 height: "auto",
                 backgroundColor: "rgb(255, 255, 255)",
                 color: "black",
+                fontFamily: "Arial, sans-serif"
               }}
               className="notaCard"
             >
               <h3
                 style={{
                   textAlign: "center",
-                  fontSize: "1rem",
+                  fontSize: "10px",
                   margin: "5px 0",
                 }}
               >
                 Fabiana Perfumaria
               </h3>
               <p
-                style={{ textAlign: "center", fontSize: "0.7rem", margin: "0" }}
+                style={{ textAlign: "center", fontSize: "9px", margin: "0" }}
               >
                 Rua DR.Rômulo De Almeida,65 <br /> São Miguel Dos Campos/AL
               </p>
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
-              <p style={{ textAlign: "center", margin: "5px 0" }}>
+              <p style={{ textAlign: "center", margin: "5px 0" ,fontSize:"9px"}}>
                 DOCUMENTO AUXILIAR DA NFCE
               </p>
               <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
-              <p style={{ margin: "5px 0" }}>
+              <p style={{ margin: "5px 0",fontSize:"10px" }}>
                 Emissão: {new Date().toLocaleDateString("pt-BR")}{" "}
                 {new Date().toLocaleTimeString("pt-BR")}
               </p>
               {pesquisarCliente && (
-                <p style={{ margin: "5px 0", fontSize: "0.7rem" }}>
+                <p style={{ margin: "5px 0", fontSize: "10px" }}>
                   Cliente: {pesquisarCliente}
                 </p>
               )}
@@ -925,16 +926,16 @@ function RealizarVendaTest() {
               <table
                 style={{
                   width: "100%",
-                  fontSize: "0.6rem",
+                  fontSize: "8px",
                   tableLayout: "fixed",
                 }}
               >
                 <thead>
                   <tr style={{ borderBottom: "1px solid #000" }}>
-                    <th style={{ textAlign: "left", width: "40%" }}>PRODUTO</th>
-                    <th style={{ textAlign: "center", width: "15%" }}>QTD</th>
+                    <th style={{ textAlign: "left", width: "35%" }}>PRODUTO</th>
+                    <th style={{ textAlign: "center", width: "5%" }}>QTD</th>
                     <th style={{ textAlign: "center", width: "20%" }}>UN</th>
-                    <th style={{ textAlign: "right", width: "25%" }}>TOTAL</th>
+                    <th style={{ textAlign: "left", width: "25%" }}>TOTAL</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -949,8 +950,8 @@ function RealizarVendaTest() {
                     ).toFixed(2);
 
                     return (
-                      <>
-                        <tr key={index}>
+                      <React.Fragment key={index}>
+                        <tr>
                           <td style={{ textAlign: "left", paddingLeft: "5px" }}>
                             {item.nomeDoProduto}
                           </td>
@@ -958,7 +959,7 @@ function RealizarVendaTest() {
                           <td style={{ textAlign: "center" }}>
                             {preco.toFixed(2)}
                           </td>
-                          <td style={{ textAlign: "right" }}>
+                          <td style={{ textAlign: "left" }}>
                             {precoTotalItem}
                           </td>
                         </tr>
@@ -972,39 +973,39 @@ function RealizarVendaTest() {
                             />
                           </td>
                         </tr>
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </tbody>
               </table>
-              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "8px", margin: "5px 0" }}>
                 <span>QTD. TOTAL DE ITENS: {quantidadeTotal}</span>
               </p>
-              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "8px", margin: "5px 0" }}>
                 <span>DESCONTO TOTAL: {DescontoNaVenda}</span>
               </p>
               <p
                 style={{
-                  fontSize: "0.7rem",
+                  fontSize: "9px",
                   fontWeight: "bold",
                   margin: "5px 0",
                 }}
               >
                 <span>VALOR TOTAL R$: {precoTotal}</span>
               </p>
-              <p style={{ fontSize: "0.7rem", margin: "5px 0" }}>
+              <p style={{ fontSize: "8px", margin: "5px 0" }}>
                 <span>PAGAMENTO: {formaDePagamento}</span>
               </p>
               <div
                 className="qrCode"
-                style={{ textAlign: "center", margin: "10px 0" }}
+              style={{ textAlign: "center", margin: "0" }}
               >
                 <QRCodeInsta />
                 <p
                   style={{
-                    fontSize: "0.7rem",
-                    margin: "0 0 0 0",
-                    padding: "5px",
+                    fontSize: "10px",
+                    margin:"0",
+                    paddingTop: "0px",
                   }}
                 >
                   Obrigado e volte sempre!
