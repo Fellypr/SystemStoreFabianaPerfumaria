@@ -28,7 +28,8 @@ function BuscarPreço() {
           },
         },
       );
-      setResultProduct(response.data);
+      setResultProduct(response.data.itens);
+      console.log("seu result log:", response.data.itens);
     } catch (error) {
       console.error(error);
     }
