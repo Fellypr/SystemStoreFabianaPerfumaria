@@ -43,6 +43,7 @@ function RealizarVendaTest() {
   const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
   const [abrirNota, setAbrirNota] = useState(null);
+  const [incluirQrCodeNaNota, setIncluirQrCodeNaNota] = useState(true);
   const [alertaQuantidade, setAlertaQuantidade] = useState(null);
   const [showPrecoAdquirido, setShowPrecoAdquirido] = useState(false);
   const [telaDecodigo, setTelaDecodificado] = useState(false);
@@ -98,7 +99,8 @@ function RealizarVendaTest() {
   function MesagemDeVenda(item) {
     setShowRealizarVenda(item);
   }
-  function AbrirNota() {
+  function AbrirNota(comQrCode = true) {
+    setIncluirQrCodeNaNota(comQrCode);
     setAbrirNota(true);
     setTimeout(() => {
       window.print();
@@ -996,21 +998,24 @@ function RealizarVendaTest() {
               <p style={{ fontSize: "8px", margin: "5px 0" }}>
                 <span>PAGAMENTO: {formaDePagamento}</span>
               </p>
-              <div
-                className="qrCode"
-              style={{ textAlign: "center", margin: "0" }}
-              >
-                <QRCodeInsta />
-                <p
-                  style={{
-                    fontSize: "10px",
-                    margin:"0",
-                    paddingTop: "0px",
-                  }}
+              {incluirQrCodeNaNota && (
+                <div
+                  className="qrCode"
+                  style={{ textAlign: "center", margin: "0" }}
                 >
-                  Obrigado e volte sempre!
-                </p>
-              </div>
+                  <QRCodeInsta />
+                </div>
+              )}
+              <p
+                style={{
+                  fontSize: "10px",
+                  margin: "0",
+                  paddingTop: incluirQrCodeNaNota ? "0px" : "17px",
+                  textAlign: "center",
+                }}
+              >
+                Obrigado e volte sempre!
+              </p>
             </div>
           )}
         </div>

@@ -1,171 +1,284 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { FaPrint, FaTimes, FaQrcode } from 'react-icons/fa';
+import { MdReceiptLong } from 'react-icons/md';
 
-const CardConfirmaçãoDeVenda = ({FinalizarVenda,AbrirNota,setShowRealizarVenda}) => {
+const CardConfirmaçãoDeVenda = ({ FinalizarVenda, AbrirNota, setShowRealizarVenda }) => {
+  const [incluirQrCode, setIncluirQrCode] = useState(true);
 
-    const AbrirNotaFinalizar = () => {
-        AbrirNota();
-    }
-    const Confirmar = () => {
-        FinalizarVenda();
-    }
-    function handleDismiss() {
-        setShowRealizarVenda(false);
-      }
+  const handleDismiss = () => {
+    setShowRealizarVenda(false);
+  };
+
+  const handleImprimir = () => {
+    AbrirNota(incluirQrCode);
+  };
+
   return (
     <StyledWrapper>
       <div className="card">
-        <button type="button" className="dismiss"  onClick={handleDismiss}>X</button> 
-        <div className="header"> 
-          <div className="image">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth={0} /><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" /><g id="SVGRepo_iconCarrier"> <path d="M20 7L9.00004 18L3.99994 13" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /> </g></svg>
-          </div> 
+        <button type="button" className="dismiss" onClick={handleDismiss} aria-label="Fechar">
+          <FaTimes />
+        </button>
+
+        <div className="header">
+          <div className="icon-badge">
+            <MdReceiptLong />
+          </div>
+
           <div className="content">
-            <span className="title">Confirme a Venda</span> 
-            <p className="message">Deseja Imprimir o comprovante?</p> 
-          </div> 
+            <span className="title">Confirmar venda</span>
+            <p className="message">Deseja imprimir o comprovante antes de finalizar?</p>
+          </div>
+
+          <div className="qr-option">
+            <div className="qr-option-info">
+              <FaQrcode className="qr-icon" />
+              <div>
+                <span className="qr-label">QR Code na nota</span>
+                <span className="qr-hint">Instagram da loja no comprovante</span>
+              </div>
+            </div>
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={incluirQrCode}
+                onChange={(e) => setIncluirQrCode(e.target.checked)}
+              />
+              <span className="slider" />
+            </label>
+          </div>
+
           <div className="actions">
-            <button className="history"  onClick={AbrirNotaFinalizar}>Sim</button> 
-            <button className="track"  onClick={Confirmar}>Confirmar Venda</button> 
-          </div> 
-        </div> 
+            <button type="button" className="btn-print" onClick={handleImprimir}>
+              <FaPrint />
+              Imprimir comprovante
+            </button>
+            <button type="button" className="btn-confirm" onClick={FinalizarVenda}>
+              Confirmar sem imprimir
+            </button>
+          </div>
+        </div>
       </div>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   .card {
-    overflow: hidden;
     position: relative;
-    text-align: left;
-    border-radius: 0.5rem;
-    max-width: 290px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    background-color: #fff;
+    width: min(360px, 92vw);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(23, 94, 165, 0.08);
+    overflow: hidden;
+    animation: slideUp 0.35s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   .dismiss {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    top: 12px;
+    right: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1rem;
-    background-color: #fff;
-    color: black;
-    border: 2px solid #D1D5DB;
-    font-size: 1rem;
-    font-weight: 300;
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    transition: .3s ease;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    z-index: 1;
   }
 
   .dismiss:hover {
-    background-color: #ee0d0d;
-    border: 2px solid #ee0d0d;
-    color: #fff;
+    background: #fee2e2;
+    color: #dc2626;
   }
 
   .header {
-    padding: 1.25rem 1rem 1rem 1rem;
+    padding: 2rem 1.5rem 1.5rem;
   }
 
-  .image {
+  .icon-badge {
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #e2feee;
-    flex-shrink: 0;
-    justify-content: center;
     align-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 9999px;
-    animation: animate .6s linear alternate-reverse infinite;
-    transition: .6s ease;
-  }
-
-  .image svg {
-    color: #0afa2a;
-    width: 2rem;
-    height: 2rem;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 1rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #e8f4fd 0%, #d4ebfa 100%);
+    color: #175ea5;
+    font-size: 1.75rem;
   }
 
   .content {
-    margin-top: 0.75rem;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    margin-bottom: 1.25rem;
   }
 
   .title {
-    color: #066e29;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5rem;
+    display: block;
+    color: #111827;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 0.35rem;
   }
 
   .message {
-    color: #595b5f;
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .qr-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+  }
+
+  .qr-option-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .qr-icon {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    color: #175ea5;
+  }
+
+  .qr-label {
+    display: block;
     font-size: 0.875rem;
-    line-height: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.3;
+  }
+
+  .qr-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    line-height: 1.3;
+  }
+
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: #d1d5db;
+    transition: background 0.25s;
+  }
+
+  .slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.25s;
+  }
+
+  .toggle input:checked + .slider {
+    background: #175ea5;
+  }
+
+  .toggle input:checked + .slider::before {
+    transform: translateX(20px);
   }
 
   .actions {
-    margin: 0.75rem 1rem;
-    cursor: pointer;
-    
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
   }
 
-  .history {
+  .btn-print,
+  .btn-confirm {
     display: inline-flex;
-    padding: 0.5rem 1rem;
-    background-color: #1aa06d;
-    color: #ffffff;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 500;
+    align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     width: 100%;
-    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+
+  .btn-print {
     border: none;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    z-index: 9999;
+    background: linear-gradient(135deg, #1aa06d 0%, #158f5e 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(26, 160, 109, 0.35);
   }
 
-  .track {
-    display: inline-flex;
-    margin-top: 0.75rem;
-    padding: 0.5rem 1rem;
-    color: #242525;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 500;
-    justify-content: center;
-    width: 100%;
-    border-radius: 0.375rem;
-    border: 1px solid #D1D5DB;
-    background-color: #fff;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    z-index: 9999;
+  .btn-print:hover {
+    background: linear-gradient(135deg, #158f5e 0%, #127a4f 100%);
+    transform: translateY(-1px);
   }
 
-  @keyframes animate {
-    from {
-      transform: scale(1);
-    }
+  .btn-confirm {
+    border: 1.5px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+  }
 
-    to {
-      transform: scale(1.09);
-    }
-  }`;
+  .btn-confirm:hover {
+    border-color: #175ea5;
+    color: #175ea5;
+    background: #f0f7ff;
+  }
+`;
 
 export default CardConfirmaçãoDeVenda;
