@@ -19,6 +19,7 @@ public sealed class VendaService : IVendaService
             throw new InvalidOperationException("Nenhuma venda recebida.");
 
         await _repo.RealizarVendaAsync(vendas);
+        
         return "Venda realizada com sucesso.";
     }
 

@@ -54,9 +54,9 @@ public sealed class SqlVendaRepository : IVendaRepository
 
             const string queryVenda = @"
                     INSERT INTO Venda 
-                    (Produtos_Vendidos, DataDaVenda, FormaDePagamento, PrecoTotal, QuantidadeTotal, ValorNaFicha, NomeDoComprado, IdVendaDeCliente)
+                    (Produtos_Vendidos, DataDaVenda, FormaDePagamento, PrecoTotal, QuantidadeTotal, ValorNaFicha, NomeDoComprado, IdVendaDeCliente,Funcionaria)
                     OUTPUT INSERTED.IdVenda
-                    VALUES (@Produtos, @Data, @FormaPagamento, @Total, @QuantidadeTotal, @ValorNaFicha, @NomeComprador, @IdCliente);";
+                    VALUES (@Produtos, @Data, @FormaPagamento, @Total, @QuantidadeTotal, @ValorNaFicha, @NomeComprador, @IdCliente,@Funcionario);";
 
             using var cmdVenda = new SqlCommand(queryVenda, connection, transaction);
 
@@ -75,7 +75,7 @@ public sealed class SqlVendaRepository : IVendaRepository
             cmdVenda.Parameters.Add("@ValorNaFicha", SqlDbType.Decimal).Value = primeiraVenda.ValorNaFicha;
             cmdVenda.Parameters.Add("@NomeComprador", SqlDbType.NVarChar).Value = primeiraVenda.Comprador;
             cmdVenda.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente;
-
+            cmdVenda.Parameters.Add("@Funcionario", SqlDbType.NVarChar).Value = primeiraVenda.Funcionario;
             var idVendaCriada = (int)await cmdVenda.ExecuteScalarAsync();
 
             if (primeiraVenda.FormaDePagamento != null && primeiraVenda.FormaDePagamento.Any())

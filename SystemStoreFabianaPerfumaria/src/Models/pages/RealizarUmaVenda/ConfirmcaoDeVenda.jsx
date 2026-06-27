@@ -5,13 +5,39 @@ import { MdReceiptLong } from 'react-icons/md';
 
 const CardConfirmaçãoDeVenda = ({ FinalizarVenda, AbrirNota, setShowRealizarVenda }) => {
   const [incluirQrCode, setIncluirQrCode] = useState(true);
+  const [funcionario, setFuncionario] = useState("");
+  const [erroFuncionario, setErroFuncionario] = useState("");
+
+  const funcionarios = ["Graciele Emiliano", "Angela Maria"];
 
   const handleDismiss = () => {
     setShowRealizarVenda(false);
   };
 
+  const validarFuncionario = () => {
+    if (!funcionario) {
+      setErroFuncionario("Selecione quem realizou a venda.");
+      return false;
+    }
+
+    setErroFuncionario("");
+    return true;
+  };
+
   const handleImprimir = () => {
+    if (!validarFuncionario()) {
+      return;
+    }
+
     AbrirNota(incluirQrCode);
+  };
+
+  const handleConfirmar = () => {
+    if (!validarFuncionario()) {
+      return;
+    }
+
+    FinalizarVenda(funcionario);
   };
 
   return (
@@ -29,6 +55,29 @@ const CardConfirmaçãoDeVenda = ({ FinalizarVenda, AbrirNota, setShowRealizarVe
           <div className="content">
             <span className="title">Confirmar venda</span>
             <p className="message">Deseja imprimir o comprovante antes de finalizar?</p>
+          </div>
+
+          <div className="funcionario-field">
+            <label htmlFor="funcionario-venda">Funcionaria da venda</label>
+            <select
+              id="funcionario-venda"
+              value={funcionario}
+              onChange={(e) => {
+                setFuncionario(e.target.value);
+                setErroFuncionario("");
+              }}
+              aria-invalid={erroFuncionario ? "true" : "false"}
+            >
+              <option value="">Selecione</option>
+              {funcionarios.map((nome) => (
+                <option key={nome} value={nome}>
+                  {nome}
+                </option>
+              ))}
+            </select>
+            {erroFuncionario && (
+              <span className="field-error">{erroFuncionario}</span>
+            )}
           </div>
 
           <div className="qr-option">
@@ -54,7 +103,7 @@ const CardConfirmaçãoDeVenda = ({ FinalizarVenda, AbrirNota, setShowRealizarVe
               <FaPrint />
               Imprimir comprovante
             </button>
-            <button type="button" className="btn-confirm" onClick={FinalizarVenda}>
+            <button type="button" className="btn-confirm" onClick={handleConfirmar}>
               Confirmar sem imprimir
             </button>
           </div>
@@ -148,6 +197,48 @@ const StyledWrapper = styled.div`
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
+  }
+
+  .funcionario-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .funcionario-field label {
+    color: #374151;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .funcionario-field select {
+    width: 100%;
+    height: 42px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    color: #111827;
+    font-size: 0.92rem;
+    outline: none;
+    padding: 0 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .funcionario-field select:focus {
+    border-color: #175ea5;
+    box-shadow: 0 0 0 3px rgba(23, 94, 165, 0.12);
+  }
+
+  .funcionario-field select[aria-invalid='true'] {
+    border-color: #dc2626;
+  }
+
+  .field-error {
+    color: #dc2626;
+    font-size: 0.78rem;
+    font-weight: 600;
   }
 
   .qr-option {

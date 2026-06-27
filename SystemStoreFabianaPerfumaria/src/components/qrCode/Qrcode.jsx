@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import QRCodeStyling from "qr-code-styling";
 
-const qrCode = new QRCodeStyling({
+const qrCodeOptions = {
   width: 80,
   height: 80,
   data: "https://www.instagram.com/fabianaperfumaria_/",
@@ -20,20 +20,28 @@ const qrCode = new QRCodeStyling({
   },
   image:
     "img/LogoWithCorBlack.png",
-});
+};
 
-const QRCodeInsta = () => {
+const QRCodeInsta = ({ onReady }) => {
   const ref = useRef(null);
 
   useEffect(() => {
     if (ref.current) {
+      const qrCode = new QRCodeStyling(qrCodeOptions);
+      ref.current.innerHTML = "";
       qrCode.append(ref.current);
+      onReady && onReady();
     }
-  }, []);
+
+    return () => {
+      if (ref.current) {
+        ref.current.innerHTML = "";
+      }
+    };
+  }, [onReady]);
 
   return (
-    <div>
-      <br />
+    <div className="qrCodeContainer">
       <div ref={ref} />
     </div>
   );

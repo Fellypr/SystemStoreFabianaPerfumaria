@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./RealizarUmaVenda.css";
 
-import QRCodeInsta from "../../../components/qrCode/Qrcode";
 import CardConfirmaçãoDeVenda from "./ConfirmcaoDeVenda";
 import PaymentSplit from "../../../components/PaymentSplit/PaymentSplit";
+import NotaFiscalVenda from "./NotaFiscalVenda";
 
 import { FaUser, FaRegTrashAlt } from "react-icons/fa";
 import { FcPaid } from "react-icons/fc";
@@ -44,6 +44,8 @@ function RealizarVendaTest() {
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
   const [abrirNota, setAbrirNota] = useState(null);
   const [incluirQrCodeNaNota, setIncluirQrCodeNaNota] = useState(true);
+  const [qrCodeProntoNota, setQrCodeProntoNota] = useState(false);
+  const [impressaoPendente, setImpressaoPendente] = useState(false);
   const [alertaQuantidade, setAlertaQuantidade] = useState(null);
   const [showPrecoAdquirido, setShowPrecoAdquirido] = useState(false);
   const [telaDecodigo, setTelaDecodificado] = useState(false);
@@ -101,11 +103,48 @@ function RealizarVendaTest() {
   }
   function AbrirNota(comQrCode = true) {
     setIncluirQrCodeNaNota(comQrCode);
+    setQrCodeProntoNota(false);
     setAbrirNota(true);
-    setTimeout(() => {
-      window.print();
-    }, 500);
+    setImpressaoPendente(true);
   }
+
+  const handleQrReady = useCallback(() => {
+    setQrCodeProntoNota(true);
+  }, []);
+
+  useEffect(() => {
+    if (!impressaoPendente || !abrirNota) {
+      return;
+    }
+
+    if (incluirQrCodeNaNota && !qrCodeProntoNota) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      window.print();
+      setImpressaoPendente(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [abrirNota, impressaoPendente, incluirQrCodeNaNota, qrCodeProntoNota]);
+
+  useEffect(() => {
+    if (
+      !impressaoPendente ||
+      !abrirNota ||
+      !incluirQrCodeNaNota ||
+      qrCodeProntoNota
+    ) {
+      return;
+    }
+
+    const fallback = setTimeout(() => {
+      setQrCodeProntoNota(true);
+    }, 2000);
+
+    return () => clearTimeout(fallback);
+  }, [abrirNota, impressaoPendente, incluirQrCodeNaNota, qrCodeProntoNota]);
 
   const buscarCliente = async () => {
     try {
@@ -269,10 +308,14 @@ function RealizarVendaTest() {
     );
   };
 
-  const FinalizarVenda = async () => {
+  const FinalizarVenda = async (funcionarioResponsavel) => {
     if (produtosVendidos.length === 0) {
       alert("Não há produtos na venda!");
       window.location.reload();
+      return;
+    }
+    if (!funcionarioResponsavel) {
+      alert("Selecione a funcionaria que realizou a venda.");
       return;
     }
     try {
@@ -324,6 +367,7 @@ function RealizarVendaTest() {
           id_produto: produto.id_produto,
           quantidadeTotal: quantidadeTotal,
           comprador: pesquisarCliente,
+          funcionario: funcionarioResponsavel,
         };
 
         if (formaDePagamento === "Crediario") {
@@ -342,6 +386,7 @@ function RealizarVendaTest() {
           },
         },
       );
+      console.log("venda realizada:",dadosParaEnvio);
       setMensagemDeSucesso(response.data);
       setShowRealizarVenda(null);
       setProdutosVendidos([]);
@@ -879,146 +924,17 @@ function RealizarVendaTest() {
       </div>
 
       {abrirNota && (
-        <div id="nota-fiscal" className="NotaFiscal">
-          {produtosVendidos.length > 0 && (
-            <div
-              style={{
-                border: "none",
-                padding: "0px",
-                margin: "0 auto",
-                fontSize: "11px",
-                width: "220px",
-                lineHeight: "1.2",
-                height: "auto",
-                backgroundColor: "rgb(255, 255, 255)",
-                color: "black",
-                fontFamily: "Arial, sans-serif"
-              }}
-              className="notaCard"
-            >
-              <h3
-                style={{
-                  textAlign: "center",
-                  fontSize: "10px",
-                  margin: "5px 0",
-                }}
-              >
-                Fabiana Perfumaria
-              </h3>
-              <p
-                style={{ textAlign: "center", fontSize: "9px", margin: "0" }}
-              >
-                Rua DR.Rômulo De Almeida,65 <br /> São Miguel Dos Campos/AL
-              </p>
-              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
-              <p style={{ textAlign: "center", margin: "5px 0" ,fontSize:"9px"}}>
-                DOCUMENTO AUXILIAR DA NFCE
-              </p>
-              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
-              <p style={{ margin: "5px 0",fontSize:"10px" }}>
-                Emissão: {new Date().toLocaleDateString("pt-BR")}{" "}
-                {new Date().toLocaleTimeString("pt-BR")}
-              </p>
-              {pesquisarCliente && (
-                <p style={{ margin: "5px 0", fontSize: "10px" }}>
-                  Cliente: {pesquisarCliente}
-                </p>
-              )}
-              <hr style={{ borderTop: "1px dashed #000", margin: "5px 0" }} />
-              <table
-                style={{
-                  width: "100%",
-                  fontSize: "8px",
-                  tableLayout: "fixed",
-                }}
-              >
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #000" }}>
-                    <th style={{ textAlign: "left", width: "35%" }}>PRODUTO</th>
-                    <th style={{ textAlign: "center", width: "5%" }}>QTD</th>
-                    <th style={{ textAlign: "center", width: "20%" }}>UN</th>
-                    <th style={{ textAlign: "left", width: "25%" }}>TOTAL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {produtosVendidos.map((item, index) => {
-                    const preco = parseFloat(item.precoVenda);
-                    const quantidade = item.quantidade;
-                    const desconto =
-                      parseFloat(item.desconto?.replace(/\D/g, "") || 0) / 100;
-                    const precoTotalItem = (
-                      preco * quantidade -
-                      desconto
-                    ).toFixed(2);
-
-                    return (
-                      <React.Fragment key={index}>
-                        <tr>
-                          <td style={{ textAlign: "left", paddingLeft: "5px" }}>
-                            {item.nomeDoProduto}
-                          </td>
-                          <td style={{ textAlign: "center" }}>{quantidade}</td>
-                          <td style={{ textAlign: "center" }}>
-                            {preco.toFixed(2)}
-                          </td>
-                          <td style={{ textAlign: "left" }}>
-                            {precoTotalItem}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colSpan={4}>
-                            <hr
-                              style={{
-                                borderTop: "1px dashed #000",
-                                margin: "5px 0",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      </React.Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <p style={{ fontSize: "8px", margin: "5px 0" }}>
-                <span>QTD. TOTAL DE ITENS: {quantidadeTotal}</span>
-              </p>
-              <p style={{ fontSize: "8px", margin: "5px 0" }}>
-                <span>DESCONTO TOTAL: {DescontoNaVenda}</span>
-              </p>
-              <p
-                style={{
-                  fontSize: "9px",
-                  fontWeight: "bold",
-                  margin: "5px 0",
-                }}
-              >
-                <span>VALOR TOTAL R$: {precoTotal}</span>
-              </p>
-              <p style={{ fontSize: "8px", margin: "5px 0" }}>
-                <span>PAGAMENTO: {formaDePagamento}</span>
-              </p>
-              {incluirQrCodeNaNota && (
-                <div
-                  className="qrCode"
-                  style={{ textAlign: "center", margin: "0" }}
-                >
-                  <QRCodeInsta />
-                </div>
-              )}
-              <p
-                style={{
-                  fontSize: "10px",
-                  margin: "0",
-                  paddingTop: incluirQrCodeNaNota ? "0px" : "17px",
-                  textAlign: "center",
-                }}
-              >
-                Obrigado e volte sempre!
-              </p>
-            </div>
-          )}
-        </div>
+        <NotaFiscalVenda
+          produtos={produtosVendidos}
+          quantidadeTotal={quantidadeTotal}
+          descontoTotal={DescontoNaVenda}
+          valorTotal={precoTotal}
+          formaDePagamento={formaDePagamento}
+          pagamentosDivididos={pagamentosDivididos}
+          cliente={pesquisarCliente}
+          incluirQrCode={incluirQrCodeNaNota}
+          onQrReady={handleQrReady}
+        />
       )}
       {alertaQuantidade && (
         <div className="alertaQuantidade">

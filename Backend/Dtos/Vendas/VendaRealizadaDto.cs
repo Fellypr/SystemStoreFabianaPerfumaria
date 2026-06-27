@@ -43,6 +43,9 @@ public class VendaRealizadaDto
 
     [JsonPropertyName("comprador")]
     public string Comprador { get; set; }
+    
+    [JsonPropertyName("funcionario")]
+    public string Funcionario { get; set; }
 
     [JsonPropertyName("diaDaSemana")]
     public string DiaDaSemana { get; set; }
