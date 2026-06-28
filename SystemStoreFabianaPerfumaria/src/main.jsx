@@ -17,6 +17,7 @@ import ProdutosEmEstoque from './Models/pages/ProdudosEmEstoques/ProdutosEmEstoq
 import HistoricoDeFicha from './Models/pages/HistoricoDeFicha/HistoricoDeFicha.jsx'
 import BuscarPreço from './Models/pages/BuscarPreço/BuscarPreço.jsx'
 import MontarKit from './Models/pages/MontarKit/MontarKit.jsx'
+import Comissao from './Models/pages/Comissão/Comissao.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')).render(
                   <Route path='/HistoricoDeFicha' element={<HistoricoDeFicha/>}/>
                   <Route path='/MontarKit' element={<MontarKit/>}/>
                   <Route path='/BuscarPreço' element={<BuscarPreço/>}/>
+                  <Route path='/graciele' element={<Comissao/>}/>
               </Route>
           </Routes> 
     </BrowserRouter>

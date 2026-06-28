@@ -27,8 +27,8 @@ public sealed class VendaService : IVendaService
 
     public Task<List<VendaRealizadaDto>> HistoricoCrediarioAsync(string cliente, DateTime? data) => _repo.HistoricoCrediarioAsync(cliente, data);
 
-    public Task<List<VendaRealizadaDto>> FiltrarAsync(string comprado, string formaDePagamento, DateTime? dataFinal, DateTime? dataInicial) =>
-        _repo.FiltrarAsync(comprado, formaDePagamento, dataFinal, dataInicial);
+    public Task<List<VendaRealizadaDto>> FiltrarAsync(string comprado, string formaDePagamento, string funcionaria, DateTime? dataFinal, DateTime? dataInicial) =>
+        _repo.FiltrarAsync(comprado, formaDePagamento, funcionaria, dataFinal, dataInicial);
 
     public async Task<string> AbaterValorAsync(int idVenda, VendaRealizadaDto atualizar)
     {

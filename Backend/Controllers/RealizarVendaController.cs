@@ -101,12 +101,13 @@ namespace Backend.Controllers
 public async Task<ActionResult> FiltrarVendas(
     [FromQuery] string comprado, 
     [FromQuery] string formaDePagamento, 
+    [FromQuery] string funcionaria,
     [FromQuery] DateTime? dataFinal, 
     [FromQuery] DateTime? dataInicial)
 {
     try
     {
-        return Ok(await _vendaService.FiltrarAsync(comprado, formaDePagamento, dataFinal, dataInicial));
+        return Ok(await _vendaService.FiltrarAsync(comprado, formaDePagamento,funcionaria, dataFinal, dataInicial));
     }
     catch (Exception ex)
     {

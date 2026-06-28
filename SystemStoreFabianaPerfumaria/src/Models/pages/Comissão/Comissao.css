@@ -1,0 +1,532 @@
+:root {
+  --comissao-primary: #c5a059;
+  --comissao-dark: #1f1f1f;
+  --comissao-muted: #747474;
+  --comissao-border: #e7e2d8;
+  --comissao-bg: #f6f7f7;
+  --comissao-white: #ffffff;
+}
+
+.comissao-page {
+  min-height: calc(100vh - 100px);
+  background: var(--comissao-bg);
+  padding: 28px 20px 40px;
+}
+
+.comissao-header,
+.comissao-metrics,
+.comissao-filter-card,
+.comissao-table-card {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.comissao-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.comissao-header span {
+  color: var(--comissao-primary);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.comissao-header h2 {
+  margin: 4px 0 0;
+  color: var(--comissao-dark);
+  font-size: 28px;
+}
+
+.comissao-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.comissao-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 96px;
+  background: var(--comissao-white);
+  border: 1px solid rgba(197, 160, 89, 0.14);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(31, 31, 31, 0.06);
+}
+
+.comissao-metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.comissao-metric-icon.gold {
+  background: #fff6e3;
+  color: var(--comissao-primary);
+}
+
+.comissao-metric-icon.blue {
+  background: #e9f3ff;
+  color: #2674be;
+}
+
+.comissao-metric-icon.green {
+  background: #e9f8ef;
+  color: #219653;
+}
+
+.comissao-metric-card p {
+  margin: 0 0 6px;
+  color: var(--comissao-muted);
+  font-size: 14px;
+}
+
+.comissao-metric-card strong {
+  color: var(--comissao-dark);
+  font-size: 24px;
+}
+
+.comissao-salario-card {
+  min-height: 140px;
+  width: 500px;
+  padding: 16px;
+}
+
+.comissao-salario-content {
+  flex: 1;
+}
+
+.comissao-salario-total {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 22px;
+  color: #219653;
+}
+
+.comissao-salario-breakdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.comissao-salario-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #f8fdfa;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d6f5e3;
+}
+
+.comissao-salario-label {
+  font-size: 10px;
+  color: var(--comissao-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.comissao-salario-value {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--comissao-dark);
+}
+
+.comissao-value {
+  color: #219653;
+}
+
+.comissao-salario-divider {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--comissao-muted);
+}
+
+.comissao-salario-formula {
+  background: #fbfaf8;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--comissao-border);
+}
+
+.comissao-formula-text {
+  font-size: 11px;
+  color: var(--comissao-muted);
+  font-family: monospace;
+  line-height: 1.4;
+}
+
+.comissao-filter-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+  background: var(--comissao-white);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(31, 31, 31, 0.06);
+}
+
+.comissao-filter-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comissao-filter-card label span {
+  color: var(--comissao-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.comissao-filter-card select{
+  width: 250px;
+  height: 44px;
+  border: 1px solid var(--comissao-border);
+  border-radius: 8px;
+  background: #fbfaf8;
+  color: var(--comissao-dark);
+  outline: none;
+}
+.comissao-date-input {
+  width: 200px;
+  height: 44px;
+  border: 1px solid var(--comissao-border);
+  border-radius: 8px;
+  background: #fbfaf8;
+  color: var(--comissao-dark);
+  outline: none;
+}
+
+.comissao-filter-card select {
+  padding: 0 12px;
+}
+
+.comissao-date-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+}
+
+.comissao-date-input svg {
+  color: var(--comissao-primary);
+  flex: 0 0 auto;
+}
+
+.comissao-date-input input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--comissao-dark);
+  outline: none;
+}
+
+.comissao-search-button {
+  height: 44px;
+  min-width: 120px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--comissao-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.comissao-search-button:hover {
+  background: #ad8842;
+  transform: translateY(-1px);
+}
+
+.comissao-table-card {
+  background: var(--comissao-white);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(31, 31, 31, 0.06);
+  overflow: hidden;
+}
+
+.comissao-table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.comissao-table-title h3 {
+  margin: 0;
+  color: var(--comissao-dark);
+  font-size: 18px;
+}
+
+.comissao-table-title span {
+  color: var(--comissao-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.comissao-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.comissao-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.comissao-table th {
+  background: #fbfaf8;
+  color: var(--comissao-muted);
+  font-size: 12px;
+  padding: 14px 20px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.comissao-table td {
+  border-top: 1px solid #f0f0f0;
+  color: var(--comissao-dark);
+  font-size: 14px;
+  padding: 15px 20px;
+}
+
+.comissao-table tbody tr:hover {
+  background: #fffaf0;
+}
+
+.comissao-table-total {
+  font-weight: 800;
+}
+
+.comissao-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 8px;
+  background: #f3ead9;
+  color: #8a6524;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.comissao-empty {
+  height: 120px;
+  color: var(--comissao-muted) !important;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .comissao-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .comissao-filter-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .comissao-search-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .comissao-page {
+    padding: 20px 12px 32px;
+  }
+
+  .comissao-header h2 {
+    font-size: 23px;
+  }
+
+  .comissao-metrics,
+  .comissao-filter-card {
+    grid-template-columns: 1fr;
+  }
+
+  .comissao-table-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.comissao-lock-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px);
+}
+
+.comissao-lock-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.comissao-lock-card {
+  background: var(--comissao-white);
+  border-radius: 16px;
+  padding: 40px 32px;
+  box-shadow: 0 20px 60px rgba(31, 31, 31, 0.12);
+  width: 100%;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  text-align: center;
+}
+
+.comissao-lock-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff6e3 0%, #f3ead9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 36px;
+  color: var(--comissao-primary);
+}
+
+.comissao-lock-title {
+  margin: 0 0 8px;
+  color: var(--comissao-dark);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.comissao-lock-subtitle {
+  margin: 0 0 32px;
+  color: var(--comissao-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.comissao-lock-input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+  background: #fbfaf8;
+  border: 2px solid var(--comissao-border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.comissao-lock-input-wrapper.error {
+  border-color: #ef4444;
+  background: #fef2f2;
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.comissao-lock-input {
+  width: 100%;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.comissao-lock-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.comissao-lock-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--comissao-border);
+  background: var(--comissao-white);
+  transition: all 0.3s ease;
+}
+
+.comissao-lock-dot.filled {
+  background: var(--comissao-primary);
+  border-color: var(--comissao-primary);
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.2);
+}
+
+.comissao-lock-error {
+  margin: 0 0 20px;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.comissao-lock-button {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: var(--comissao-primary);
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.comissao-lock-button:hover:not(:disabled) {
+  background: #ad8842;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
+}
+
+.comissao-lock-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.comissao-lock-button:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 1200px) {
+  .comissao-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .comissao-filter-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .comissao-search-button {
+    width: 100%;
+  }
+}

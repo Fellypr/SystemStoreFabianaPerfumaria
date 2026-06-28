@@ -260,6 +260,7 @@ ORDER BY V.DataDaVenda;";
                 PrecoUnitario = Convert.ToDecimal(reader["PrecoTotal"].ToString(), CultureInfo.InvariantCulture),
                 QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
+                Funcionario = reader["Funcionaria"].ToString(),
                 FormaDePagamento = new List<PagamentoDto>
                 {
                     new PagamentoDto
@@ -277,7 +278,7 @@ ORDER BY V.DataDaVenda;";
         return vendas;
     }
 
-    public async Task<List<VendaRealizadaDto>> FiltrarAsync(string comprado, string formaDePagamento, DateTime? dataFinal, DateTime? dataInicial)
+    public async Task<List<VendaRealizadaDto>> FiltrarAsync(string comprado, string formaDePagamento, string funcionaria, DateTime? dataFinal, DateTime? dataInicial)
     {
         using var connection = _db.CreateConnection();
         await connection.OpenAsync();
@@ -294,12 +295,14 @@ ORDER BY V.DataDaVenda;";
                     V.FormaDePagamento,
                     V.Produtos_Vendidos,
                     V.PrecoTotal AS PrecoTotalVenda,
-                    V.IdVenda
+                    V.IdVenda,
+                    V.Funcionaria
                 FROM Venda V
                 INNER JOIN RealizarVendas RV ON RV.IdVenda = V.IdVenda
                 INNER JOIN CadastroDeCliente CD ON CD.Id_Cliente = V.IdVendaDeCliente
                 WHERE (@comprado IS NULL OR CD.NomeDoCliente LIKE '%' + @comprado + '%') 
-                  AND (@formaDePagamento IS NULL OR V.FormaDePagamento = @formaDePagamento) 
+                  AND (@formaDePagamento IS NULL OR V.FormaDePagamento = @formaDePagamento)
+                  AND (@funcionaria IS NULL OR V.Funcionaria = @funcionaria)
                   AND (@dataFinal IS NULL OR CAST(V.DataDaVenda AS DATE) <= @dataFinal) 
                   AND (@dataInicial IS NULL OR CAST(V.DataDaVenda AS DATE) >= @dataInicial)
                 ORDER BY V.DataDaVenda;";
@@ -307,6 +310,7 @@ ORDER BY V.DataDaVenda;";
         using var command = new SqlCommand(query, connection);
         command.Parameters.AddWithValue("@comprado", (object)comprado ?? DBNull.Value);
         command.Parameters.AddWithValue("@formaDePagamento", (object)formaDePagamento ?? DBNull.Value);
+        command.Parameters.AddWithValue("@funcionaria", (object)funcionaria ?? DBNull.Value);
         command.Parameters.AddWithValue("@dataFinal", (object)dataFinal?.Date ?? DBNull.Value);
         command.Parameters.AddWithValue("@dataInicial", (object)dataInicial?.Date ?? DBNull.Value);
 
@@ -333,7 +337,8 @@ ORDER BY V.DataDaVenda;";
                 ValorNaFicha = reader["ValorNaFicha"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["ValorNaFicha"]),
                 Produtos_Vendidos = reader["Produtos_Vendidos"].ToString(),
                 NumeroDeTelefone = reader["Telefone"].ToString(),
-                PrecoTotal = reader["PrecoTotalVenda"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoTotalVenda"])
+                PrecoTotal = reader["PrecoTotalVenda"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["PrecoTotalVenda"]),
+                Funcionario = reader["Funcionaria"].ToString()
             });
         }
 

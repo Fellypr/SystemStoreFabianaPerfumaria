@@ -42,6 +42,7 @@ const QRCodeInsta = ({ onReady }) => {
 
   return (
     <div className="qrCodeContainer">
+      <br/>
       <div ref={ref} />
     </div>
   );

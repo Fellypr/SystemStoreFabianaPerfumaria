@@ -109,7 +109,6 @@ function HistoricoDeVenda() {
 
   useEffect(() => {
     BuscandoVendas();
-    console.log("olha o historico de vendas de hoje", HistoricoDeVendasDeHoje);
   }, [dataInicio, dataFim, busca, formaDePagamento]);
 
   function limitarNome(nome, limite = 7) {
