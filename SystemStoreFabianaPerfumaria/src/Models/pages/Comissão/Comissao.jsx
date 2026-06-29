@@ -1,19 +1,23 @@
 import "./Comissao.css";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
   FaCalendarAlt,
   FaChartLine,
   FaUserTie,
   FaWallet,
+  FaTimes,
+  FaUser,
+  FaPhone,
+  FaStore,
 } from "react-icons/fa";
 import { IoIosCash } from "react-icons/io";
+import { MdOutlineEdit } from "react-icons/md";
 import { UseComissao } from "../../../hooks/UseComissao";
 
 function Comissao() {
   const {
-    BuscarHistoricoDeVendasParaComissao,
     historicoDeVendas,
     dataInicio,
     setDataInicio,
@@ -28,18 +32,71 @@ function Comissao() {
     totalVendido,
     vendasUnicas,
     baseSalario,
+    setBaseSalario,
     porcentagemComissao,
+    setPorcentagemComissao,
     codigoFuncionario,
     setCodigoFuncionario,
     liberado,
     liberaEntrada,
     erroCodigo,
     setErroCodigo,
+    porcentagemComissaoCrediario,
   } = UseComissao();
 
-  const funcionarios = ["Graciele Emiliano", "Angela Maria"];
+  const funcionarios = ["Graciele", "Angela"];
+  const [vendaSelecionada, setVendaSelecionada] = useState(null);
+  const [modoEdicao, setModoEdicao] = useState(false);
+  const [editBaseSalario, setEditBaseSalario] = useState("");
+  const [editPorcentagem, setEditPorcentagem] = useState("");
 
-  const comissaoVendas = (totalVendido * porcentagemComissao) / 100;
+  // Função para formatar valor para moeda enquanto digita
+  const formatarMoedaInput = (valor) => {
+    // Remove tudo que não é dígito
+    const apenasNumeros = valor.replace(/\D/g, "");
+    // Converte para número e divide por 100 para ter centavos
+    const numero = parseFloat(apenasNumeros) / 100;
+    // Formata como moeda
+    return numero.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
+
+  // Função para converter moeda formatada de volta para número
+  const desformatarMoeda = (valor) => {
+    return parseFloat(
+      valor.replace(/[R$.\s]/g, "").replace(",", ".")
+    );
+  };
+
+  // Inicia o modo de edição com os valores atuais
+  const iniciarEdicao = () => {
+    // Como o formatador espera centavos, multiplicamos por 100
+    const valorEmCentavos = Math.round(baseSalario * 100).toString();
+    setEditBaseSalario(formatarMoedaInput(valorEmCentavos));
+    setEditPorcentagem(porcentagemComissao.toString());
+    setModoEdicao(true);
+  };
+
+  // Salva as alterações
+  const salvarEdicao = () => {
+    const novaBase = desformatarMoeda(editBaseSalario) || 0;
+    const novaPorcentagem = parseFloat(editPorcentagem) || 0;
+    setBaseSalario(novaBase);
+    setPorcentagemComissao(novaPorcentagem);
+    setModoEdicao(false);
+  };
+
+  const comissaoVendas = vendasUnicas.reduce((total, venda) => {
+    const valorVenda = venda.precoTotal;
+    const isCrediario = textoFormaPagamento(venda) === "Crediario";
+    const porcentagem = isCrediario
+      ? porcentagemComissaoCrediario
+      : porcentagemComissao;
+    const comissaoDaVenda = (valorVenda * porcentagem) / 100;
+    return total + comissaoDaVenda;
+  }, 0);
 
   function handleInputChange(e) {
     const value = e.target.value.replace(/\D/g, "").slice(0, 4);
@@ -51,6 +108,24 @@ function Comissao() {
     if (e.key === "Enter") {
       liberaEntrada();
     }
+  }
+  useEffect(() => {
+    console.log("aqui estar as vendas unicas", vendasUnicas);
+    console.log("aqui estar o historico de vendas", historicoDeVendas);
+    console.log("aqui estar a comissao", comissaoVendas);
+  }, [vendasUnicas, historicoDeVendas]);
+
+  function abrirDetalhesVenda(venda) {
+    setVendaSelecionada(venda);
+  }
+
+  function fecharDetalhesVenda() {
+    setVendaSelecionada(null);
+  }
+
+  // Função para pegar todos os produtos da venda (pelo idVenda)
+  function getProdutosDaVenda(idVenda) {
+    return historicoDeVendas.filter((item) => item.idVenda === idVenda);
   }
 
   if (!liberado) {
@@ -79,7 +154,9 @@ function Comissao() {
                 Digite o código de 4 dígitos para acessar a página de comissões
               </p>
 
-              <div className={`comissao-lock-input-wrapper ${erroCodigo ? "error" : ""}`}>
+              <div
+                className={`comissao-lock-input-wrapper ${erroCodigo ? "error" : ""}`}
+              >
                 <input
                   type="password"
                   maxLength={4}
@@ -101,7 +178,9 @@ function Comissao() {
               </div>
 
               {erroCodigo && (
-                <p className="comissao-lock-error">Código incorreto. Tente novamente.</p>
+                <p className="comissao-lock-error">
+                  Código incorreto. Tente novamente.
+                </p>
               )}
 
               <button
@@ -177,29 +256,69 @@ function Comissao() {
             </div>
             <div className="comissao-salario-content">
               <p>Salário Total</p>
-              <strong className="comissao-salario-total">{formatarMoeda(baseSalario + comissaoVendas)}</strong>
+              <strong className="comissao-salario-total">
+                {formatarMoeda(baseSalario + comissaoVendas)}
+              </strong>
               <div className="comissao-salario-breakdown">
                 <div className="comissao-salario-item">
                   <span className="comissao-salario-label">Base</span>
-                  <span className="comissao-salario-value">{formatarMoeda(baseSalario)}</span>
+                  <span className="comissao-salario-value">
+                    {formatarMoeda(baseSalario)}
+                  </span>
                 </div>
                 <div className="comissao-salario-divider">+</div>
                 <div className="comissao-salario-item">
                   <span className="comissao-salario-label">Comissão</span>
-                  <span className="comissao-salario-value comissao-value">{formatarMoeda(comissaoVendas)}</span>
-                  
+                  <span className="comissao-salario-value comissao-value">
+                    {formatarMoeda(comissaoVendas)}
+                  </span>
                 </div>
               </div>
               <div className="comissao-salario-formula">
-                <span className="comissao-formula-text">
-                  {formatarMoeda(baseSalario)} + ({formatarMoeda(totalVendido)} × {porcentagemComissao}%)
-                  <span>÷100</span>
-                </span>
+                {!modoEdicao ? (
+                  <span className="comissao-formula-text">
+                    {formatarMoeda(baseSalario)} + ({formatarMoeda(totalVendido)}{" "}
+                    × {porcentagemComissao}%)
+                    {" "}
+                    <span>÷100</span>
+                    <div className="editar-comissao" onClick={iniciarEdicao}>
+                      <MdOutlineEdit size={15}/>
+                    </div>
+                  </span>
+                ) : (
+                  <div className="comissao-edicao-formula">
+                    <input
+                      type="text"
+                      value={editBaseSalario}
+                      onChange={(e) => setEditBaseSalario(formatarMoedaInput(e.target.value))}
+                      className="comissao-input-edicao"
+                      placeholder="Salário Base"
+                    />
+                    <span className="comissao-operador">+</span>
+                    <span className="comissao-valor-fixo">({formatarMoeda(totalVendido)}</span>
+                    <span className="comissao-operador">×</span>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={editPorcentagem}
+                      onChange={(e) => setEditPorcentagem(e.target.value)}
+                      className="comissao-input-edicao comissao-input-porcentagem"
+                      placeholder="%"
+                    />
+                    <span className="comissao-valor-fixo">%)</span>
+                    <span className="comissao-operador">÷100</span>
+                    <button className="comissao-salvar-edicao" onClick={salvarEdicao}>
+                      ✓
+                    </button>
+                    <button className="comissao-cancelar-edicao" onClick={() => setModoEdicao(false)}>
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </section>
-        
 
         <form className="comissao-filter-card">
           <label>
@@ -272,6 +391,7 @@ function Comissao() {
                   <th>Cliente</th>
                   <th>Pagamento</th>
                   <th>Total</th>
+                  <th>Comissao</th>
                   <th>Data</th>
                 </tr>
               </thead>
@@ -280,6 +400,8 @@ function Comissao() {
                   vendasUnicas.map((venda, index) => (
                     <tr
                       key={`${venda.idVenda ?? venda.IdVenda}-${venda.id_produto ?? venda.nomeDoProduto ?? index}-${index}`}
+                      onClick={() => abrirDetalhesVenda(venda)}
+                      className="comissao-table-row-clickable"
                     >
                       <td>{venda.funcionario || "Nao informado"}</td>
                       <td>{venda.comprador || "Cliente nao informado"}</td>
@@ -291,6 +413,13 @@ function Comissao() {
                       <td className="comissao-table-total">
                         {formatarMoeda(venda.precoTotal)}
                       </td>
+                      <td className="comissao-table-comissao">
+                        {textoFormaPagamento(venda) === "Crediario"
+                          ? formatarMoeda((venda.precoTotal * 0.5) / 100)
+                          : formatarMoeda(
+                              (venda.precoTotal * porcentagemComissao) / 100,
+                            )}
+                      </td>
                       <td>
                         {venda.dataDaVenda
                           ? format(new Date(venda.dataDaVenda), "dd/MM/yyyy")
@@ -301,7 +430,8 @@ function Comissao() {
                 ) : (
                   <tr>
                     <td colSpan="5" className="comissao-empty">
-                      Selecione a funcionaria acima para consultar as vendas e comissões.
+                      Selecione a funcionaria acima para consultar as vendas e
+                      comissões.
                     </td>
                   </tr>
                 )}
@@ -309,6 +439,126 @@ function Comissao() {
             </table>
           </div>
         </section>
+
+        {/* Modal de detalhes da venda */}
+        {vendaSelecionada && (
+          <div className="comissao-modal-overlay" onClick={fecharDetalhesVenda}>
+            <div
+              className="comissao-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="comissao-modal-close"
+                onClick={fecharDetalhesVenda}
+              >
+                <FaTimes />
+              </button>
+
+              <div className="comissao-modal-header">
+                <h2 className="comissao-modal-title">Detalhes da Venda</h2>
+              </div>
+
+              <div className="comissao-modal-body">
+                {/* Informações básicas */}
+                <div className="comissao-modal-section">
+                  <h3 className="comissao-modal-section-title">
+                    Dados da Venda
+                  </h3>
+                  <div className="comissao-modal-grid">
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">Funcionário</span>
+                      <div className="comissao-modal-value flex items-center gap-2">
+                        <FaUserTie className="text-amber-700" />
+                        {vendaSelecionada.funcionario || "Não informado"}
+                      </div>
+                    </div>
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">Cliente</span>
+                      <div className="comissao-modal-value flex items-center gap-2">
+                        <FaUser className="text-gray-600" />
+                        {vendaSelecionada.comprador || "Não informado"}
+                      </div>
+                    </div>
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">Telefone</span>
+                      <div className="comissao-modal-value flex items-center gap-2">
+                        <FaPhone className="text-green-600" />
+                        {vendaSelecionada.numeroDeTelefone || "Não informado"}
+                      </div>
+                    </div>
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">Data e Hora</span>
+                      <div className="comissao-modal-value flex items-center gap-2">
+                        <FaCalendarAlt className="text-blue-600" />
+                        {vendaSelecionada.dataDaVenda
+                          ? format(
+                              new Date(vendaSelecionada.dataDaVenda),
+                              "dd/MM/yyyy HH:mm",
+                            )
+                          : "--"}
+                      </div>
+                    </div>
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">
+                        Forma de Pagamento
+                      </span>
+                      <div className="comissao-modal-value">
+                        <span className="comissao-badge">
+                          {textoFormaPagamento(vendaSelecionada)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="comissao-modal-item">
+                      <span className="comissao-modal-label">Total</span>
+                      <div className="comissao-modal-value font-bold text-green-600 text-xl">
+                        {formatarMoeda(vendaSelecionada.precoTotal)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="comissao-modal-section">
+                  <h3 className="comissao-modal-section-title">
+                    Produtos Vendidos
+                  </h3>
+                  <div className="comissao-modal-products">
+                    {getProdutosDaVenda(vendaSelecionada.idVenda).map(
+                      (produto, idx) => (
+                        <div key={idx} className="comissao-modal-product-item">
+                          <div className="comissao-modal-product-info">
+                            <p className="comissao-modal-product-name">
+                              {produto.nomeDoProduto}
+                            </p>
+                            <p className="comissao-modal-product-qty">
+                              Quantidade: {produto.quantidade}
+                            </p>
+                          </div>
+                          <div className="comissao-modal-product-price">
+                            <p className="comissao-modal-product-unit">
+                              {formatarMoeda(produto.precoUnitario)}
+                              <span className="comissao-unitaria">
+                                Comissão:{" "}
+                                {textoFormaPagamento(produto) === "Crediario"
+                                  ? formatarMoeda(
+                                      (produto.precoUnitario * 0.5) / 100,
+                                    )
+                                  : formatarMoeda(
+                                      (produto.precoUnitario *
+                                        porcentagemComissao) /
+                                        100,
+                                    )}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

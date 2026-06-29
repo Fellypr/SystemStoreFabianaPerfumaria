@@ -3,12 +3,23 @@ import axios from "axios";
 export function UseComissao() {
   const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
   const [historicoDeVendas, setHistoricoDeVendas] = useState([]);
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  const [dataInicio, setDataInicio] = useState(() => {
+    const dataAtual = new Date();
+    const primeiroDiaDoMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1);
+    const dataFormatada = primeiroDiaDoMes.toISOString().split("T")[0];
+    return dataFormatada;
+  });
+  const [dataFim, setDataFim] = useState(() => {
+    const dataAtual = new Date();
+    const ultimoDiaDoMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth() + 1, 0);
+    const dataFormatada = ultimoDiaDoMes.toISOString().split("T")[0];
+    return dataFormatada;
+  });
   const [formaDePagamento, setFormaDePagamento] = useState("");
   const [nomeFuncionario, setNomeFuncionario] = useState("");
   const [baseSalario, setBaseSalario] = useState(1000);
-  const [porcentagemComissao, setPorcentagemComissao] = useState(1);
+  const [porcentagemComissao, setPorcentagemComissao] = useState(1.5);
+  const [porcentagemComissaoCrediario, setPorcentagemComissaoCrediario] = useState(0.5);
   const [codigoFuncionario, setCodigoFuncionario] = useState("");
   const [liberado, setLiberado] = useState(false);
 
@@ -50,7 +61,6 @@ export function UseComissao() {
   
   useEffect(() => {
     BuscarHistoricoDeVendasParaComissao();
-    console.log(historicoDeVendas);
   }, [nomeFuncionario, formaDePagamento, dataInicio, dataFim]);
     const { vendasUnicas, totalVendido} = useMemo(() => {
       const unicas = Object.values(
@@ -105,5 +115,7 @@ export function UseComissao() {
     liberaEntrada,
     erroCodigo,
     setErroCodigo,
+    porcentagemComissaoCrediario,
+    setPorcentagemComissaoCrediario,
   };
 }

@@ -8,7 +8,7 @@ const CardConfirmaçãoDeVenda = ({ FinalizarVenda, AbrirNota, setShowRealizarVe
   const [funcionario, setFuncionario] = useState("");
   const [erroFuncionario, setErroFuncionario] = useState("");
 
-  const funcionarios = ["Graciele Emiliano", "Angela Maria"];
+  const funcionarios = ["Graciele", "Angela"];
 
   const handleDismiss = () => {
     setShowRealizarVenda(false);

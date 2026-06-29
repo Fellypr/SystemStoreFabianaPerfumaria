@@ -159,6 +159,7 @@
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid var(--comissao-border);
+  gap: 6px;
 }
 
 .comissao-formula-text {
@@ -166,6 +167,16 @@
   color: var(--comissao-muted);
   font-family: monospace;
   line-height: 1.4;
+  display: flex;
+}
+.editar-comissao{
+  margin-left: 20px;
+}
+.editar-comissao:hover{
+  cursor: pointer;
+  color: var(--comissao-primary);
+  scale: 1.1;
+
 }
 
 .comissao-filter-card {
@@ -515,18 +526,301 @@
   opacity: 0.6;
 }
 
-@media (max-width: 1200px) {
-  .comissao-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+/* Estilos para linhas clicáveis na tabela */
+.comissao-table-row-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comissao-table-row-clickable:hover {
+  background-color: #fffaf0 !important;
+}
+
+/* Estilos para o modal de detalhes da venda */
+.comissao-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.comissao-modal-content {
+  background: var(--comissao-white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.comissao-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--comissao-muted);
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.comissao-modal-close:hover {
+  background: #e5e7eb;
+  color: var(--comissao-dark);
+}
+
+.comissao-modal-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--comissao-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comissao-modal-title {
+  margin: 0;
+  color: var(--comissao-dark);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.comissao-modal-id {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--comissao-primary);
+  background: #fff6e3;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.comissao-modal-body {
+  padding: 20px 24px 24px;
+}
+
+.comissao-modal-section {
+  margin-bottom: 24px;
+}
+
+.comissao-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.comissao-modal-section-title {
+  margin: 0 0 16px;
+  color: var(--comissao-dark);
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comissao-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.comissao-modal-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.comissao-modal-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--comissao-muted);
+  text-transform: uppercase;
+}
+
+.comissao-modal-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--comissao-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comissao-modal-value .flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comissao-modal-value .text-amber-700 {
+  color: #b45309;
+}
+
+.comissao-modal-value .text-gray-600 {
+  color: #4b5563;
+}
+
+.comissao-modal-value .text-green-600 {
+  color: #16a34a;
+}
+
+.comissao-modal-value .text-blue-600 {
+  color: #2563eb;
+}
+
+.comissao-modal-value .font-bold {
+  font-weight: 800;
+}
+
+.comissao-modal-value .text-xl {
+  font-size: 20px;
+}
+
+.comissao-modal-products {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comissao-modal-product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: #fbfaf8;
+  border-radius: 10px;
+  border: 1px solid var(--comissao-border);
+}
+
+.comissao-modal-product-info {
+  flex: 1;
+}
+
+.comissao-modal-product-name {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--comissao-dark);
+}
+
+.comissao-modal-product-qty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--comissao-muted);
+  font-weight: 500;
+}
+
+.comissao-modal-product-price {
+  text-align: right;
+}
+.comissao-unitaria {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--comissao-muted);
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+}
+
+.comissao-modal-product-unit {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--comissao-dark);
+}
+
+@media (max-width: 620px) {
+  .comissao-modal-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 980px) {
-  .comissao-filter-card {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.editar-comissao {
+  cursor: pointer;
+  color: var(--comissao-primary);
+  transition: all 0.2s ease;
+  padding: 4px;
+  border-radius: 4px;
+}
 
-  .comissao-search-button {
-    width: 100%;
-  }
+.editar-comissao:hover {
+  background-color: rgba(197, 160, 89, 0.1);
+  transform: scale(1.1);
+}
+
+.comissao-edicao-formula {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.comissao-input-edicao {
+  padding: 4px 8px;
+  border: 1px solid var(--comissao-border);
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--comissao-dark);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.comissao-input-edicao:focus {
+  border-color: var(--comissao-primary);
+  box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.2);
+}
+
+.comissao-input-porcentagem {
+  width: 60px;
+}
+
+.comissao-operador {
+  font-weight: 700;
+  color: var(--comissao-muted);
+}
+
+.comissao-valor-fixo {
+  font-weight: 600;
+  color: var(--comissao-muted);
+}
+
+.comissao-salvar-edicao,
+.comissao-cancelar-edicao {
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comissao-salvar-edicao {
+  background-color: #219653;
+  color: white;
+}
+
+.comissao-salvar-edicao:hover {
+  background-color: #1976d2;
+}
+
+.comissao-cancelar-edicao {
+  background-color: #ef4444;
+  color: white;
+}
+
+.comissao-cancelar-edicao:hover {
+  background-color: #d32f2f;
 }
