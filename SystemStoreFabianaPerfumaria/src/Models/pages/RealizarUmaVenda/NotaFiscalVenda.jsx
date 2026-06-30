@@ -67,11 +67,11 @@ export default function NotaFiscalVenda({
           Emissao: {dataEmissao.toLocaleDateString("pt-BR")}{" "}
           {dataEmissao.toLocaleTimeString("pt-BR")}
         </p>
-        {cliente && <p className="nota-info">Cliente: {cliente}</p>}
+        {cliente && <p className="nota-info-cliente">Cliente: {cliente}</p>}
         <hr className="nota-sep" />
 
         <table className="nota-produtos">
-          <thead>
+          <thead className="nota-produtos-head">
             <tr>
               <th className="nota-produto">PRODUTO</th>
               <th className="nota-qtd">QTD</th>
@@ -79,7 +79,7 @@ export default function NotaFiscalVenda({
               <th className="nota-valor">TOTAL</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="nota-produtos-body">
             {produtos.map((item, index) => {
               const preco = Number.parseFloat(item.precoVenda) || 0;
               const totalItem = calcularTotalItem(item);

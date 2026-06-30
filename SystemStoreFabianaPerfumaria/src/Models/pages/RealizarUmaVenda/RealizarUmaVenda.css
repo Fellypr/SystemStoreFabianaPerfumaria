@@ -835,9 +835,9 @@
 }
 
 .nota-loja {
-  margin: 4px 0;
+  margin-right: 100px;
   text-align: center;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -845,7 +845,6 @@
 .nota-endereco,
 .nota-titulo,
 .nota-info,
-.nota-total,
 .nota-rodape {
   margin: 4px 0;
 }
@@ -854,18 +853,26 @@
 .nota-titulo,
 .nota-rodape {
   text-align: center;
+  margin-right: 100px;
 }
 
 .nota-endereco,
-.nota-titulo,
-.nota-info {
+.nota-titulo{
   font-size: 9px;
+}
+.nota-info{
+  font-size: 8px;
+}
+.nota-info-cliente {
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .nota-sep {
   border: 0;
   border-top: 1px dashed #000;
   margin: 5px 0;
+  margin-right: 110px;
 }
 
 .nota-sep-item {
@@ -873,10 +880,10 @@
 }
 
 .nota-produtos {
-  width: 100%;
+  width: 60%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 9px;
+  font-size: 7px;
 }
 
 .nota-produtos th {
@@ -887,28 +894,29 @@
 .nota-produtos th,
 .nota-produtos td {
   padding: 1px 2px;
-  vertical-align: top;
+  vertical-align: center;
 }
 
 .nota-produto {
-  width: 40%;
+  width: 32%;
   text-align: left;
   word-break: break-word;
+  font-size: 7px;
 }
 
 .nota-qtd {
-  width: 10%;
+  width: 2%;
   text-align: center;
 }
 
 .nota-valor {
-  width: 25%;
+  width: 15%;
   text-align: right;
   white-space: nowrap;
 }
 
 .nota-total {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 700;
 }
 
@@ -964,7 +972,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin: 2px 0 0;
+  margin-right: 100px;
   text-align: center;
 }
 
@@ -976,7 +984,7 @@
 @media print {
   @page{
     margin: 0;
-    size:80mm auto;
+    size:72mm 10mm auto;
   }
 
   body,html,* {
