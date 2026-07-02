@@ -52,11 +52,14 @@ function HistoricoDeFicha() {
         `${url}/RealizarVenda/HistoricoCrediario?cliente=${searchCliente}&data=${searchDate}`
       );
       setFichas(response.data);
-    } catch {}
+    } catch (error) {
+      console.error("Erro ao buscar fichas:",error);
+    }
   }
 
   useEffect(() => {
     BuscarClienteComFichaEmAberto();
+
   }, [searchCliente, searchDate]);
 
   async function AbaterValor() {

@@ -229,7 +229,9 @@ SELECT
     CD.Telefone,
     RV.PrecoTotal,
     V.DataDaVenda,
+    CD.Id_Cliente,
     CD.NomeDoCliente,
+    V.Funcionaria,
     V.ValorNaFicha,
     V.FormaDePagamento,
     V.Produtos_Vendidos,
@@ -256,11 +258,12 @@ ORDER BY V.DataDaVenda;";
             {
                 IdVenda = Convert.ToInt32(reader["IdVenda"]),
                 NomeDoProduto = reader["NomeDoProduto"].ToString(),
+                IdCliente = Convert.ToInt32(reader["Id_Cliente"]),
+                Funcionario = reader["Funcionaria"].ToString() ?? "Não informado",
                 Comprador = reader["NomeDoCliente"].ToString(),
                 PrecoUnitario = Convert.ToDecimal(reader["PrecoTotal"].ToString(), CultureInfo.InvariantCulture),
                 QuantidadeTotal = Convert.ToInt32(reader["QuantidadeTotal"]),
                 DataDaVenda = Convert.ToDateTime(reader["DataDaVenda"]),
-                Funcionario = reader["Funcionaria"].ToString(),
                 FormaDePagamento = new List<PagamentoDto>
                 {
                     new PagamentoDto

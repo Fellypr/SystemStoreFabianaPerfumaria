@@ -41,11 +41,14 @@ public class VendaRealizadaDto
     [JsonPropertyName("valorNaFicha")]
     public decimal ValorNaFicha { get; set; }
 
+    [JsonPropertyName("idCliente")]
+    public int? IdCliente { get; set; }
+
     [JsonPropertyName("comprador")]
     public string Comprador { get; set; }
     
     [JsonPropertyName("funcionario")]
-    public string Funcionario { get; set; }
+    public string? Funcionario { get; set; }
 
     [JsonPropertyName("diaDaSemana")]
     public string DiaDaSemana { get; set; }
