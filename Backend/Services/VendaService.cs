@@ -30,9 +30,9 @@ public sealed class VendaService : IVendaService
     public Task<List<VendaRealizadaDto>> FiltrarAsync(string comprado, string formaDePagamento, string funcionaria, DateTime? dataFinal, DateTime? dataInicial) =>
         _repo.FiltrarAsync(comprado, formaDePagamento, funcionaria, dataFinal, dataInicial);
 
-    public async Task<string> AbaterValorAsync(int idVenda, VendaRealizadaDto atualizar)
+    public async Task<string> AbaterValorAsync(int idVenda,int idCliente, VendaRealizadaDto atualizar)
     {
-        await _repo.AbaterValorNaFichaAsync(idVenda, atualizar.ValorNaFicha);
+        await _repo.AbaterValorNaFichaAsync(idVenda, idCliente, atualizar.ValorNaFicha);
         return "Valor abatido com sucesso";
     }
 

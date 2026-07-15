@@ -116,14 +116,15 @@ public async Task<ActionResult> FiltrarVendas(
 }
 
 
-        [HttpPost("AbaterValor/{idVenda}")]
+        [HttpPost("AbaterValor/{idVenda}/{idCliente}")]
         public async Task<ActionResult> AbaterValorNaFicha(
     int idVenda,
+    int idCliente,
     [FromBody] VendaRealizadaDto atualizar)
         {
             try
             {
-                var msg = await _vendaService.AbaterValorAsync(idVenda, atualizar);
+                var msg = await _vendaService.AbaterValorAsync(idVenda,idCliente, atualizar);
                 return Ok(msg);
             }
             catch (Exception ex)

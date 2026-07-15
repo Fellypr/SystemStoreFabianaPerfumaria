@@ -348,7 +348,7 @@ ORDER BY V.DataDaVenda;";
         return vendas;
     }
 
-    public async Task AbaterValorNaFichaAsync(int idVenda, decimal valor)
+    public async Task AbaterValorNaFichaAsync(int idVenda, int idCliente, decimal valor)
     {
         using var connection = _db.CreateConnection();
         await connection.OpenAsync();
@@ -357,14 +357,28 @@ ORDER BY V.DataDaVenda;";
         try
         {
             const string updateQuery = @"
-                        UPDATE Venda 
-                        SET ValorNaFicha = ValorNaFicha - @Valor
-                        WHERE IdVenda = @IdVenda";
+                WITH CalculoAbatimento AS (
+    SELECT 
+        IdVenda,
+        ValorNaFicha,
+        SUM(ValorNaFicha) OVER (PARTITION BY IdVendaDeCliente ORDER BY IdVenda) as soma_acumulada
+    FROM Venda
+    WHERE IdVendaDeCliente = @IdVendaDeCliente AND FormaDePagamento = 'Crediario'
+)
+UPDATE c
+SET c.ValorNaFicha = CASE 
+    WHEN c.soma_acumulada <= @Valor THEN 0
+    WHEN c.soma_acumulada - c.ValorNaFicha < @Valor THEN c.soma_acumulada - @Valor
+    ELSE c.ValorNaFicha
+END
+FROM CalculoAbatimento c;
+            ";
 
             using (var cmdUpdate = new SqlCommand(updateQuery, connection, transaction))
             {
                 cmdUpdate.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
                 cmdUpdate.Parameters.Add("@Valor", SqlDbType.Decimal).Value = valor;
+                cmdUpdate.Parameters.Add("@IdVendaDeCliente", SqlDbType.Int).Value = idCliente;
 
                 var rows = await cmdUpdate.ExecuteNonQueryAsync();
                 if (rows == 0)
