@@ -1,22 +1,43 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "./HistoricoDeFicha.css";
 import { FcViewDetails } from "react-icons/fc";
 import { LuPrinter } from "react-icons/lu";
 import { IoClose } from "react-icons/io5";
 import { MdDone } from "react-icons/md";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 
 function HistoricoDeFicha() {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const stateFromNavigate = location.state;
+
+  const clienteNomeParam = searchParams.get("clienteNome");
+  const clienteIdParam = searchParams.get("clienteId");
+  const abrirModalParam = searchParams.get("abrirModal");
+
+  const clienteNomeInicial =
+    stateFromNavigate?.clienteNome ??
+    (clienteNomeParam ? decodeURIComponent(clienteNomeParam) : "");
+  const clienteIdInicial =
+    stateFromNavigate?.clienteId ??
+    (clienteIdParam && clienteIdParam !== "" ? Number(clienteIdParam) : null);
+  const abrirModalInicial = Boolean(
+    stateFromNavigate?.abrirModal ?? abrirModalParam === "1",
+  );
+
   const [isOpen, setIsOpen] = useState(false);
   const [fichas, setFichas] = useState([]);
   const [abaterFicha, setAbaterFicha] = useState(false);
   const [fichaSelacionada, setFichaSelecionada] = useState([]);
-  const [searchCliente, setSearchCliente] = useState("");
+  const [searchCliente, setSearchCliente] = useState(clienteNomeInicial);
   const [searchDate, setSearchDate] = useState("");
   const [valorNaFicha, setValorNaFicha] = useState("R$ 0,00");
+  const idClienteViaLinkRef = useRef(clienteIdInicial);
+  const abrirModalViaLinkRef = useRef(abrirModalInicial);
+  const tentativasAbrirModalRef = useRef(0);
   const url = import.meta.env.VITE_IP_PARA_USAR_NO_MOMENTO;
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
@@ -159,6 +180,39 @@ function HistoricoDeFicha() {
   );
   console.log("aqui estar os donos da ficha", dono_da_ficha);
   console.log("aqui estar as vendas selecionadas", fichaSelacionada);
+
+  useEffect(() => {
+    if (!abrirModalViaLinkRef.current) return;
+    if (!dono_da_ficha?.length) return;
+
+    const idAlvo = idClienteViaLinkRef.current;
+    const nomeAlvo =
+      stateFromNavigate?.clienteNome ??
+      (clienteNomeParam ? decodeURIComponent(clienteNomeParam) : null);
+    let itemEncontrado = null;
+
+    if (idAlvo != null) {
+      itemEncontrado = dono_da_ficha.find((item) => item.id === idAlvo);
+    }
+    if (!itemEncontrado && nomeAlvo) {
+      const nome = String(nomeAlvo).toLowerCase().trim();
+      itemEncontrado = dono_da_ficha.find(
+        (item) => String(item.comprador ?? "").toLowerCase().trim() === nome,
+      );
+    }
+
+    if (itemEncontrado) {
+      tentativasAbrirModalRef.current = 0;
+      abrirModalViaLinkRef.current = false;
+      toggleModal(itemEncontrado.id);
+      return;
+    }
+
+    tentativasAbrirModalRef.current = (tentativasAbrirModalRef.current || 0) + 1;
+    if (tentativasAbrirModalRef.current > 10) {
+      abrirModalViaLinkRef.current = false;
+    }
+  }, [fichas]);
 
   return (
     <main>

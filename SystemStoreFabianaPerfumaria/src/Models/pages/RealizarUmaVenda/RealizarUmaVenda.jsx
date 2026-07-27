@@ -40,6 +40,7 @@ function RealizarVendaTest() {
   const [ficha, setFicha] = useState("R$ 0,00");
   const [cliente, setcliente] = useState([]);
   const [pesquisarCliente, setPesquisarCliente] = useState("");
+  const [idClienteSelecionado, setIdClienteSelecionado] = useState(null);
   const [DescontoNaVenda, setDescontoNaVenda] = useState("R$ 0,00");
   const [valorDaFichaEmAberto, setValorDaFichaEmAberto] = useState([]);
   const [abrirNota, setAbrirNota] = useState(null);
@@ -180,8 +181,9 @@ function RealizarVendaTest() {
     item.nomeDoCliente.toLowerCase().includes(pesquisarCliente.toLowerCase()),
   );
 
-  function AdicionandoCliente(nome) {
+  function AdicionandoCliente(nome, id) {
     setPesquisarCliente(nome);
+    setIdClienteSelecionado(id ?? null);
     setcliente([]);
   }
 
@@ -262,9 +264,6 @@ function RealizarVendaTest() {
     setShowPrecoAdquirido(false);
     setAtivarFuncaoEditarDinheiro(false);
   };
-  useEffect(() => {
-    console.log(produtosVendidos);
-  }, [produtosVendidos]);
 
   useEffect(() => {
     if (alertaQuantidade !== null) {
@@ -397,6 +396,7 @@ function RealizarVendaTest() {
       setFicha("R$ 0,00");
       setcliente("");
       setPesquisarCliente("");
+      setIdClienteSelecionado(null);
       setDescontoNaVenda("R$ 0,00");
     } catch (error) {
       const msg = parseApiError(error);
@@ -445,6 +445,7 @@ function RealizarVendaTest() {
         },
       );
       setValorDaFichaEmAberto(response.data);
+      console.log(response.data);
     } catch (error) {}
   }
 
@@ -548,7 +549,7 @@ function RealizarVendaTest() {
                   <button
                     className="ContainerButton"
                     key={clientes.Id_Cliente}
-                    onClick={() => AdicionandoCliente(clientes.nomeDoCliente)}
+                    onClick={() => AdicionandoCliente(clientes.nomeDoCliente, clientes.Id_Cliente)}
                   >
                     <FaUser fontSize={50} />
                     <div className="InformacoesDeClienteFiltrados">
@@ -913,11 +914,48 @@ function RealizarVendaTest() {
           </div>
           {valorDaFichaEmAberto.length > 0 ? (
             <div className="AlertaDeFichaNaoPaga">
-              <h2>⚠️ Alerta De Ficha Não Paga</h2>
-              <p>O Cliente Estar Na Lista De Ficha Pendentes</p>
-              <div className="Tempo"></div>
+              <div className="alerta-header">
+                <div className="alerta-icon-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div className="alerta-textos">
+                  <h2>Ficha em Aberto</h2>
+                  <p>O cliente está na lista de fichas pendentes</p>
+                </div>
+              </div>
+              <Link
+                to={{
+                  pathname: "/HistoricoDeFicha",
+                  search: `?clienteId=${idClienteSelecionado ?? ""}&clienteNome=${encodeURIComponent(pesquisarCliente || "")}&abrirModal=1`,
+                }}
+                state={{
+                  clienteNome: pesquisarCliente,
+                  clienteId: idClienteSelecionado,
+                  abrirModal: true,
+                }}
+                className="link-ver-ficha"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Ver Ficha do Cliente
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </Link>
+              <div className="alerta-progresso">
+                <div className="progresso-barra"></div>
+              </div>
             </div>
-          ) : (
+           ) : (
             ""
           )}
         </section>
@@ -938,9 +976,22 @@ function RealizarVendaTest() {
       )}
       {alertaQuantidade && (
         <div className="alertaQuantidade">
-          <p>⚠️Lembrete⚠️</p>
-          <p>Esse Produto Tem Apenas 1 Unidade</p>
-          <div className="line"></div>
+          <div className="alerta-qtd-header">
+            <div className="alerta-qtd-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div className="alerta-qtd-textos">
+              <h3>Lembrete</h3>
+              <p>Este produto tem apenas 1 unidade em estoque</p>
+            </div>
+          </div>
+          <div className="alerta-qtd-progresso">
+            <div className="qtd-progresso-barra"></div>
+          </div>
         </div>
       )}
 

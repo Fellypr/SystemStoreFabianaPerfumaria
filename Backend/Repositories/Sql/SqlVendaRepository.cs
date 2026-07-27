@@ -440,7 +440,7 @@ FROM CalculoAbatimento c;
         using var connection = _db.CreateConnection();
         await connection.OpenAsync();
 
-        const string query = "SELECT * FROM Venda WHERE ValorNaFicha > 0 AND NomeDoComprado = @NomeDoComprado";
+        const string query = "SELECT * FROM Venda WHERE ValorNaFicha > 0 AND NomeDoComprado = @NomeDoComprado AND DataDaVenda >= DATEADD(DAY,-30,GETDATE())";
         using var cmd = new SqlCommand(query, connection);
         cmd.Parameters.AddWithValue("@NomeDoComprado", fichaEmAberto);
 
