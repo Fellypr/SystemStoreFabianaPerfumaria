@@ -27,7 +27,7 @@ export function UseAdicionarProdutoCodigo() {
         setLoading(true);
         try {
             let connection = new signalR.HubConnectionBuilder()
-                .withUrl("http://192.168.1.190:5080/scrapingHub")
+                .withUrl("http://192.168.1.190:5080/scrapingHub")//Aqui !!!!!!! caso esteja desatualizado "pip install --upgrade undetected-chromedriver"
                 .withAutomaticReconnect()
                 .build();
 

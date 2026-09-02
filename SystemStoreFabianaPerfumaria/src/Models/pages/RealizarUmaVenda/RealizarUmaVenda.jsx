@@ -58,6 +58,8 @@ function RealizarVendaTest() {
   const [ativarFuncaoEditarDinheiro, setAtivarFuncaoEditarDinheiro] =
     useState(false);
   const [loadingSucesso, setLoadingSucesso] = useState(false);
+  const [showPagamentoWarning, setShowPagamentoWarning] = useState(false);
+  const [showTroco, setShowTroco] = useState(false);
 
   function formatarMoeda(e, setValor) {
     const valorNumerico = e.target.value.replace(/\D/g, "");
@@ -315,6 +317,12 @@ function RealizarVendaTest() {
     }
     if (!funcionarioResponsavel) {
       alert("Selecione a funcionaria que realizou a venda.");
+      return;
+    }
+    if (!formaDePagamento) {
+      alert("Selecione a forma de pagamento antes de finalizar a venda.");
+      setShowPagamentoWarning(true);
+      setTimeout(() => setShowPagamentoWarning(false), 4000);
       return;
     }
     try {
@@ -864,6 +872,10 @@ function RealizarVendaTest() {
                   if (v === "Pagamento dividido") setShowSplit(true);
                   else setShowSplit(false);
                 }}
+                style={{
+                  borderColor: !formaDePagamento ? "#ff9800" : undefined,
+                  borderWidth: !formaDePagamento ? "2px" : undefined,
+                }}
               >
                 <option value="">Selecione</option>
                 <option value="Dinheiro">Dinheiro</option>
@@ -873,6 +885,44 @@ function RealizarVendaTest() {
                 <option value="Crediario">Ficha</option>
                 <option value="Pagamento dividido">Pagamento dividido</option>
               </select>
+              {showPagamentoWarning && !formaDePagamento && (
+                <div
+                  className="lembrete-pagamento"
+                  style={{
+                    marginTop: "8px",
+                    padding: "10px 14px",
+                    backgroundColor: "#ffebee",
+                    borderLeft: "4px solid #f44336",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    fontSize: "13px",
+                    color: "#c62828",
+                    transition: "all 0.3s ease",
+                    animation: "shake 0.4s ease",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  <span>
+                    ⚠️ É obrigatório selecionar a forma de pagamento para finalizar a venda!
+                  </span>
+                </div>
+              )}
             </div>
             {showSplit && (
               <PaymentSplit
@@ -899,6 +949,109 @@ function RealizarVendaTest() {
                   setShowSplit(false);
                 }}
               />
+            )}
+
+            {formaDePagamento === "Dinheiro" && (
+              <div className="TrocoContainer">
+                <button
+                  type="button"
+                  className="TrocoBotao"
+                  onClick={() => setShowTroco((prev) => !prev)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <path d="M6 12h.01M18 12h.01"></path>
+                  </svg>
+                  {showTroco ? "Fechar Troco" : "💰 Calcular Troco"}
+                </button>
+
+                {showTroco && (
+                  <div className="TrocoPainel">
+                    <div className="TrocoHeader">
+                      <h3>Gerador de Troco</h3>
+                    </div>
+
+                    <div className="TrocoLinha">
+                      <span className="TrocoLabel">Total da Venda:</span>
+                      <span className="TrocoValor TrocoTotal">{precoTotal}</span>
+                    </div>
+
+                    <div className="TrocoLinha TrocoInputWrapper">
+                      <label className="TrocoLabel" htmlFor="dinheiroRecebidoInput">
+                        Valor Recebido:
+                      </label>
+                      <input
+                        id="dinheiroRecebidoInput"
+                        type="text"
+                        className="TrocoInput"
+                        value={dinheiroRecebido}
+                        onChange={(e) => {
+                          const apenasNumeros = e.target.value.replace(/\D/g, "");
+                          if (apenasNumeros === "") {
+                            setDinheiroRecebido("R$ 0,00");
+                            return;
+                          }
+                          const valorNumerico = Number(apenasNumeros) / 100;
+                          setDinheiroRecebido(
+                            valorNumerico.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }),
+                          );
+                        }}
+                      />
+                    </div>
+
+                    <div className="TrocoDivisoria"></div>
+
+                    <div className="TrocoLinha TrocoResultado">
+                      <span className="TrocoLabel">Troco:</span>
+                      {(() => {
+                        const totalNum =
+                          Number(precoTotal.replace(/\D/g, "")) / 100 || 0;
+                        const recebidoNum =
+                          Number(dinheiroRecebido.replace(/\D/g, "")) / 100 || 0;
+                        const trocoNum = recebidoNum - totalNum;
+
+                        let classe = "troco-zero";
+                        let texto;
+                        if (trocoNum > 0.005) {
+                          classe = "troco-positivo";
+                          texto = trocoNum.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          });
+                        } else if (trocoNum < -0.005) {
+                          classe = "troco-negativo";
+                          texto = `Falta ${Math.abs(trocoNum).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}`;
+                        } else {
+                          texto = "Pagamento exato";
+                        }
+
+                        return (
+                          <span className={`TrocoValor ${classe}`}>
+                            {texto}
+                          </span>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             <div className="Botoes">

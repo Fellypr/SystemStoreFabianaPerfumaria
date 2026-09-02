@@ -1400,6 +1400,155 @@
   transform: scale(1.2);
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.TrocoContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.TrocoBotao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.TrocoBotao:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.35);
+  filter: brightness(1.05);
+}
+
+.TrocoBotao:active {
+  transform: translateY(0);
+}
+
+.TrocoPainel {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f5faff 100%);
+  border: 1px solid #cce1f5;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(7, 64, 121, 0.12);
+  animation: fadeSlideIn 0.3s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.TrocoHeader {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e3ecf6;
+  & h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #074079;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.TrocoLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  gap: 12px;
+}
+
+.TrocoLabel {
+  font-size: 14px;
+  color: #455a64;
+  font-weight: 500;
+}
+
+.TrocoValor {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.TrocoTotal {
+  color: #074079;
+}
+
+.TrocoInputWrapper {
+  margin-top: 4px;
+}
+
+.TrocoInput {
+  width: 50%;
+  height: 38px;
+  padding: 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #074079;
+  border: 2px solid #cfd8dc;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease;
+  text-align: right;
+}
+
+.TrocoInput:focus {
+  outline: none;
+  border-color: #074079;
+  box-shadow: 0 0 0 3px rgba(7, 64, 121, 0.15);
+}
+
+.TrocoDivisoria {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #cfd8dc 50%, transparent 100%);
+  margin: 10px 0;
+}
+
+.TrocoResultado {
+  padding-top: 10px !important;
+  padding-bottom: 4px !important;
+}
+
+.troco-positivo {
+  color: #2e7d32;
+  font-size: 18px;
+}
+
+.troco-zero {
+  color: #546e7a;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.troco-negativo {
+  color: #c62828;
+  font-size: 18px;
+}
+
+
 .buttons-name {
   background-color: rgb(4, 0, 255);
   width: 100%;

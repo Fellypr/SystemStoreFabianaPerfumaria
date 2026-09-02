@@ -121,7 +121,7 @@ def criar_driver(semi_manual: bool = False, cdp_address: str | None = None):
         return uc.Chrome(options=options)
 
     print("Iniciando o navegador com perfil persistente...", file=sys.stderr, flush=True)
-    driver = uc.Chrome(options=options, version_main=148)
+    driver = uc.Chrome(options=options, version_main=152)
     print(
         "Consulta manual ativa: o Selenium só será usado para extrair os dados "
         "depois que a página da NF-e carregar.",
