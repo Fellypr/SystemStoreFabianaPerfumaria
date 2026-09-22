@@ -388,44 +388,6 @@ FROM CalculoAbatimento c;
                 }
             }
 
-            const string deleteItens = @"
-                        DELETE FROM RealizarVendas
-                        WHERE IdVenda = @IdVenda
-                        AND EXISTS (
-                            SELECT 1 FROM Venda 
-                            WHERE IdVenda = @IdVenda AND ValorNaFicha <= 0
-                        )";
-
-            using (var cmdItens = new SqlCommand(deleteItens, connection, transaction))
-            {
-                cmdItens.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
-                await cmdItens.ExecuteNonQueryAsync();
-            }
-
-            const string deletePagamentos = @"
-                        DELETE FROM PagamentoVenda
-                        WHERE IdVenda = @IdVenda
-                        AND EXISTS (
-                            SELECT 1 FROM Venda 
-                            WHERE IdVenda = @IdVenda AND ValorNaFicha <= 0
-                        )";
-
-            using (var cmdPg = new SqlCommand(deletePagamentos, connection, transaction))
-            {
-                cmdPg.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
-                await cmdPg.ExecuteNonQueryAsync();
-            }
-
-            const string deleteVenda = @"
-                        DELETE FROM Venda
-                        WHERE IdVenda = @IdVenda AND ValorNaFicha <= 0";
-
-            using (var cmdVenda = new SqlCommand(deleteVenda, connection, transaction))
-            {
-                cmdVenda.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
-                await cmdVenda.ExecuteNonQueryAsync();
-            }
-
             transaction.Commit();
         }
         catch

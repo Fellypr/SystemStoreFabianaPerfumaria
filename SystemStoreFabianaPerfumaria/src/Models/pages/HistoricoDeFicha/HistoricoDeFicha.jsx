@@ -1,7 +1,6 @@
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "./HistoricoDeFicha.css";
-import { FcViewDetails } from "react-icons/fc";
-import { LuPrinter } from "react-icons/lu";
+import { MdOutlineDone } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { MdDone } from "react-icons/md";
 
@@ -73,7 +72,6 @@ function HistoricoDeFicha() {
         `${url}/RealizarVenda/HistoricoCrediario?cliente=${searchCliente}&data=${searchDate}`,
       );
       setFichas(response.data);
-      console.log("aqui estar as vendas encontradas ao todo:", response.data);
     } catch (error) {
       console.error("Erro ao buscar fichas:", error);
     }
@@ -178,8 +176,6 @@ function HistoricoDeFicha() {
       return acc;
     }, {}),
   );
-  console.log("aqui estar os donos da ficha", dono_da_ficha);
-  console.log("aqui estar as vendas selecionadas", fichaSelacionada);
 
   useEffect(() => {
     if (!abrirModalViaLinkRef.current) return;
@@ -356,7 +352,12 @@ function HistoricoDeFicha() {
                           </div>
                         ))}
                       </div>
-                      <span className="Total-abater-valor-venda">Falta abater : R$ {item2.valorDoProduto ? parseFloat(item2.valorDoProduto).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "R$ 0,00"}</span>
+                      {item2.valorDoProduto ? (
+                        <span className="Total-abater-valor-venda">Falta abater : R$ {item2.valorDoProduto ? parseFloat(item2.valorDoProduto).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "R$ 0,00"}</span>  
+                      ):(
+                        <span className="Total-abater-valor-venda">Venda abatida <MdOutlineDone size={20}/></span>
+                      )}
+                      
                     </div>
                   ))}
                 </div>
