@@ -209,6 +209,8 @@ function HistoricoDeFicha() {
       abrirModalViaLinkRef.current = false;
     }
   }, [fichas]);
+  console.log("dono_da_ficha", dono_da_ficha);
+  console.log("todas as fichas", fichas);
 
   return (
     <main>

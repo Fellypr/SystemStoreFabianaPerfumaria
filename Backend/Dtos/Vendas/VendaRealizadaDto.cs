@@ -46,7 +46,7 @@ public class VendaRealizadaDto
 
     [JsonPropertyName("comprador")]
     public string Comprador { get; set; }
-    
+
     [JsonPropertyName("funcionario")]
     public string? Funcionario { get; set; }
 
@@ -58,5 +58,13 @@ public class VendaRealizadaDto
 
     [JsonPropertyName("numeroDeTelefone")]
     public string NumeroDeTelefone { get; set; }
+    [JsonPropertyName("dataAbatimento")]
+    public DateTime? DataAbatimento { get; set; }
+
+    [JsonPropertyName("valorPago")]
+    public decimal? ValorPago { get; set; }
+
+    [JsonPropertyName("valorAbatido")]
+    public decimal? ValorAbatido { get; set; }
 }
 

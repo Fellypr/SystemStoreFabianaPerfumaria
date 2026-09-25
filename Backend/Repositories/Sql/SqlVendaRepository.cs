@@ -235,12 +235,19 @@ SELECT
     V.ValorNaFicha,
     V.FormaDePagamento,
     V.Produtos_Vendidos,
-    V.IdVenda
+    V.IdVenda,
+    AF.DataAbatimento,
+    AF.ValorPago,
+    AFV.ValorAbatido
 FROM Venda V
 INNER JOIN RealizarVendas RV
     ON RV.IdVenda = V.IdVenda
 INNER JOIN CadastroDeCliente CD
     ON CD.Id_Cliente = V.IdVendaDeCliente
+LEFT JOIN AbatimentoFichaVenda AFV
+    ON AFV.IdVenda = V.IdVenda
+LEFT JOIN AbatimentoFicha AF
+    ON AF.IdAbatimento = AFV.IdAbatimento
 WHERE V.FormaDePagamento = 'Crediario'
   AND (@cliente IS NULL OR CD.NomeDoCliente LIKE @cliente)
   AND (@data IS NULL OR CAST(V.DataDaVenda AS DATE) = @data)
@@ -275,6 +282,9 @@ ORDER BY V.DataDaVenda;";
                 ValorNaFicha = Convert.ToDecimal(reader["ValorNaFicha"]),
                 Produtos_Vendidos = reader["Produtos_Vendidos"].ToString(),
                 NumeroDeTelefone = reader["Telefone"].ToString(),
+                DataAbatimento = reader["DataAbatimento"] == DBNull.Value ? null : Convert.ToDateTime(reader["DataAbatimento"]),
+                ValorPago      = reader["ValorPago"]      == DBNull.Value ? null : Convert.ToDecimal(reader["ValorPago"]),
+                ValorAbatido   = reader["ValorAbatido"]   == DBNull.Value ? null : Convert.ToDecimal(reader["ValorAbatido"]),
             });
         }
 
@@ -356,36 +366,75 @@ ORDER BY V.DataDaVenda;";
         using var transaction = connection.BeginTransaction();
         try
         {
-            const string updateQuery = @"
-                WITH CalculoAbatimento AS (
-    SELECT 
-        IdVenda,
-        ValorNaFicha,
-        SUM(ValorNaFicha) OVER (PARTITION BY IdVendaDeCliente ORDER BY IdVenda) as soma_acumulada
-    FROM Venda
-    WHERE IdVendaDeCliente = @IdVendaDeCliente AND FormaDePagamento = 'Crediario'
-)
-UPDATE c
-SET c.ValorNaFicha = CASE 
-    WHEN c.soma_acumulada <= @Valor THEN 0
-    WHEN c.soma_acumulada - c.ValorNaFicha < @Valor THEN c.soma_acumulada - @Valor
-    ELSE c.ValorNaFicha
-END
-FROM CalculoAbatimento c;
-            ";
+            // 1. Busca as vendas de fiado abertas do cliente, da mais antiga para a mais nova
+            const string queryVendas = @"
+                SELECT IdVenda, ValorNaFicha
+                FROM Venda
+                WHERE IdVendaDeCliente = @IdCliente
+                  AND FormaDePagamento = 'Crediario'
+                  AND ValorNaFicha > 0
+                ORDER BY IdVenda;";
 
-            using (var cmdUpdate = new SqlCommand(updateQuery, connection, transaction))
+            var vendasAberto = new List<(int Id, decimal Saldo)>();
+            using (var cmd = new SqlCommand(queryVendas, connection, transaction))
             {
-                cmdUpdate.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
-                cmdUpdate.Parameters.Add("@Valor", SqlDbType.Decimal).Value = valor;
-                cmdUpdate.Parameters.Add("@IdVendaDeCliente", SqlDbType.Int).Value = idCliente;
+                cmd.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente;
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                    vendasAberto.Add((Convert.ToInt32(reader["IdVenda"]),
+                                      Convert.ToDecimal(reader["ValorNaFicha"])));
+            }
 
-                var rows = await cmdUpdate.ExecuteNonQueryAsync();
-                if (rows == 0)
+            // 2. Insere o cabeçalho do abatimento em AbatimentoFicha
+            const string insertAbatimento = @"
+                INSERT INTO AbatimentoFicha (IdCliente, ValorPago)
+                OUTPUT INSERTED.IdAbatimento
+                VALUES (@IdCliente, @ValorPago);";
+
+            int idAbatimento;
+            using (var cmd = new SqlCommand(insertAbatimento, connection, transaction))
+            {
+                cmd.Parameters.Add("@IdCliente", SqlDbType.Int).Value = idCliente;
+                cmd.Parameters.Add("@ValorPago", SqlDbType.Decimal).Value = valor;
+                idAbatimento = (int)await cmd.ExecuteScalarAsync();
+            }
+
+            // 3. Distribui o valor entre as vendas e grava o histórico em AbatimentoFichaVenda
+            decimal restante = valor;
+            foreach (var (idVendaAberta, saldo) in vendasAberto)
+            {
+                if (restante <= 0) break;
+
+                decimal abater = Math.Min(restante, saldo);
+
+                // Atualiza o saldo da venda
+                const string updateVenda = @"
+                    UPDATE Venda
+                    SET ValorNaFicha = ValorNaFicha - @Abater
+                    WHERE IdVenda = @IdVenda;";
+
+                using (var cmd = new SqlCommand(updateVenda, connection, transaction))
                 {
-                    transaction.Rollback();
-                    throw new InvalidOperationException("Venda não encontrada");
+                    cmd.Parameters.Add("@Abater", SqlDbType.Decimal).Value = abater;
+                    cmd.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVendaAberta;
+                    await cmd.ExecuteNonQueryAsync();
                 }
+
+                // Registra a distribuição (histórico)
+                const string insertDistribuicao = @"
+                    INSERT INTO AbatimentoFichaVenda
+                        (IdAbatimento, IdVenda, ValorAbatido)
+                    VALUES (@IdAbatimento, @IdVenda, @ValorAbatido);";
+
+                using (var cmd = new SqlCommand(insertDistribuicao, connection, transaction))
+                {
+                    cmd.Parameters.Add("@IdAbatimento", SqlDbType.Int).Value = idAbatimento;
+                    cmd.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVendaAberta;
+                    cmd.Parameters.Add("@ValorAbatido", SqlDbType.Decimal).Value = abater;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                restante -= abater;
             }
 
             transaction.Commit();
