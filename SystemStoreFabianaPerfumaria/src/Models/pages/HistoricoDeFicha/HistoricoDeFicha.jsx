@@ -34,6 +34,7 @@ function HistoricoDeFicha() {
   const [searchCliente, setSearchCliente] = useState(clienteNomeInicial);
   const [searchDate, setSearchDate] = useState("");
   const [valorNaFicha, setValorNaFicha] = useState("R$ 0,00");
+  const [historicoVendasAbertas, setHistoricoVendasAbertas] = useState({});
   const idClienteViaLinkRef = useRef(clienteIdInicial);
   const abrirModalViaLinkRef = useRef(abrirModalInicial);
   const tentativasAbrirModalRef = useRef(0);
@@ -53,6 +54,13 @@ function HistoricoDeFicha() {
     );
   }
 
+  function toggleHistoricoVenda(idVenda) {
+    setHistoricoVendasAbertas((prev) => ({
+      ...prev,
+      [idVenda]: !prev[idVenda],
+    }));
+  }
+
   function toggleModal(idCliente) {
     const item = dono_da_ficha.filter((item) => item.id === idCliente);
     setFichaSelecionada(item);
@@ -64,6 +72,7 @@ function HistoricoDeFicha() {
     setAbaterFicha(false);
     setValorNaFicha("R$ 0,00");
     setFichaSelecionada([]);
+    setHistoricoVendasAbertas({});
   }
 
   async function BuscarClienteComFichaEmAberto() {
@@ -102,7 +111,9 @@ function HistoricoDeFicha() {
       fecharModal();
     } catch (error) {
       alert("Erro ao abater valor.");
-      console.error(`error ao abater valor de ids de vendas ${idVenda} e ${id}: ${error}`);
+      console.error(
+        `error ao abater valor de ids de vendas ${idVenda} e ${id}: ${error}`,
+      );
     }
   }
 
@@ -122,18 +133,44 @@ function HistoricoDeFicha() {
               preco_unitario: item.precoUnitario,
             },
           ],
+          abatimentos: [],
           total: item.valorNaFicha,
           idCliente: item.idCliente,
           comprador: item.comprador,
           numeroDeTelefone: item.numeroDeTelefone,
         };
       } else {
-        acc[idVenda].nomeDosProdutos.push({
-          produto: item.nomeDoProduto,
-          quantidade_unitaria: item.quantidade,
-          preco_unitario: item.precoUnitario,
-        });
+        const produtoJaExiste = acc[idVenda].nomeDosProdutos.some(
+          (p) => p.produto === item.nomeDoProduto,
+        );
+        if (!produtoJaExiste) {
+          acc[idVenda].nomeDosProdutos.push({
+            produto: item.nomeDoProduto,
+            quantidade_unitaria: item.quantidade,
+            preco_unitario: item.precoUnitario,
+          });
+        }
       }
+
+      if (item.dataAbatimento && item.valorAbatido != null) {
+        const jaAdicionado = acc[idVenda].abatimentos.some(
+          (a) =>
+            a.dataAbatimento === item.dataAbatimento &&
+            a.valorAbatido === item.valorAbatido,
+        );
+
+        if (!jaAdicionado) {
+          acc[idVenda].abatimentos.push({
+            valorAbatido: item.valorAbatido,
+            dataAbatimento: item.dataAbatimento,
+          });
+
+          acc[idVenda].abatimentos.sort(
+            (a, b) => new Date(a.dataAbatimento) - new Date(b.dataAbatimento),
+          );
+        }
+      }
+
       return acc;
     }, {}),
   );
@@ -157,6 +194,7 @@ function HistoricoDeFicha() {
                 preco_unitario: produto.preco_unitario,
               })),
               dataDaVenda: item.dataDaVenda,
+              abatimentos: item.abatimentos,
             },
           ],
         };
@@ -171,6 +209,7 @@ function HistoricoDeFicha() {
             preco_unitario: produto.preco_unitario,
           })),
           dataDaVenda: item.dataDaVenda,
+          abatimentos: item.abatimentos,
         });
       }
       return acc;
@@ -193,7 +232,10 @@ function HistoricoDeFicha() {
     if (!itemEncontrado && nomeAlvo) {
       const nome = String(nomeAlvo).toLowerCase().trim();
       itemEncontrado = dono_da_ficha.find(
-        (item) => String(item.comprador ?? "").toLowerCase().trim() === nome,
+        (item) =>
+          String(item.comprador ?? "")
+            .toLowerCase()
+            .trim() === nome,
       );
     }
 
@@ -204,13 +246,15 @@ function HistoricoDeFicha() {
       return;
     }
 
-    tentativasAbrirModalRef.current = (tentativasAbrirModalRef.current || 0) + 1;
+    tentativasAbrirModalRef.current =
+      (tentativasAbrirModalRef.current || 0) + 1;
     if (tentativasAbrirModalRef.current > 10) {
       abrirModalViaLinkRef.current = false;
     }
   }, [fichas]);
   console.log("dono_da_ficha", dono_da_ficha);
   console.log("todas as fichas", fichas);
+  console.log("fichaSelacionada", fichaSelacionada);
 
   return (
     <main>
@@ -314,9 +358,11 @@ function HistoricoDeFicha() {
                     <h1 className="nome-comprador">
                       {fichaSelacionada?.[0]?.comprador}
                     </h1>
-                    <p className="telefone">
-                      <span>📞</span> {fichaSelacionada?.[0]?.telefone}
-                    </p>
+                    <div className="telefone-container">
+                      <p className="telefone">
+                        <span>📞</span> {fichaSelacionada?.[0]?.telefone}
+                      </p>
+                    </div>
                   </div>
                   <button onClick={fecharModal} className="close-modal-btn">
                     <IoClose size={24} />
@@ -327,10 +373,101 @@ function HistoricoDeFicha() {
                   {fichaSelacionada?.[0]?.vendas?.map((item2) => (
                     <div key={item2.id} className="venda-item">
                       <div className="venda-date">
-                        📅{" "}
-                        {item2.dataDaVenda
-                          ? format(new Date(item2.dataDaVenda), "dd/MM/yyyy")
-                          : "-"}
+                        <div className="telefone-container">
+                          📅{" "}
+                          {item2.dataDaVenda
+                            ? format(new Date(item2.dataDaVenda), "dd/MM/yyyy")
+                            : "-"}
+                          <div className="abatimentos-container">
+                            {item2.abatimentos?.length > 0 && (
+                              <div className="abatimento-item">
+                                <div className="abatimento-data">
+                                  <p>Data do ultimo abatimento:</p>
+                                  {item2.abatimentos.at(-1).dataAbatimento
+                                    ? format(
+                                        new Date(
+                                          item2.abatimentos.at(-1)
+                                            .dataAbatimento,
+                                        ),
+                                        "dd/MM/yyyy HH:mm:ss",
+                                      )
+                                    : "-"}
+                                </div>
+                                <div className="abatimento-valor">
+                                  <p>Valor abatido:</p>
+                                  <span className="valor-abatido">
+                                    {item2.abatimentos.at(-1).valorAbatido
+                                      ? parseFloat(
+                                          item2.abatimentos.at(-1).valorAbatido,
+                                        ).toLocaleString("pt-BR", {
+                                          style: "currency",
+                                          currency: "BRL",
+                                        })
+                                      : "R$ 0,00"}
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="btn-ver-historico"
+                                  onClick={() => toggleHistoricoVenda(item2.id_venda)}
+                                >
+                                  {historicoVendasAbertas[item2.id_venda]
+                                    ? "Ocultar Histórico"
+                                    : "Ver Histórico"}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {historicoVendasAbertas[item2.id_venda] && item2.abatimentos?.length > 0 && (
+                          <div className="painel-historico-abatimentos">
+                            <div className="painel-historico-header">
+                              <span>📜 Histórico de Abatimentos da Venda</span>
+                              <span className="painel-total-abatido">
+                                Total abatido:{" "}
+                                {item2.abatimentos
+                                  .reduce(
+                                    (acc, ab) =>
+                                      acc + (parseFloat(ab.valorAbatido) || 0),
+                                    0,
+                                  )
+                                  .toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                              </span>
+                            </div>
+                            <div className="painel-historico-lista">
+                              {item2.abatimentos.map((ab, idx) => (
+                                <div key={idx} className="painel-historico-item">
+                                  <span className="historico-indice">
+                                    {idx + 1}º Abatimento
+                                  </span>
+                                  <span className="historico-data">
+                                    📅{" "}
+                                    {ab.dataAbatimento
+                                      ? format(
+                                          new Date(ab.dataAbatimento),
+                                          "dd/MM/yyyy HH:mm:ss",
+                                        )
+                                      : "-"}
+                                  </span>
+                                  <span className="historico-valor">
+                                    {ab.valorAbatido
+                                      ? parseFloat(
+                                          ab.valorAbatido,
+                                        ).toLocaleString("pt-BR", {
+                                          style: "currency",
+                                          currency: "BRL",
+                                        })
+                                      : "R$ 0,00"}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="produtos-list">
                         {item2.nomeDosProdutos?.map((produto, index) => (
@@ -355,11 +492,20 @@ function HistoricoDeFicha() {
                         ))}
                       </div>
                       {item2.valorDoProduto ? (
-                        <span className="Total-abater-valor-venda">Falta abater : R$ {item2.valorDoProduto ? parseFloat(item2.valorDoProduto).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "R$ 0,00"}</span>  
-                      ):(
-                        <span className="Total-abater-valor-venda">Venda abatida <MdOutlineDone size={20}/></span>
+                        <span className="Total-abater-valor-venda">
+                          Falta abater : R${" "}
+                          {item2.valorDoProduto
+                            ? parseFloat(item2.valorDoProduto).toLocaleString(
+                                "pt-BR",
+                                { style: "currency", currency: "BRL" },
+                              )
+                            : "R$ 0,00"}
+                        </span>
+                      ) : (
+                        <span className="Total-abater-valor-venda">
+                          Venda abatida <MdOutlineDone size={20} />
+                        </span>
                       )}
-                      
                     </div>
                   ))}
                 </div>
@@ -422,7 +568,9 @@ function HistoricoDeFicha() {
               <button
                 className="button-concluir-abatimento"
                 onClick={AbaterValor}
-                disabled={(fichaSelacionada?.[0]?.valor_total ?? 0) < valorNaFicha}
+                disabled={
+                  (fichaSelacionada?.[0]?.valor_total ?? 0) < valorNaFicha
+                }
               >
                 Confirmar Abatimento
               </button>

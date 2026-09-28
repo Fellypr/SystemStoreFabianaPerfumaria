@@ -224,6 +224,122 @@
     }
   }
 }
+.telefone-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.abatimentos-container {
+  width: auto;
+  max-width: 75%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  .abatimento-item {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    .abatimento-data{
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      gap: 5px;
+    }
+    .abatimento-valor{
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      gap: 5px;
+      .valor-abatido{
+        color: #10b981;
+        font-size: 1rem;
+        font-weight: 800;
+      }
+    }
+    .btn-ver-historico {
+      background-color: transparent;
+      border: 1px solid #0284c7;
+      color: #0284c7;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      &:hover {
+        background-color: #0284c7;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.painel-historico-abatimentos {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 14px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+  animation: fadeIn 0.25s ease;
+  .painel-historico-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0369a1;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    .painel-total-abatido {
+      color: #059669;
+      font-size: 0.95rem;
+      font-weight: 800;
+      background-color: #ecfdf5;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+  }
+  .painel-historico-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    .painel-historico-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background-color: #f8fafc;
+      border-radius: 6px;
+      border-left: 4px solid #0284c7;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+      &:hover {
+        background-color: #f1f5f9;
+      }
+      .historico-indice {
+        font-weight: 700;
+        color: #475569;
+        min-width: 110px;
+      }
+      .historico-data {
+        color: #334155;
+        font-weight: 500;
+      }
+      .historico-valor {
+        font-weight: 800;
+        color: #10b981;
+      }
+    }
+  }
+}
 
 .vendas-list {
   width: 100%;
@@ -277,7 +393,7 @@
     }
   }
 }
-.Total-abater-valor-venda{
+.Total-abater-valor-venda {
   font-size: 1.2rem;
   font-weight: 700;
   color: #074079;
@@ -482,13 +598,25 @@
 }
 
 @keyframes aparecerFicha {
-	0% {
-		transform: scale(0);
-		transform-origin: 50% 0%;
-	}
+  0% {
+    transform: scale(0);
+    transform-origin: 50% 0%;
+  }
 
-	100% {
-		transform: scale(1);
-		transform-origin: 50% 0%;
-	}
+  100% {
+    transform: scale(1);
+    transform-origin: 50% 0%;
+  }
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
