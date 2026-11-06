@@ -1,7 +1,7 @@
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "./HistoricoDeFicha.css";
 import { MdOutlineDone } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoArrowUndoOutline } from "react-icons/io5";
 import { MdDone } from "react-icons/md";
 
 import { useState, useEffect, useRef } from "react";
@@ -35,6 +35,7 @@ function HistoricoDeFicha() {
   const [searchDate, setSearchDate] = useState("");
   const [valorNaFicha, setValorNaFicha] = useState("R$ 0,00");
   const [historicoVendasAbertas, setHistoricoVendasAbertas] = useState({});
+  const [desfazendoVendaId, setDesfazendoVendaId] = useState(null);
   const idClienteViaLinkRef = useRef(clienteIdInicial);
   const abrirModalViaLinkRef = useRef(abrirModalInicial);
   const tentativasAbrirModalRef = useRef(0);
@@ -114,6 +115,47 @@ function HistoricoDeFicha() {
       console.error(
         `error ao abater valor de ids de vendas ${idVenda} e ${id}: ${error}`,
       );
+    }
+  }
+
+  async function desfazerUltimoAbatimento(idVenda, abatimento) {
+    if (!idVenda) return;
+
+    const valorFormatado = abatimento?.valorAbatido
+      ? parseFloat(abatimento.valorAbatido).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      : "este valor";
+
+    const dataFormatada = abatimento?.dataAbatimento
+      ? format(new Date(abatimento.dataAbatimento), "dd/MM/yyyy HH:mm")
+      : "";
+
+    const confirmacao = window.confirm(
+      `Deseja realmente desfazer o último abatimento de ${valorFormatado}${
+        dataFormatada ? ` realizado em ${dataFormatada}` : ""
+      }?\n\nO valor retornará para o saldo da venda.`,
+    );
+
+    if (!confirmacao) return;
+
+    try {
+      setDesfazendoVendaId(idVenda);
+      const response = await axios.delete(
+        `${url}/RealizarVenda/DesfazerUltimoAbatimento/${idVenda}`,
+      );
+      alert(response.data?.mensagem || "Abatimento desfeito com sucesso!");
+      await BuscarClienteComFichaEmAberto();
+    } catch (error) {
+      const msgErro =
+        error.response?.data?.mensagem ||
+        error.response?.data ||
+        "Erro ao desfazer o abatimento.";
+      alert(typeof msgErro === "string" ? msgErro : "Erro ao desfazer o abatimento.");
+      console.error("Erro ao desfazer abatimento:", error);
+    } finally {
+      setDesfazendoVendaId(null);
     }
   }
 
@@ -250,6 +292,15 @@ function HistoricoDeFicha() {
       (tentativasAbrirModalRef.current || 0) + 1;
     if (tentativasAbrirModalRef.current > 10) {
       abrirModalViaLinkRef.current = false;
+    }
+  }, [fichas]);
+
+  useEffect(() => {
+    if (!isOpen || !fichaSelacionada?.[0]?.id) return;
+    const clienteId = fichaSelacionada[0].id;
+    const clienteAtualizado = dono_da_ficha.find((item) => item.id === clienteId);
+    if (clienteAtualizado) {
+      setFichaSelecionada([clienteAtualizado]);
     }
   }, [fichas]);
   console.log("dono_da_ficha", dono_da_ficha);
@@ -415,6 +466,25 @@ function HistoricoDeFicha() {
                                     ? "Ocultar Histórico"
                                     : "Ver Histórico"}
                                 </button>
+                                <button
+                                  type="button"
+                                  className="btn-desfazer-abatimento"
+                                  title="Desfazer o último abatimento desta venda"
+                                  disabled={desfazendoVendaId === item2.id_venda}
+                                  onClick={() =>
+                                    desfazerUltimoAbatimento(
+                                      item2.id_venda,
+                                      item2.abatimentos.at(-1),
+                                    )
+                                  }
+                                >
+                                  <IoArrowUndoOutline size={18} />
+                                  <span>
+                                    {desfazendoVendaId === item2.id_venda
+                                      ? "Desfazendo..."
+                                      : "Desfazer"}
+                                  </span>
+                                </button>
                               </div>
                             )}
                           </div>
@@ -439,32 +509,64 @@ function HistoricoDeFicha() {
                               </span>
                             </div>
                             <div className="painel-historico-lista">
-                              {item2.abatimentos.map((ab, idx) => (
-                                <div key={idx} className="painel-historico-item">
-                                  <span className="historico-indice">
-                                    {idx + 1}º Abatimento
-                                  </span>
-                                  <span className="historico-data">
-                                    📅{" "}
-                                    {ab.dataAbatimento
-                                      ? format(
-                                          new Date(ab.dataAbatimento),
-                                          "dd/MM/yyyy HH:mm:ss",
-                                        )
-                                      : "-"}
-                                  </span>
-                                  <span className="historico-valor">
-                                    {ab.valorAbatido
-                                      ? parseFloat(
-                                          ab.valorAbatido,
-                                        ).toLocaleString("pt-BR", {
-                                          style: "currency",
-                                          currency: "BRL",
-                                        })
-                                      : "R$ 0,00"}
-                                  </span>
-                                </div>
-                              ))}
+                              {item2.abatimentos.map((ab, idx) => {
+                                const isUltimo =
+                                  idx === item2.abatimentos.length - 1;
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`painel-historico-item ${
+                                      isUltimo ? "item-ultimo-abatimento" : ""
+                                    }`}
+                                  >
+                                    <span className="historico-indice">
+                                      {idx + 1}º Abatimento
+                                    </span>
+                                    <span className="historico-data">
+                                      📅{" "}
+                                      {ab.dataAbatimento
+                                        ? format(
+                                            new Date(ab.dataAbatimento),
+                                            "dd/MM/yyyy HH:mm:ss",
+                                          )
+                                        : "-"}
+                                    </span>
+                                    <span className="historico-valor">
+                                      {ab.valorAbatido
+                                        ? parseFloat(
+                                            ab.valorAbatido,
+                                          ).toLocaleString("pt-BR", {
+                                            style: "currency",
+                                            currency: "BRL",
+                                          })
+                                        : "R$ 0,00"}
+                                    </span>
+                                    {isUltimo && (
+                                      <button
+                                        type="button"
+                                        className="btn-desfazer-historico"
+                                        title="Desfazer este último abatimento"
+                                        disabled={
+                                          desfazendoVendaId === item2.id_venda
+                                        }
+                                        onClick={() =>
+                                          desfazerUltimoAbatimento(
+                                            item2.id_venda,
+                                            ab,
+                                          )
+                                        }
+                                      >
+                                        <IoArrowUndoOutline size={16} />
+                                        <span>
+                                          {desfazendoVendaId === item2.id_venda
+                                            ? "..."
+                                            : "Desfazer"}
+                                        </span>
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}

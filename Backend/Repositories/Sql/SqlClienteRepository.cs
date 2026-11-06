@@ -124,6 +124,24 @@ public sealed class SqlClienteRepository : IClienteRepository
         using var transaction = connection.BeginTransaction();
         try
         {
+            const string deleteAbatimentosVenda = @"DELETE AFV FROM AbatimentoFichaVenda AFV 
+                   INNER JOIN Venda V ON AFV.IdVenda = V.IdVenda 
+                   WHERE V.IdVendaDeCliente = @Id";
+            using (var cmdAbatVenda = new SqlCommand(deleteAbatimentosVenda, connection, transaction))
+            {
+                cmdAbatVenda.Parameters.AddWithValue("@Id", id);
+                await cmdAbatVenda.ExecuteNonQueryAsync();
+            }
+
+            const string deletePagamentos = @"DELETE PV FROM PagamentoVenda PV 
+                   INNER JOIN Venda V ON PV.IdVenda = V.IdVenda 
+                   WHERE V.IdVendaDeCliente = @Id";
+            using (var cmdPg = new SqlCommand(deletePagamentos, connection, transaction))
+            {
+                cmdPg.Parameters.AddWithValue("@Id", id);
+                await cmdPg.ExecuteNonQueryAsync();
+            }
+
             const string deleteItems = @"DELETE RV FROM RealizarVendas RV 
                    INNER JOIN Venda V ON RV.IdVenda = V.IdVenda 
                    WHERE V.IdVendaDeCliente = @Id";
@@ -138,6 +156,13 @@ public sealed class SqlClienteRepository : IClienteRepository
             {
                 cmd2.Parameters.AddWithValue("@Id_Cliente", id);
                 await cmd2.ExecuteNonQueryAsync();
+            }
+
+            const string deleteAbatimentos = "DELETE FROM AbatimentoFicha WHERE IdCliente = @Id_Cliente";
+            using (var cmdAbat = new SqlCommand(deleteAbatimentos, connection, transaction))
+            {
+                cmdAbat.Parameters.AddWithValue("@Id_Cliente", id);
+                await cmdAbat.ExecuteNonQueryAsync();
             }
 
             const string deleteCliente = "DELETE FROM CadastroDeCliente WHERE Id_Cliente = @Id_Cliente";

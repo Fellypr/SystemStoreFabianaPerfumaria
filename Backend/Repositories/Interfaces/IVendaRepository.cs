@@ -14,5 +14,6 @@ public interface IVendaRepository
     Task<List<object>> ClientesComFichaEmAbertoAsync(string fichaEmAberto);
     Task<List<VendaRealizadaDto>> VendasDaSemanaAsync();
     Task<object> CancelarAutomaticoAsync(int idVenda);
+    Task<string> DesfazerUltimoAbatimentoAsync(int idVenda);
 }
 

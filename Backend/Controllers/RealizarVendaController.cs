@@ -180,10 +180,23 @@ public async Task<ActionResult> FiltrarVendas(
             }
         }
 
-
-
-
+        [HttpDelete("DesfazerUltimoAbatimento/{idVenda}")]
+        public async Task<IActionResult> DesfazerUltimoAbatimento(int idVenda)
+        {
+            try
+            {
+                var msg = await _vendaService.DesfazerUltimoAbatimentoAsync(idVenda);
+                return Ok(new { mensagem = msg });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = $"Erro ao desfazer abatimento: {ex.Message}" });
+            }
+        }
     }
-
 }
 

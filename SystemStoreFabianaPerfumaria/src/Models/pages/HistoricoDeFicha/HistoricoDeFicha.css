@@ -276,6 +276,30 @@
         color: #ffffff;
       }
     }
+    .btn-desfazer-abatimento {
+      background-color: #fff1f2;
+      border: 1px solid #f43f5e;
+      color: #e11d48;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      &:hover:not(:disabled) {
+        background-color: #e11d48;
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(225, 29, 72, 0.25);
+      }
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    }
   }
 }
 
@@ -336,6 +360,34 @@
       .historico-valor {
         font-weight: 800;
         color: #10b981;
+      }
+      &.item-ultimo-abatimento {
+        border-left: 4px solid #f43f5e;
+        background-color: #fff1f2;
+      }
+      .btn-desfazer-historico {
+        background-color: #ffffff;
+        border: 1px solid #f43f5e;
+        color: #e11d48;
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+        margin-left: 10px;
+        &:hover:not(:disabled) {
+          background-color: #e11d48;
+          color: #ffffff;
+          box-shadow: 0 2px 6px rgba(225, 29, 72, 0.25);
+        }
+        &:disabled {
+          opacity: 0.55;
+          cursor: not-allowed;
+        }
       }
     }
   }

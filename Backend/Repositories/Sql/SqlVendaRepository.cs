@@ -535,9 +535,19 @@ ORDER BY V.DataDaVenda;";
                 await cmdEstoque.ExecuteNonQueryAsync();
             }
 
+            const string sqlDelAbatimentosVenda = "DELETE FROM AbatimentoFichaVenda WHERE IdVenda = @id";
             const string sqlDelPagamentos = "DELETE FROM PagamentoVenda WHERE IdVenda = @id";
             const string sqlDelItens = "DELETE FROM RealizarVendas WHERE IdVenda = @id";
             const string sqlDelVenda = "DELETE FROM Venda WHERE IdVenda = @id";
+            const string sqlDelAbatimentosOrfaos = @"
+                DELETE FROM AbatimentoFicha 
+                WHERE IdAbatimento NOT IN (SELECT IdAbatimento FROM AbatimentoFichaVenda);";
+
+            using (var cmdDelAbat = new SqlCommand(sqlDelAbatimentosVenda, conn, transaction))
+            {
+                cmdDelAbat.Parameters.AddWithValue("@id", idVenda);
+                await cmdDelAbat.ExecuteNonQueryAsync();
+            }
 
             using (var cmdDelPg = new SqlCommand(sqlDelPagamentos, conn, transaction))
             {
@@ -557,8 +567,100 @@ ORDER BY V.DataDaVenda;";
                 await cmdDelV.ExecuteNonQueryAsync();
             }
 
+            using (var cmdDelOrf = new SqlCommand(sqlDelAbatimentosOrfaos, conn, transaction))
+            {
+                await cmdDelOrf.ExecuteNonQueryAsync();
+            }
+
             transaction.Commit();
             return new { mensagem = "Venda cancelada e estoque reposto!", itens = produtosParaRepor };
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<string> DesfazerUltimoAbatimentoAsync(int idVenda)
+    {
+        var connectString = _db.CreateConnection().ConnectionString;
+        using var connection = new SqlConnection(connectString);
+        await connection.OpenAsync();
+
+        using var transaction = connection.BeginTransaction();
+        try
+        {
+            // 1. Busca o último abatimento vinculado a essa venda
+            const string queryUltimoAbatimento = @"
+                SELECT TOP 1 
+                    AFV.IdAbatimento, 
+                    AFV.ValorAbatido
+                FROM AbatimentoFichaVenda AFV
+                INNER JOIN AbatimentoFicha AF ON AF.IdAbatimento = AFV.IdAbatimento
+                WHERE AFV.IdVenda = @IdVenda
+                ORDER BY AF.DataAbatimento DESC, AFV.IdAbatimento DESC;";
+
+            int idAbatimento;
+            decimal valorAbatido;
+
+            using (var cmd = new SqlCommand(queryUltimoAbatimento, connection, transaction))
+            {
+                cmd.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
+                using var reader = await cmd.ExecuteReaderAsync();
+                if (!await reader.ReadAsync())
+                {
+                    throw new InvalidOperationException("Nenhum abatimento encontrado para esta venda.");
+                }
+
+                idAbatimento = Convert.ToInt32(reader["IdAbatimento"]);
+                valorAbatido = Convert.ToDecimal(reader["ValorAbatido"]);
+            }
+
+            // 2. Estorna o valor de volta no ValorNaFicha da Venda
+            const string queryRestaurarSaldo = @"
+                UPDATE Venda
+                SET ValorNaFicha = ValorNaFicha + @ValorAbatido
+                WHERE IdVenda = @IdVenda;";
+
+            using (var cmd = new SqlCommand(queryRestaurarSaldo, connection, transaction))
+            {
+                cmd.Parameters.Add("@ValorAbatido", SqlDbType.Decimal).Value = valorAbatido;
+                cmd.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // 3. Deleta o registro em AbatimentoFichaVenda correspondente
+            const string queryDeletarAbatimentoVenda = @"
+                DELETE FROM AbatimentoFichaVenda
+                WHERE IdAbatimento = @IdAbatimento AND IdVenda = @IdVenda;";
+
+            using (var cmd = new SqlCommand(queryDeletarAbatimentoVenda, connection, transaction))
+            {
+                cmd.Parameters.Add("@IdAbatimento", SqlDbType.Int).Value = idAbatimento;
+                cmd.Parameters.Add("@IdVenda", SqlDbType.Int).Value = idVenda;
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // 4. Atualiza o cabeçalho AbatimentoFicha (diminui o ValorPago) e remove se ficar órfão ou zerado
+            const string queryAjustarCabecalho = @"
+                UPDATE AbatimentoFicha
+                SET ValorPago = ValorPago - @ValorAbatido
+                WHERE IdAbatimento = @IdAbatimento;
+
+                DELETE FROM AbatimentoFicha
+                WHERE IdAbatimento = @IdAbatimento
+                  AND (ValorPago <= 0 OR IdAbatimento NOT IN (SELECT IdAbatimento FROM AbatimentoFichaVenda));";
+
+            using (var cmd = new SqlCommand(queryAjustarCabecalho, connection, transaction))
+            {
+                cmd.Parameters.Add("@ValorAbatido", SqlDbType.Decimal).Value = valorAbatido;
+                cmd.Parameters.Add("@IdAbatimento", SqlDbType.Int).Value = idAbatimento;
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            transaction.Commit();
+            return $"Abatimento de {valorAbatido.ToString("C", new CultureInfo("pt-BR"))} desfeito com sucesso.";
         }
         catch
         {

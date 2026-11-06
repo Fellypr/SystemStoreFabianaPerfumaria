@@ -41,5 +41,7 @@ public sealed class VendaService : IVendaService
     public Task<List<VendaRealizadaDto>> VendasDaSemanaAsync() => _repo.VendasDaSemanaAsync();
 
     public Task<object> CancelarAutomaticoAsync(int idVenda) => _repo.CancelarAutomaticoAsync(idVenda);
+
+    public Task<string> DesfazerUltimoAbatimentoAsync(int idVenda) => _repo.DesfazerUltimoAbatimentoAsync(idVenda);
 }
 

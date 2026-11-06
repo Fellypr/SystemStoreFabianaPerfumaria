@@ -12,5 +12,6 @@ public interface IVendaService
     Task<List<object>> ClientesComFichaAsync(FiltrarVendasPelaFichaDto filtro);
     Task<List<VendaRealizadaDto>> VendasDaSemanaAsync();
     Task<object> CancelarAutomaticoAsync(int idVenda);
+    Task<string> DesfazerUltimoAbatimentoAsync(int idVenda);
 }
 
